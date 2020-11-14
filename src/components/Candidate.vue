@@ -1,20 +1,22 @@
 <template>
   <div v-if="featured" class="candidate">
+    <circular-picture :src="profilePicture" :size="4" :color="color" />
     <div class="info">
-      <p :style="{ color: color }" class="rel-votes">
-        {{ formattedPercentage }}%
-      </p>
       <div
         class="bar"
-        :style="{ backgroundColor: color, width: `calc(100% * ${percentage})` }"
+        :style="{
+          backgroundColor: color,
+          width: `calc(100% * ${percentage})`,
+        }"
       ></div>
-      <p :style="{ color: color }" class="abs-votes">{{ votes }} votos</p>
+      <div class="votes">
+      <p :style="{ color: color }" class="abs-votes">{{ votes }}</p>
+      <p v-if="votes > 0" :style="{ color: color }" class="rel-votes">
+        {{ formattedPercentage }}%
+      </p>
     </div>
-    <circular-picture 
-      :src="profilePicture"
-      :size="4"
-      :color="color"
-    />
+    </div>
+    
   </div>
 
   <div v-else class="candidate_compact">
@@ -29,21 +31,20 @@
     <div class="info">
       <p class="name">{{ name }}</p>
       <p class="abs-votes">{{ votes }} votos</p>
-      <p 
-        class="rel-votes"
-        :style="{ color: color }"
-      >{{ formattedPercentage }}%</p>
+      <p class="rel-votes" :style="{ color: color }">
+        {{ formattedPercentage }}%
+      </p>
     </div>
   </div>
 </template>
 
 
 <script>
-import CircularPicture from './CircularPicture.vue';
+import CircularPicture from "./CircularPicture.vue";
 
 export default {
   components: {
-    CircularPicture
+    CircularPicture,
   },
   props: {
     name: {
@@ -51,12 +52,12 @@ export default {
     },
     votes: {
       type: Number,
-      default: 0
+      default: 0,
     },
     totalVotes: Number,
     profilePicture: {
       type: String,
-      default: ''
+      default: "",
     },
     color: {
       type: String,
@@ -72,7 +73,7 @@ export default {
       return this.votes / this.totalVotes;
     },
     formattedPercentage() {
-      const val = isNaN(this.percentage) ? 0 : this.percentage; 
+      const val = isNaN(this.percentage) ? 0 : this.percentage;
       return (val * 100).toFixed(2).replace(".", ",");
     },
   },
@@ -82,12 +83,20 @@ export default {
 <style scoped>
 .candidate {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .candidate .info {
+  display: flex;
   flex-grow: 1;
+  z-index: 2;
+  margin-left: 5px;
+}
+
+.candidate .bar-wrapper {
+  display: flex;
+  align-items: center;
 }
 
 .candidate .bar {
@@ -105,26 +114,35 @@ export default {
   border-radius: 50%;
   border: 5px solid;
   margin: 0;
+  z-index: 3;
 }
 
 .candidate p {
   margin: 0;
 }
 
+.candidate .votes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: relative;
+}
+
 .candidate .abs-votes {
-  font-size: 1.75rem;
+  font-size: 2.5rem;
   font-weight: 700;
+  margin-left: 5px;
 }
 
 .candidate .rel-votes {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 800;
+  position: absolute;
+  bottom: -30px;
 }
 
-
-
 .candidate_compact {
-  display: flex;  
+  display: flex;
 }
 
 .candidate_compact .info {
@@ -142,11 +160,12 @@ export default {
 .candidate_compact .abs-votes {
   color: #909090;
   font-weight: 700;
+  font-size: 0.9rem;
 }
 
 .candidate_compact .rel-votes {
   font-weight: 700;
-  font-size: 26px;
+  font-size: 1rem;
   justify-self: flex-end;
 }
 

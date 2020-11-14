@@ -3,11 +3,15 @@
     <div>
       <h1>Cadastrar votos</h1>
       <label>Selecione a seção</label>
-      <select v-model="formSection">
+      <select v-model="formSection" @change="onSelectChange">
         <option
           v-for="section in allSections"
           :key="section.num"
           :value="section.num"
+          :style="{ 
+            backgroundColor: section.closed && '#ffdb57',
+            color: section.closed && 'gray'
+          }"
         >
           {{ section.num }} - {{ section.local }}
         </option>
@@ -30,10 +34,14 @@
         <span>votos</span>
       </div>
     </div>
-    <p>Seção {{ formSection }} | {{ allSections.find(s => s.num === formSection).local }}</p>
-      <p>{{ votesEntered }} votos inseridos de {{ allSections.find(s => s.num === formSection).eleitores }}</p>
-
-    <button @click.prevent="registrar" type="submit">Cadastrar</button>
+      <p>
+        {{ votesEntered }} votos inseridos de {{ currentFormSection.eleitores }}
+        <br /> {{ currentFormSection.eleitores - votesEntered }} nulos
+      </p>
+    <div class="btns">
+      <button @click.prevent="registrar" type="submit">Cadastrar</button>
+      <button class="close" @click="onClose">Sair</button>
+    </div>
   </form>
 </template>
 
@@ -57,9 +65,6 @@ export default {
       },
     };
   },
-  created() {
-
-  },
   computed: {
     ...mapGetters(["allSections", "candidates"]),
     votesEntered() {
@@ -69,14 +74,23 @@ export default {
     },
     areNegatives() {
       return Object.entries(this.formVotes).some(([, value]) => value < 0);
+    },
+    currentFormSection() {
+      return this.allSections.find(s => s.num === this.formSection);
     }
   },
   methods: {
     ...mapActions(["registerVotes"]),
+    onSelectChange() {
+      this.formVotes = {...this.currentFormSection.votos};
+    },
+    onClose() {
+      this.$router.push("/");
+    },
     registrar() {
+      alert(this.votesEntered + '' + this.currentFormSection.eleitores);
       if (this.votesEntered < 0 || this.areNegatives) return alert('Inválido!');
-      if (this.votesEntered > this.allSections[this.formSection].eleitores) return alert('Votos inseridos excederam a quantidade máxima');
-
+      if (this.votesEntered > this.currentFormSection.eleitores) return alert('Votos inseridos excederam a quantidade máxima');
       this.registerVotes({ 
         sectionNum: this.formSection,
         votes: Object.fromEntries(
@@ -84,8 +98,6 @@ export default {
             .map(([key, value]) => [key, Number(value)])
         )
       });
-
-      this.$router.push('/');
     },
   },
 };
@@ -167,8 +179,6 @@ form .votos .candidato .nome {
 }
 
 button {
-  background-color: #0066FF;
-  color: white;
   border-radius: 5px;
   font-family: "Montserrat", sans-serif;
   border: none;
@@ -177,6 +187,22 @@ button {
   font-size: 1.3rem;
   padding: 15px 22.5px;
   cursor: pointer;
+}
+
+.btns {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+button[type="submit"] {
+  background-color: #0066FF;
+  color: white;
+}
+
+button.close {
+  background-color: red;
+  color: white;
 }
 
 button:hover {

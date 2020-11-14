@@ -7,6 +7,7 @@ const state = {
     { numero: 40, nome: "Josimar da Serraria", cor: "yellow" },
     { numero: 77, nome: "Dra. Regina", cor: "blueviolet" },
     { numero: 27, nome: "Dr. Haroldo", cor: "green" },
+    { numero: "outros", nome: "Outros", cor: "pink" },
   ],
 };
 
@@ -33,13 +34,25 @@ const getters = {
       .filter((s) => s.zona === zone)
       .reduce((prev, acc) => prev + acc.eleitores, 0),
   nullVotes: (state) =>
-    state.sections.reduce((prev, acc) => {
-      let votados = 0;
-      for (let partidoVoto in acc.votos) {
-        votados += acc.votos[partidoVoto];
-      }
-      return prev + (acc.eleitores - votados);
-    }),
+    state.sections
+      .filter((s) => !!s.closed)
+      .reduce((prev, acc) => {
+        let votados = 0;
+        for (let partidoVoto in acc.votos) {
+          votados += acc.votos[partidoVoto];
+        }
+        return prev + (acc.eleitores - votados);
+      }, 0),
+  nullVotesByZone: (state) => (zone) =>
+    state.sections
+      .filter((s) => !!s.closed && s.zona === zone)
+      .reduce((prev, acc) => {
+        let votados = 0;
+        for (let partidoVoto in acc.votos) {
+          votados += acc.votos[partidoVoto];
+        }
+        return prev + (acc.eleitores - votados);
+      }, 0),
   votesByCandidate: (state) => (candidate) =>
     state.sections
       .filter((s) => !!s.closed)
@@ -48,7 +61,7 @@ const getters = {
     state.sections
       .filter((s) => !!s.closed && s.zona === zone)
       .reduce((prev, acc) => prev + acc.votos[candidate], 0),
-  candidates: (state) => state.candidates
+  candidates: (state) => state.candidates,
 };
 
 const actions = {

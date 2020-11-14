@@ -3,12 +3,15 @@
     <section class="apuracao-geral">
       <div class="header">
         <div class="left">
+          <h1 class="pageTitle">Apuração Paralela de Gov. Nunes Freire - MA</h1>
           <h1 class="titulo-apuracao">Geral</h1>
           <h2 class="subtitulo-apuracao">{{ votesCounted }} votos apurados</h2>
         </div>
         <div class="right">
           <h1 class="secoes-rel">
-            {{ formatarPercentual(closedSections.length / allSections.length) }}%
+            {{
+              formatarPercentual(closedSections.length / allSections.length)
+            }}%
           </h1>
           <h2 class="secoes-abs">
             Seções totalizadas ({{ closedSections.length }}/{{
@@ -19,24 +22,47 @@
       </div>
 
       <candidate
-        v-for="candidato in candidatosDestaque"
-        :key="candidato.numero"
-        :name="candidato.nome"
-        :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
-        :featured="candidato.numero === 22 || candidato.numero === 40"
-        :color="candidato.cor"
-        :votes="votesByCandidate(candidato.numero)"
+        featured
+        :name="fernando.nome"
+        :profilePicture="'/img/candidatos/' + fernando.numero + '.jpg'"
+        :color="fernando.cor"
+        :votes="votesByCandidate(fernando.numero)"
         :totalVotes="votesCounted"
       />
+
+      <p class="diff">
+        + 50.000
+        <span class="legend">Diferença de votos</span>
+      </p>
+
+      <candidate
+        featured
+        :name="josimar.nome"
+        :profilePicture="'/img/candidatos/' + josimar.numero + '.jpg'"
+        :color="josimar.cor"
+        :votes="votesByCandidate(josimar.numero)"
+        :totalVotes="votesCounted"
+      />
+
       <div class="other-candidates">
         <candidate
-          v-for="candidato in outrosCandidatos"
+          v-for="candidato in outrosCandidatos.sort(
+            (a, b) => votesByCandidate(b.numero) - votesByCandidate(a.numero)
+          )"
           :key="candidato.numero"
           :name="candidato.nome"
           :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
           :featured="candidato.numero === 22 || candidato.numero === 40"
           :color="candidato.cor"
           :votes="votesByCandidate(candidato.numero)"
+          :totalVotes="votesCounted"
+        />
+
+        <candidate
+          key="null"
+          name="Brancos, nulos e abstenções"
+          color="red"
+          :votes="nullVotes"
           :totalVotes="votesCounted"
         />
       </div>
@@ -80,12 +106,22 @@
         />
         <div class="other-candidates">
           <compact-candidate
-            v-for="candidato in outrosCandidatos"
+            v-for="candidato in outrosCandidatos.sort(
+              (a, b) =>
+                votesByCandidateAndZone(b.numero, 'urbana') -
+                votesByCandidateAndZone(a.numero, 'urbana')
+            )"
             :key="candidato.numero"
             :name="candidato.nome"
             :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
             :color="candidato.cor"
             :votes="votesByCandidateAndZone(candidato.numero, 'urbana')"
+            :totalVotes="votesCountedByZone('urbana')"
+          />
+          <compact-candidate
+            name="Brancos, nulos e abstenções"
+            color="red"
+            :votes="nullVotesByZone('urbana')"
             :totalVotes="votesCountedByZone('urbana')"
           />
         </div>
@@ -128,12 +164,22 @@
         />
         <div class="other-candidates">
           <compact-candidate
-            v-for="candidato in outrosCandidatos"
+            v-for="candidato in outrosCandidatos.sort(
+              (a, b) =>
+                votesByCandidateAndZone(b.numero, 'rural') -
+                votesByCandidateAndZone(a.numero, 'rural')
+            )"
             :key="candidato.numero"
             :name="candidato.nome"
             :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
             :color="candidato.cor"
             :votes="votesByCandidateAndZone(candidato.numero, 'rural')"
+            :totalVotes="votesCountedByZone('rural')"
+          />
+          <compact-candidate
+            name="Brancos, nulos e abstenções"
+            color="red"
+            :votes="nullVotesByZone('rural')"
             :totalVotes="votesCountedByZone('rural')"
           />
         </div>
@@ -157,6 +203,10 @@ export default {
       loading: false,
     };
   },
+  created() {
+    console.log(this.fernando);
+    console.log(this.josimar);
+  },
   computed: {
     candidatosDestaque() {
       return this.candidates.filter((c) => c.numero === 40 || c.numero === 22);
@@ -175,12 +225,25 @@ export default {
       "sectionsByZone",
       "votesByCandidate",
       "votesByCandidateAndZone",
-      "candidates"
+      "candidates",
+      "nullVotes",
+      "nullVotesByZone",
     ]),
+    fernando() {
+      return this.candidates.find((c) => c.numero === 22);
+    },
+    josimar() {
+      return this.candidates.find((c) => c.numero === 40);
+    },
+    diffVotos(a, b) {
+      return Number(
+        this.votesByCandidate(a) - this.votesByCandidate(b)
+      );
+    },
   },
   methods: {
     formatarPercentual(decimal) {
-      const val = isNaN(decimal) ? 0 : decimal; 
+      const val = isNaN(decimal) ? 0 : decimal;
       return (val * 100).toFixed(2).replace(".", ",");
     },
   },
@@ -206,19 +269,15 @@ section.apuracao-geral {
   min-height: 100%;
   background-color: white;
   box-shadow: 0 10px 20px 5px rgba(0, 0, 0, 0.25);
-  padding: 30px 40px;
+  padding: 60px 40px;
 }
 
 section.apuracao-geral .header {
-  margin-bottom: 3rem;
-}
-
-section.apuracao-geral .candidate {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.6rem;
 }
 
 section.apuracao-geral .other-candidates {
-  margin-top: 2rem;
+  margin-top: 3rem;
   display: flex;
   justify-content: space-between;
   align-content: space-between;
@@ -228,7 +287,7 @@ section.apuracao-geral .other-candidates {
 
 .filtros {
   flex-grow: 1;
-  padding: 30px 40px;
+  padding: 30px 55px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -296,5 +355,29 @@ section.apuracao-geral .other-candidates {
   height: 85px;
   width: 76%;
   margin-top: 1.1rem;
+}
+
+.diff {
+  font-weight: 700;
+  font-size: 1.25rem;
+  width: 100%;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: green;
+}
+
+.diff span {
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: black;
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  width: 100%;
 }
 </style>
