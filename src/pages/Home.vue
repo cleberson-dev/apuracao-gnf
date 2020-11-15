@@ -67,7 +67,7 @@
           name="Brancos, nulos e abstenções"
           color="red"
           :votes="nullVotes"
-          :totalVotes="validVotes"
+          :totalVotes="votosApurados"
         />
       </div>
     </section>
@@ -134,7 +134,7 @@
             name="Brancos, nulos e abstenções"
             color="red"
             :votes="nullVotesByZone('urbana')"
-            :totalVotes="validVotesByZone('urbana')"
+            :totalVotes="votosApuradosPorZona('urbana')"
           />
         </div>
       </section>
@@ -200,7 +200,7 @@
             name="Brancos, nulos e abstenções"
             color="red"
             :votes="nullVotesByZone('rural')"
-            :totalVotes="validVotesByZone('rural')"
+            :totalVotes="votosApuradosPorZona('rural')"
           />
         </div>
       </section>
