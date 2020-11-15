@@ -6,7 +6,7 @@
         <div class="left">
           <h1 class="titulo-apuracao">Geral</h1>
           <h2 class="subtitulo-apuracao">
-            {{ votesCounted }} votos apurados
+            {{ votosApurados }} votos apurados
           </h2>
         </div>
         <div class="right">
@@ -78,7 +78,7 @@
           <div class="left">
             <h1 class="titulo-apuracao">Urbana</h1>
             <h2 class="subtitulo-apuracao">
-              {{ votesCountedByZone("urbana") }} votos apurados
+              {{ votosApuradosPorZona("urbana") }} votos apurados
             </h2>
           </div>
           <div class="right">
@@ -144,7 +144,7 @@
           <div class="left">
             <h1 class="titulo-apuracao">Rural</h1>
             <h2 class="subtitulo-apuracao">
-              {{ votesCountedByZone("rural") }} votos apurados
+              {{ votosApuradosPorZona("rural") }} votos apurados
             </h2>
           </div>
           <div class="right">
@@ -238,6 +238,8 @@ export default {
       "nullVotesByZone",
       "validVotes",
       "validVotesByZone",
+      "votosApurados",
+      "votosApuradosPorZona"
     ]),
     fernando() {
       return this.candidates.find((c) => c.numero === 22);

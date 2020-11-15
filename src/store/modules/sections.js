@@ -93,6 +93,12 @@ const getters = {
       .filter((s) => !!s.closed && s.zona === zone)
       .reduce((prev, acc) => prev + acc.votos[candidate], 0),
   candidates: (state) => state.candidates,
+  votosApurados: (state) => state.sections
+    .filter(s => !!s.closed)
+    .reduce((prev, acc) => prev + acc.eleitores, 0),
+  votosApuradosPorZona: (state) => zone => state.sections
+    .filter(s => !!s.closed && s.zona === zone)
+    .reduce((prev, acc) => prev + acc.eleitores, 0)
 };
 
 const actions = {
@@ -121,7 +127,7 @@ const actions = {
   },
   async cleanVotes({ commit }) {
     try {
-      await axios.delete('http://localhost:5000/votos');
+      await axios.get('http://localhost:5000/limparVotos');
       const { data } = await axios.get('http://localhost:5000/secoes');
       commit("fetchSections", data);
     } catch (err) {
