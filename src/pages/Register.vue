@@ -63,6 +63,7 @@ export default {
         27: 0,
         outros: 0,
       },
+      ordering: [22, 40, 77, 27, 'outros']
     };
   },
   computed: {

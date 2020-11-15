@@ -18,6 +18,9 @@ export default {
   components: {
     MyHeader
   },
+  created() {
+    // db.candidates.find({}, (err, docs) => console.log(docs.length));
+  }
 };
 </script>
 

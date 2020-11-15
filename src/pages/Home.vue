@@ -27,11 +27,14 @@
         :profilePicture="'/img/candidatos/' + fernando.numero + '.jpg'"
         :color="fernando.cor"
         :votes="votesByCandidate(fernando.numero)"
-        :totalVotes="votesCounted"
+        :totalVotes="validVotes"
       />
 
-      <p class="diff">
-        + 50.000
+      <p 
+        class="diff"
+        :style="{ color: diffVotos(fernando.numero, josimar.numero) >= 0 ? 'green' : 'red' }"
+      >
+        {{ diffVotos(fernando.numero, josimar.numero) >= 0 ? '+' : '-' }} {{ Math.abs(diffVotos(fernando.numero, josimar.numero)) }}
         <span class="legend">Diferença de votos</span>
       </p>
 
@@ -41,7 +44,7 @@
         :profilePicture="'/img/candidatos/' + josimar.numero + '.jpg'"
         :color="josimar.cor"
         :votes="votesByCandidate(josimar.numero)"
-        :totalVotes="votesCounted"
+        :totalVotes="validVotes"
       />
 
       <div class="other-candidates">
@@ -55,7 +58,7 @@
           :featured="candidato.numero === 22 || candidato.numero === 40"
           :color="candidato.cor"
           :votes="votesByCandidate(candidato.numero)"
-          :totalVotes="votesCounted"
+          :totalVotes="validVotes"
         />
 
         <candidate
@@ -63,7 +66,7 @@
           name="Brancos, nulos e abstenções"
           color="red"
           :votes="nullVotes"
-          :totalVotes="votesCounted"
+          :totalVotes="validVotes"
         />
       </div>
     </section>
@@ -72,7 +75,7 @@
       <section class="apuracao-urbana">
         <div class="header">
           <div class="left">
-            <h1 class="titulo-apuracao">Zona Urbana</h1>
+            <h1 class="titulo-apuracao">Urbana</h1>
             <h2 class="subtitulo-apuracao">
               {{ votesCountedByZone("urbana") }} votos apurados
             </h2>
@@ -101,7 +104,7 @@
           :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
           :color="candidato.cor"
           :votes="votesByCandidateAndZone(candidato.numero, 'urbana')"
-          :totalVotes="votesCountedByZone('urbana')"
+          :totalVotes="validVotesByZone('urbana')"
           featured
         />
         <div class="other-candidates">
@@ -116,7 +119,7 @@
             :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
             :color="candidato.cor"
             :votes="votesByCandidateAndZone(candidato.numero, 'urbana')"
-            :totalVotes="votesCountedByZone('urbana')"
+            :totalVotes="validVotesByZone('urbana')"
           />
           <compact-candidate
             name="Brancos, nulos e abstenções"
@@ -130,7 +133,7 @@
       <section class="apuracao-rural" :style="{ marginTop: '30px' }">
         <div class="header">
           <div class="left">
-            <h1 class="titulo-apuracao">Zona Rural</h1>
+            <h1 class="titulo-apuracao">Rural</h1>
             <h2 class="subtitulo-apuracao">
               {{ votesCountedByZone("rural") }} votos apurados
             </h2>
@@ -159,7 +162,7 @@
           :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
           :color="candidato.cor"
           :votes="votesByCandidateAndZone(candidato.numero, 'rural')"
-          :totalVotes="votesCountedByZone('rural')"
+          :totalVotes="validVotesByZone('rural')"
           featured
         />
         <div class="other-candidates">
@@ -174,7 +177,7 @@
             :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
             :color="candidato.cor"
             :votes="votesByCandidateAndZone(candidato.numero, 'rural')"
-            :totalVotes="votesCountedByZone('rural')"
+            :totalVotes="validVotesByZone('rural')"
           />
           <compact-candidate
             name="Brancos, nulos e abstenções"
@@ -189,7 +192,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import Candidate from "../components/Candidate";
 import CompactCandidate from "../components/CompactCandidate";
 
@@ -198,14 +201,9 @@ export default {
     Candidate,
     CompactCandidate,
   },
-  data() {
-    return {
-      loading: false,
-    };
-  },
   created() {
-    console.log(this.fernando);
-    console.log(this.josimar);
+    this.fetchCandidates();
+    this.fetchSections();
   },
   computed: {
     candidatosDestaque() {
@@ -228,6 +226,8 @@ export default {
       "candidates",
       "nullVotes",
       "nullVotesByZone",
+      "validVotes",
+      "validVotesByZone",
     ]),
     fernando() {
       return this.candidates.find((c) => c.numero === 22);
@@ -235,16 +235,17 @@ export default {
     josimar() {
       return this.candidates.find((c) => c.numero === 40);
     },
+  },
+  methods: {
+    ...mapActions(["fetchCandidates", "fetchSections"]),
+    formatarPercentual(decimal) {
+      const val = isNaN(decimal) ? 0 : decimal;
+      return (val * 100).toFixed(2).replace(".", ",");
+    },
     diffVotos(a, b) {
       return Number(
         this.votesByCandidate(a) - this.votesByCandidate(b)
       );
-    },
-  },
-  methods: {
-    formatarPercentual(decimal) {
-      const val = isNaN(decimal) ? 0 : decimal;
-      return (val * 100).toFixed(2).replace(".", ",");
     },
   },
 };
@@ -260,7 +261,7 @@ export default {
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-start;
   margin-bottom: 15px;
 }
 
@@ -287,14 +288,15 @@ section.apuracao-geral .other-candidates {
 
 .filtros {
   flex-grow: 1;
-  padding: 30px 55px;
+  padding: 30px 40px;
+  padding-right: 40px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
 }
 
 .apuracao-geral .titulo-apuracao {
-  font-size: 2.3rem;
+  font-size: 1.8rem;
   font-weight: 800;
   margin: 0;
 }
@@ -351,6 +353,7 @@ section.apuracao-geral .other-candidates {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: space-between;
   flex-wrap: wrap;
   height: 85px;
   width: 76%;
@@ -376,8 +379,9 @@ section.apuracao-geral .other-candidates {
 }
 
 .pageTitle {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 800;
   width: 100%;
+  margin-top: 0;
 }
 </style>

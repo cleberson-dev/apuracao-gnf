@@ -16,6 +16,7 @@ async function createWindow() {
     width: 1366,
     height: 768,
     fullscreen: true,
+    show: true,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info

@@ -1,14 +1,14 @@
-import { initialSections } from "../data";
+// import { initialSections } from "../data";
+// const Datastore = require('nedb');
+
+// export const db = {};
+// db.candidates = new Datastore({ filename: 'candidates.db' });
+// db.sections = new Datastore({ filename: 'sections.db' });
+import axios from 'axios';
 
 const state = {
-  sections: initialSections.map((s) => ({ ...s, zona: s.zona.toLowerCase() })),
-  candidates: [
-    { numero: 22, nome: "Fernando PL", cor: "blue" },
-    { numero: 40, nome: "Josimar da Serraria", cor: "yellow" },
-    { numero: 77, nome: "Dra. Regina", cor: "blueviolet" },
-    { numero: 27, nome: "Dr. Haroldo", cor: "green" },
-    { numero: "outros", nome: "Outros", cor: "pink" },
-  ],
+  sections: [],
+  candidates: [],
 };
 
 const getters = {
@@ -19,14 +19,45 @@ const getters = {
   allSections: (state) => state.sections,
   sectionsByZone: (state) => (zone) =>
     state.sections.filter((s) => s.zona === zone),
+  validVotes: (state) => state.sections
+    .reduce((prev, acc) => {
+      if (!acc.closed) return prev + acc.eleitores;
+      let votados = 0;
+      for (let partidoVoto in acc.votos) {
+        votados += acc.votos[partidoVoto];
+      }
+      return prev + votados;
+    }, 0),
+    validVotesByZone: (state) => zone => state.sections
+    .filter(c => c.zona === zone)
+    .reduce((prev, acc) => {
+      if (!acc.closed) return prev + acc.eleitores;
+      let votados = 0;
+      for (let partidoVoto in acc.votos) {
+        votados += acc.votos[partidoVoto];
+      }
+      return prev + votados;
+    }, 0),
   votesCounted: (state) =>
     state.sections
       .filter((s) => !!s.closed)
-      .reduce((prev, acc) => prev + acc.eleitores, 0),
+      .reduce((prev, acc) => {
+        let votados = 0;
+        for (let partidoVoto in acc.votos) {
+          votados += acc.votos[partidoVoto];
+        }
+        return prev + votados;
+      }, 0),
   votesCountedByZone: (state) => (zone) =>
     state.sections
       .filter((s) => !!s.closed && s.zona === zone)
-      .reduce((prev, acc) => prev + acc.eleitores, 0),
+      .reduce((prev, acc) => {
+        let votados = 0;
+        for (let partidoVoto in acc.votos) {
+          votados += acc.votos[partidoVoto];
+        }
+        return prev + votados;
+      }, 0),
   totalElectors: (state) =>
     state.sections.reduce((prev, acc) => prev + acc.eleitores, 0),
   totalElectorsByZone: (state) => (zone) =>
@@ -66,19 +97,46 @@ const getters = {
 
 const actions = {
   registerVotes({ commit }, { sectionNum, votes }) {
-    commit("registerVotes", { sectionNum, votes });
+    axios.patch(`http://localhost:5000/secoes/${sectionNum}/votos`, { votos: votes })
+      .then(() => {
+        commit("updateVotes", { sectionNum, votes });
+      });
   },
+  fetchCandidates({ commit }) {
+    axios
+      .get('http://localhost:5000/candidatos')
+      .then(({ data }) => {
+        console.log('candidatos', data);
+        commit("fetchCandidates", data);
+      })
+      .catch(console.error);
+  },
+  fetchSections({ commit }) {
+    axios
+      .get('http://localhost:5000/secoes')
+      .then(({ data }) => {
+        commit("fetchSections", data);
+      })
+      .catch(console.error);
+  }
 };
 
 const mutations = {
-  registerVotes: (state, { sectionNum, votes }) => {
+  updateVotes: (state, { sectionNum, votes }) => {
     const section = state.sections.find((s) => s.num === sectionNum);
     section.votos = votes;
     section.closed = true;
+    
 
     // state.sections = state.sections.filter((s) => s.num !== sectionNum);
     // state.sections = [...state.sections, section];
   },
+  fetchCandidates: (state, data) => {
+    state.candidates = data;
+  },
+  fetchSections: (state, data) => {
+    state.sections = data;
+  }
 };
 
 export default { state, getters, actions, mutations };
