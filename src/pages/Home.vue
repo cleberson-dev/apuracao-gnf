@@ -192,7 +192,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import Candidate from "../components/Candidate";
 import CompactCandidate from "../components/CompactCandidate";
 
@@ -200,10 +200,6 @@ export default {
   components: {
     Candidate,
     CompactCandidate,
-  },
-  created() {
-    this.fetchCandidates();
-    this.fetchSections();
   },
   computed: {
     candidatosDestaque() {
@@ -237,7 +233,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["fetchCandidates", "fetchSections"]),
     formatarPercentual(decimal) {
       const val = isNaN(decimal) ? 0 : decimal;
       return (val * 100).toFixed(2).replace(".", ",");

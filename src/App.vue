@@ -11,6 +11,7 @@
   
 
 <script>
+import { mapActions } from 'vuex';
 import MyHeader from "./components/MyHeader";
 
 export default {
@@ -19,7 +20,11 @@ export default {
     MyHeader
   },
   created() {
-    // db.candidates.find({}, (err, docs) => console.log(docs.length));
+    this.fetchSections();
+    this.fetchCandidates();
+  },
+  methods: {
+    ...mapActions(["fetchSections", "fetchCandidates"])
   }
 };
 </script>

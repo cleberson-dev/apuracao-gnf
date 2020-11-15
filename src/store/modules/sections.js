@@ -106,7 +106,6 @@ const actions = {
     axios
       .get('http://localhost:5000/candidatos')
       .then(({ data }) => {
-        console.log('candidatos', data);
         commit("fetchCandidates", data);
       })
       .catch(console.error);
@@ -114,6 +113,15 @@ const actions = {
   fetchSections({ commit }) {
     axios
       .get('http://localhost:5000/secoes')
+      .then(({ data }) => {
+        commit("fetchSections", data);
+      })
+      .catch(console.error);
+  },
+  cleanVotes({ commit }) {
+    axios
+      .delete('http://localhost:5000/votos')
+      .then(() => axios.get('http://localhost:5000/secoes'))
       .then(({ data }) => {
         commit("fetchSections", data);
       })

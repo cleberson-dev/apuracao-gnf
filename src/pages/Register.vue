@@ -18,7 +18,7 @@
       </select>
     </div>
 
-    <div class="votos">
+    <div class="votos" v-if="candidates.length > 0">
       <div
         class="candidato"
         v-for="candidate in candidates"
@@ -69,9 +69,11 @@ export default {
   computed: {
     ...mapGetters(["allSections", "candidates"]),
     votesEntered() {
-      return Object.entries(this.formVotes).reduce((prev, vote) => {
-        return prev + Number(vote[1]);
-      }, 0);
+      let votos = 0;
+      for (const numCandidato in this.formVotes) {
+        votos += this.formVotes[numCandidato];
+      }
+      return votos;
     },
     areNegatives() {
       return Object.entries(this.formVotes).some(([, value]) => value < 0);
