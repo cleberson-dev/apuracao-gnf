@@ -1,11 +1,13 @@
 <template>
   <div class="home">
     <section class="apuracao-geral">
+          <h1 class="pageTitle">Apuração Paralela de Gov. Nunes Freire - MA</h1>
       <div class="header">
         <div class="left">
-          <h1 class="pageTitle">Apuração Paralela de Gov. Nunes Freire - MA</h1>
           <h1 class="titulo-apuracao">Geral</h1>
-          <h2 class="subtitulo-apuracao">{{ votesCounted }} votos apurados</h2>
+          <h2 class="subtitulo-apuracao">
+            {{ votesCounted }} votos apurados
+          </h2>
         </div>
         <div class="right">
           <h1 class="secoes-rel">
@@ -55,7 +57,6 @@
           :key="candidato.numero"
           :name="candidato.nome"
           :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
-          :featured="candidato.numero === 22 || candidato.numero === 40"
           :color="candidato.cor"
           :votes="votesByCandidate(candidato.numero)"
           :totalVotes="validVotes"
@@ -98,12 +99,20 @@
         </div>
 
         <compact-candidate
-          v-for="candidato in candidatosDestaque"
-          :key="candidato.numero"
-          :name="candidato.nome"
-          :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
-          :color="candidato.cor"
-          :votes="votesByCandidateAndZone(candidato.numero, 'urbana')"
+          :key="fernando.numero"
+          :name="fernando.nome"
+          :profilePicture="'/img/candidatos/' + fernando.numero + '.jpg'"
+          :color="fernando.cor"
+          :votes="votesByCandidateAndZone(fernando.numero, 'urbana')"
+          :totalVotes="validVotesByZone('urbana')"
+          featured
+        />
+        <compact-candidate
+          :key="josimar.numero"
+          :name="josimar.nome"
+          :profilePicture="'/img/candidatos/' + josimar.numero + '.jpg'"
+          :color="josimar.cor"
+          :votes="votesByCandidateAndZone(josimar.numero, 'urbana')"
           :totalVotes="validVotesByZone('urbana')"
           featured
         />
@@ -125,7 +134,7 @@
             name="Brancos, nulos e abstenções"
             color="red"
             :votes="nullVotesByZone('urbana')"
-            :totalVotes="votesCountedByZone('urbana')"
+            :totalVotes="validVotesByZone('urbana')"
           />
         </div>
       </section>
@@ -156,12 +165,20 @@
         </div>
 
         <compact-candidate
-          v-for="candidato in candidatosDestaque"
-          :key="candidato.numero"
-          :name="candidato.nome"
-          :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
-          :color="candidato.cor"
-          :votes="votesByCandidateAndZone(candidato.numero, 'rural')"
+          :key="fernando.numero"
+          :name="fernando.nome"
+          :profilePicture="'/img/candidatos/' + fernando.numero + '.jpg'"
+          :color="fernando.cor"
+          :votes="votesByCandidateAndZone(fernando.numero, 'rural')"
+          :totalVotes="validVotesByZone('rural')"
+          featured
+        />
+        <compact-candidate
+          :key="josimar.numero"
+          :name="josimar.nome"
+          :profilePicture="'/img/candidatos/' + josimar.numero + '.jpg'"
+          :color="josimar.cor"
+          :votes="votesByCandidateAndZone(josimar.numero, 'rural')"
           :totalVotes="validVotesByZone('rural')"
           featured
         />
@@ -183,7 +200,7 @@
             name="Brancos, nulos e abstenções"
             color="red"
             :votes="nullVotesByZone('rural')"
-            :totalVotes="votesCountedByZone('rural')"
+            :totalVotes="validVotesByZone('rural')"
           />
         </div>
       </section>
@@ -192,7 +209,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import Candidate from "../components/Candidate";
 import CompactCandidate from "../components/CompactCandidate";
 
@@ -201,14 +218,7 @@ export default {
     Candidate,
     CompactCandidate,
   },
-  created() {
-    this.fetchCandidates();
-    this.fetchSections();
-  },
   computed: {
-    candidatosDestaque() {
-      return this.candidates.filter((c) => c.numero === 40 || c.numero === 22);
-    },
     outrosCandidatos() {
       return this.candidates.filter((c) => c.numero !== 40 && c.numero !== 22);
     },
@@ -236,8 +246,10 @@ export default {
       return this.candidates.find((c) => c.numero === 40);
     },
   },
+  created() {
+    console.log(this.candidates);
+  },
   methods: {
-    ...mapActions(["fetchCandidates", "fetchSections"]),
     formatarPercentual(decimal) {
       const val = isNaN(decimal) ? 0 : decimal;
       return (val * 100).toFixed(2).replace(".", ",");
@@ -278,9 +290,8 @@ section.apuracao-geral .header {
 }
 
 section.apuracao-geral .other-candidates {
-  margin-top: 3rem;
+  margin-top: 5rem;
   display: flex;
-  justify-content: space-between;
   align-content: space-between;
   flex-wrap: wrap;
   height: 160px;
@@ -290,6 +301,7 @@ section.apuracao-geral .other-candidates {
   flex-grow: 1;
   padding: 30px 40px;
   padding-right: 40px;
+  width: 40%;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -351,13 +363,13 @@ section.apuracao-geral .other-candidates {
 
 .filtros .other-candidates {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: space-between;
   flex-wrap: wrap;
-  height: 85px;
-  width: 76%;
   margin-top: 1.1rem;
+}
+
+.filtros .other-candidates .compact-candidate_mini {
+  margin-right: 2rem;
+  margin-bottom: 1rem;
 }
 
 .diff {

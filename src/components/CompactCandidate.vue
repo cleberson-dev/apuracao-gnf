@@ -27,7 +27,7 @@
     <circular-picture 
       :src="profilePicture"
       :color="color"
-      :size="1"
+      :size="1.2"
     />
     <div class="votes">
       <p class="relative" :style="{ color: color }">{{formattedPercentage}}%</p>

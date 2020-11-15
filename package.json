@@ -10,7 +10,9 @@
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "rebuild": "electron-rebuild -f -w sqlite3"
+    "rebuild": "electron-rebuild -f -w sqlite3",
+    "dev:server": "cd server && npm run dev",
+    "dev": "concurrently \"npm run serve\" \"npm run dev:server\""
   },
   "main": "background.js",
   "dependencies": {
@@ -28,6 +30,7 @@
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
+    "concurrently": "^5.3.0",
     "electron": "^9.0.0",
     "electron-devtools-installer": "^3.1.0",
     "electron-rebuild": "^2.3.2",

@@ -28,7 +28,7 @@ const getters = {
       }
       return prev + votados;
     }, 0),
-    validVotesByZone: (state) => zone => state.sections
+  validVotesByZone: (state) => zone => state.sections
     .filter(c => c.zona === zone)
     .reduce((prev, acc) => {
       if (!acc.closed) return prev + acc.eleitores;
@@ -99,6 +99,7 @@ const actions = {
   registerVotes({ commit }, { sectionNum, votes }) {
     axios.patch(`http://localhost:5000/secoes/${sectionNum}/votos`, { votos: votes })
       .then(() => {
+        alert('Votos cadastrados!!!');
         commit("updateVotes", { sectionNum, votes });
       });
   },
@@ -106,7 +107,6 @@ const actions = {
     axios
       .get('http://localhost:5000/candidatos')
       .then(({ data }) => {
-        console.log('candidatos', data);
         commit("fetchCandidates", data);
       })
       .catch(console.error);
@@ -118,6 +118,15 @@ const actions = {
         commit("fetchSections", data);
       })
       .catch(console.error);
+  },
+  async cleanVotes({ commit }) {
+    try {
+      await axios.delete('http://localhost:5000/votos');
+      const { data } = await axios.get('http://localhost:5000/secoes');
+      commit("fetchSections", data);
+    } catch (err) {
+      console.error(err);
+    }
   }
 };
 
@@ -126,13 +135,13 @@ const mutations = {
     const section = state.sections.find((s) => s.num === sectionNum);
     section.votos = votes;
     section.closed = true;
-    
+
 
     // state.sections = state.sections.filter((s) => s.num !== sectionNum);
     // state.sections = [...state.sections, section];
   },
   fetchCandidates: (state, data) => {
-    state.candidates = data;
+    state.candidates = data.map(c => ({ ...c, numero: c.numero === 0 ? 'outros' : c.numero }));
   },
   fetchSections: (state, data) => {
     state.sections = data;

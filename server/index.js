@@ -1,11 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const db = require('./db');
+const { clean } = require('./utils');
 const PORT = 5000;
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
 
 app.get('/candidatos', async (req, res) => {
     const candidates = await db('candidate');
@@ -28,8 +30,8 @@ app.get('/secoes', async (req, res) => {
             num: section.num,
             local: section.local,
             eleitores: section.eleitores,
-            zona: section.zona,
-            closed: section.totalizada,
+            zona: section.zona.toLowerCase(),
+            closed: section.totalizada === 0 ? false : true,
             votos
         };
     }));
@@ -82,9 +84,26 @@ app.post('/votos', async (req, res) => {
 });
 
 app.delete('/votos', async (req, res) => {
-    await db('vote').del();
-    res.status(200);
-    return res.send({ success: true });
+    try {
+        await clean();
+        res.status(200);
+        return res.send({ success: true });
+    } catch (err) {
+        res.status(400);
+        return res.send({ success: true });
+    }
+});
+
+app.get('/limparVotos', async (req, res) => {
+    try {
+        await clean();
+        res.status(200);
+        return res.send({ success: true });
+    } catch (err) {
+        res.status(400);
+        return res.send({ success: true });
+    }
+   
 });
 
 

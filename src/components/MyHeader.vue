@@ -8,12 +8,12 @@
           Início
         </router-link>
       </li>
-      <li>
+      <!-- <li>
         <router-link to="/resultados" class="item">
           <img src="/img/icons/result.svg" />
           Resultados
         </router-link>
-      </li>
+      </li> -->
       <li>
         <router-link to="/cadastrar" class="item">
           <img src="/img/icons/pen.svg" />
@@ -25,8 +25,15 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
-  name: 'MyHeader'
+  name: 'MyHeader',
+  methods: {
+    ...mapActions(["cleanVotes"]),
+    onClean() {
+      this.cleanVotes();
+    }
+  }
 }
 </script>
 
@@ -69,5 +76,14 @@ nav .item img {
   width: 28px;
   height: 28px;
   margin-bottom: 8px;
+}
+
+button.item {
+  background: none;
+  border: none;
+  outline: none;
+  width: 100%;
+  font-family: 'Montserrat',sans-serif;
+  cursor: pointer;
 }
 </style>
