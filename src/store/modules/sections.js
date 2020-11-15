@@ -121,7 +121,7 @@ const actions = {
   },
   async cleanVotes({ commit }) {
     try {
-      await axios.delete('http://localhost:5000/votos');
+      await axios.get('http://localhost:5000/limparVotos');
       const { data } = await axios.get('http://localhost:5000/secoes');
       commit("fetchSections", data);
     } catch (err) {
