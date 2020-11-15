@@ -96,10 +96,12 @@ app.delete('/votos', async (req, res) => {
 
 app.get('/limparVotos', async (req, res) => {
     try {
-        await clean();
+        await db('vote').update('votos', 0);
+        await db('section').update('totalizada', false);
         res.status(200);
         return res.send({ success: true });
     } catch (err) {
+        console.error(err);
         res.status(400);
         return res.send({ success: false });
     }

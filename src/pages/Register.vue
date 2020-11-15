@@ -100,6 +100,7 @@ export default {
   methods: {
     ...mapActions(["registerVotes"]),
     onSelectChange() {
+      console.log(this.formVotes);
       this.formVotes = {...this.currentFormSection.votos};
     },
     onClose() {
