@@ -1,6 +1,8 @@
 <template>
   <header>
-    <img alt="Logo" src="" />
+    <div class="logo">
+      <img alt="Logo" src="/img/logo.png" />
+    </div>
     <nav>
       <li>
         <router-link to="/" class="item">
@@ -86,4 +88,13 @@ button.item {
   font-family: 'Montserrat',sans-serif;
   cursor: pointer;
 }
+
+.logo {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+.logo img { width: 36px; }
 </style>
