@@ -119,6 +119,7 @@ const actions = {
       })
       .catch(console.error);
   },
+<<<<<<< HEAD
   async cleanVotes({ commit }) {
     try {
       await axios.delete('http://localhost:5000/votos');
@@ -127,6 +128,16 @@ const actions = {
     } catch (err) {
       console.error(err);
     }
+=======
+  cleanVotes({ commit }) {
+    axios
+      .delete('http://localhost:5000/votos')
+      .then(() => axios.get('http://localhost:5000/secoes'))
+      .then(({ data }) => {
+        commit("fetchSections", data);
+      })
+      .catch(console.error);
+>>>>>>> 2b88346a859b19800ced4419f6dcf893b7fc64e5
   }
 };
 
