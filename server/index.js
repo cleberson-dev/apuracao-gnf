@@ -25,7 +25,7 @@ app.get('/secoes', async (req, res) => {
             votos[key] = sv.votos;
         });
 
-        return { 
+        return {
             num: section.num,
             local: section.local,
             eleitores: section.eleitores,
@@ -49,7 +49,10 @@ app.patch('/secoes/:numSecao/votos', async (req, res) => {
                 .where('numero_candidato', Number(numCandidato))
                 .where('numero_secao', Number(numSecao))
                 .update('votos', votos[numCandidato]);
-        }
+
+            }
+            db('vote').then(res => console.log(res.length));
+
 
         await db('section')
             .where('num', Number(numSecao))
@@ -84,6 +87,21 @@ app.post('/votos', async (req, res) => {
 
 app.get('/limparVotos', async (req, res) => {
     try {
+        const votes = [];
+        await db('vote').del();
+        const sections = await db('section');
+        const candidates = await db('candidate');
+        sections.forEach(s => {
+            candidates.forEach(c => {
+                votes.push({
+                    numero_secao: s.num,
+                    numero_candidato: c.numero,
+                    votos: 0
+                });
+            });
+        });
+        console.log(votes.length);
+        await Promise.all(votes.map(v => db('vote').insert(v)));
         await db('vote').update('votos', 0);
         await db('section').update('totalizada', false);
         res.status(200);

@@ -107,6 +107,9 @@ export default {
       this.$router.push("/");
     },
     registrar() {
+      console.log(Object.fromEntries(
+          Object.entries(this.formVotes)
+            .map(([key, value]) => [key, Number(value)])));
       if (this.votesEntered < 0 || this.areNegatives) return alert('Inválido!');
       if (this.votesEntered > this.currentFormSection.eleitores) return alert('Votos inseridos excederam a quantidade máxima');
       this.registerVotes({ 
