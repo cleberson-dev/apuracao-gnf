@@ -1,13 +1,11 @@
 <template>
   <div class="home">
     <section class="apuracao-geral">
-          <h1 class="pageTitle">Apuração Paralela de Gov. Nunes Freire - MA</h1>
+      <h1 class="pageTitle">Apuração Paralela de Gov. Nunes Freire - MA</h1>
       <div class="header">
         <div class="left">
           <h1 class="titulo-apuracao">Geral</h1>
-          <h2 class="subtitulo-apuracao">
-            {{ votosApurados }} votos apurados
-          </h2>
+          <h2 class="subtitulo-apuracao">{{ votosApurados }} votos apurados</h2>
         </div>
         <div class="right">
           <h1 class="secoes-rel">
@@ -32,11 +30,15 @@
         :totalVotes="validVotes"
       />
 
-      <p 
+      <p
         class="diff"
-        :style="{ color: diffVotos(fernando.numero, josimar.numero) >= 0 ? 'green' : 'red' }"
+        :style="{
+          color:
+            diffVotos(fernando.numero, josimar.numero) >= 0 ? 'green' : 'red',
+        }"
       >
-        {{ diffVotos(fernando.numero, josimar.numero) >= 0 ? '+' : '-' }} {{ Math.abs(diffVotos(fernando.numero, josimar.numero)) }}
+        {{ diffVotos(fernando.numero, josimar.numero) >= 0 ? "+" : "-" }}
+        {{ Math.abs(diffVotos(fernando.numero, josimar.numero)) }}
         <span class="legend">Diferença de votos</span>
       </p>
 
@@ -47,6 +49,8 @@
         :color="josimar.cor"
         :votes="votesByCandidate(josimar.numero)"
         :totalVotes="validVotes"
+        :size="3.5"
+        gray
       />
 
       <div class="other-candidates">
@@ -107,6 +111,19 @@
           :totalVotes="validVotesByZone('urbana')"
           featured
         />
+
+        <p
+          class="diff"
+          :style="{
+            color:
+              diffVotosPorZona(fernando.numero, josimar.numero, 'urbana') >= 0 ? 'green' : 'red',
+          }"
+        >
+          {{ diffVotosPorZona(fernando.numero, josimar.numero, 'urbana') >= 0 ? "+" : "-" }}
+          {{ Math.abs(diffVotosPorZona(fernando.numero, josimar.numero, 'urbana')) }}
+          <span class="legend">Diferença de votos</span>
+        </p>
+
         <compact-candidate
           :key="josimar.numero"
           :name="josimar.nome"
@@ -173,6 +190,19 @@
           :totalVotes="validVotesByZone('rural')"
           featured
         />
+
+        <p
+          class="diff"
+          :style="{
+            color:
+              diffVotosPorZona(fernando.numero, josimar.numero, 'rural') >= 0 ? 'green' : 'red',
+          }"
+        >
+          {{ diffVotosPorZona(fernando.numero, josimar.numero, 'rural') >= 0 ? "+" : "-" }}
+          {{ Math.abs(diffVotosPorZona(fernando.numero, josimar.numero, 'rural')) }}
+          <span class="legend">Diferença de votos</span>
+        </p>
+
         <compact-candidate
           :key="josimar.numero"
           :name="josimar.nome"
@@ -239,7 +269,7 @@ export default {
       "validVotes",
       "validVotesByZone",
       "votosApurados",
-      "votosApuradosPorZona"
+      "votosApuradosPorZona",
     ]),
     fernando() {
       return this.candidates.find((c) => c.numero === 22);
@@ -257,10 +287,11 @@ export default {
       return (val * 100).toFixed(2).replace(".", ",");
     },
     diffVotos(a, b) {
-      return Number(
-        this.votesByCandidate(a) - this.votesByCandidate(b)
-      );
+      return Number(this.votesByCandidate(a) - this.votesByCandidate(b));
     },
+    diffVotosPorZona(a, b, zona) {
+      return Number(this.votesByCandidateAndZone(a, zona) - this.votesByCandidateAndZone(b, zona));
+    }
   },
 };
 </script>
@@ -398,4 +429,11 @@ section.apuracao-geral .other-candidates {
   width: 100%;
   margin-top: 0;
 }
+
+.filtros .diff { 
+  font-size: 0.8rem;
+  margin-top: 3px;
+  margin-bottom: 13px;
+}
+.filtros .diff .legend { font-size: 0.6rem; }
 </style>

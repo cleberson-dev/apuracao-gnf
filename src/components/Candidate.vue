@@ -1,6 +1,6 @@
 <template>
-  <div v-if="featured" class="candidate">
-    <circular-picture :src="profilePicture" :size="4" :color="color" />
+  <div v-if="featured" :class="['candidate', gray ? 'gray' : '' ]">
+    <circular-picture :src="profilePicture" :size="size" :color="color" />
     <div class="info">
       <div
         class="bar"
@@ -67,6 +67,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    gray: {
+      type: Boolean,
+      default: false
+    },
+    size: {
+      type: Number,
+      default: 4
+    }
   },
   computed: {
     percentage() {
@@ -85,6 +93,10 @@ export default {
   display: flex;
   align-items: center;
   position: relative;
+}
+
+.candidate.gray figure {
+  filter: grayscale(0.7);
 }
 
 .candidate .info {
