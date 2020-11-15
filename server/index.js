@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const db = require('./db');
-const { clean } = require('./utils');
 const PORT = 5000;
 
 const app = express();
@@ -81,17 +80,6 @@ app.post('/votos', async (req, res) => {
     });
     res.status(201);
     return res.send({ success: true, data: newVote });
-});
-
-app.delete('/votos', async (req, res) => {
-    try {
-        await clean();
-        res.status(200);
-        return res.send({ success: true });
-    } catch (err) {
-        res.status(400);
-        return res.send({ success: false });
-    }
 });
 
 app.get('/limparVotos', async (req, res) => {

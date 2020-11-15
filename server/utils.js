@@ -7,4 +7,6 @@ async function clean() {
     return db('vote');
 }
 
-clean().then(console.log);
+module.exports = { clean }
+
+// clean().then(console.log);
