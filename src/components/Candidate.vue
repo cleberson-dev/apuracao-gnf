@@ -143,6 +143,8 @@ export default {
 
 .candidate_compact {
   display: flex;
+  margin-right: 3rem;
+  margin-bottom: 2rem;
 }
 
 .candidate_compact .info {
@@ -153,19 +155,19 @@ export default {
 }
 
 .candidate_compact .name {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
 }
 
 .candidate_compact .abs-votes {
   color: #909090;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .candidate_compact .rel-votes {
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.9rem;
   justify-self: flex-end;
 }
 
@@ -174,8 +176,8 @@ export default {
 }
 
 .candidate_compact .profile-picture {
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 45px;
   background-size: cover;
   background-position: center;
   border-radius: 50%;

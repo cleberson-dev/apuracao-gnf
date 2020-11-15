@@ -8,9 +8,9 @@
           v-for="section in allSections"
           :key="section.num"
           :value="section.num"
-          :style="{ 
+          :style="{
             backgroundColor: section.closed && '#ffdb57',
-            color: section.closed && 'gray'
+            color: section.closed && 'gray',
           }"
         >
           {{ section.num }} - {{ section.local }}
@@ -21,7 +21,9 @@
     <div class="votos" v-if="candidates.length > 0">
       <div
         class="candidato"
-        v-for="candidate in candidates"
+        v-for="candidate in candidates.sort(
+          (a, b) => ordering.indexOf(a.numero) - ordering.indexOf(b.numero)
+        )"
         :key="candidate.numero"
       >
         <h4 class="nome">{{ candidate.nome }}</h4>
@@ -34,12 +36,19 @@
         <span>votos</span>
       </div>
     </div>
-      <p>
-        {{ votesEntered }} votos inseridos de {{ currentFormSection.eleitores }}
-        <br /> {{ currentFormSection.eleitores - votesEntered }} nulos
-      </p>
+    <p>
+      {{ votesEntered }} votos inseridos de {{ currentFormSection.eleitores }}
+      <br />
+      {{ 0 > votesLeft ? 0 : votesLeft }} nulos
+    </p>
     <div class="btns">
-      <button @click.prevent="registrar" type="submit">Cadastrar</button>
+      <button
+        :disabled="votesEntered < 0 || areNegatives || votesLeft < 0"
+        @click.prevent="registrar"
+        type="submit"
+      >
+        Cadastrar
+      </button>
       <button class="close" @click="onClose">Sair</button>
     </div>
   </form>
@@ -61,17 +70,20 @@ export default {
         40: 0,
         77: 0,
         27: 0,
-        outros: 0,
+        outros: 0
       },
       ordering: [22, 40, 77, 27, 'outros']
     };
+  },
+  created() {
+    this.formVotes = {...this.currentFormSection.votos};
   },
   computed: {
     ...mapGetters(["allSections", "candidates"]),
     votesEntered() {
       let votos = 0;
       for (const numCandidato in this.formVotes) {
-        votos += this.formVotes[numCandidato];
+        votos += Number(this.formVotes[numCandidato]);
       }
       return votos;
     },
@@ -80,6 +92,9 @@ export default {
     },
     currentFormSection() {
       return this.allSections.find(s => s.num === this.formSection);
+    },
+    votesLeft() {
+      return this.currentFormSection.eleitores - this.votesEntered
     }
   },
   methods: {
@@ -91,7 +106,6 @@ export default {
       this.$router.push("/");
     },
     registrar() {
-      alert(this.votesEntered + '' + this.currentFormSection.eleitores);
       if (this.votesEntered < 0 || this.areNegatives) return alert('Inválido!');
       if (this.votesEntered > this.currentFormSection.eleitores) return alert('Votos inseridos excederam a quantidade máxima');
       this.registerVotes({ 
@@ -201,6 +215,10 @@ button {
 button[type="submit"] {
   background-color: #0066FF;
   color: white;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 button.close {

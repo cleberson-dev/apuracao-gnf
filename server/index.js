@@ -30,7 +30,7 @@ app.get('/secoes', async (req, res) => {
             num: section.num,
             local: section.local,
             eleitores: section.eleitores,
-            zona: section.zona,
+            zona: section.zona.toLowerCase(),
             closed: section.totalizada === 0 ? false : true,
             votos
         };
@@ -84,9 +84,32 @@ app.post('/votos', async (req, res) => {
 });
 
 app.delete('/votos', async (req, res) => {
+<<<<<<< HEAD
+    try {
+        await clean();
+        res.status(200);
+        return res.send({ success: true });
+    } catch (err) {
+        res.status(400);
+        return res.send({ success: true });
+    }
+});
+
+app.get('/limparVotos', async (req, res) => {
+    try {
+        await clean();
+        res.status(200);
+        return res.send({ success: true });
+    } catch (err) {
+        res.status(400);
+        return res.send({ success: true });
+    }
+   
+=======
     await clean();
     res.status(200);
     return res.send({ success: true });
+>>>>>>> 2b88346a859b19800ced4419f6dcf893b7fc64e5
 });
 
 
