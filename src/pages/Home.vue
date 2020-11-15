@@ -116,11 +116,21 @@
           class="diff"
           :style="{
             color:
-              diffVotosPorZona(fernando.numero, josimar.numero, 'urbana') >= 0 ? 'green' : 'red',
+              diffVotosPorZona(fernando.numero, josimar.numero, 'urbana') >= 0
+                ? 'green'
+                : 'red',
           }"
         >
-          {{ diffVotosPorZona(fernando.numero, josimar.numero, 'urbana') >= 0 ? "+" : "-" }}
-          {{ Math.abs(diffVotosPorZona(fernando.numero, josimar.numero, 'urbana')) }}
+          {{
+            diffVotosPorZona(fernando.numero, josimar.numero, "urbana") >= 0
+              ? "+"
+              : "-"
+          }}
+          {{
+            Math.abs(
+              diffVotosPorZona(fernando.numero, josimar.numero, "urbana")
+            )
+          }}
           <span class="legend">Diferença de votos</span>
         </p>
 
@@ -195,11 +205,19 @@
           class="diff"
           :style="{
             color:
-              diffVotosPorZona(fernando.numero, josimar.numero, 'rural') >= 0 ? 'green' : 'red',
+              diffVotosPorZona(fernando.numero, josimar.numero, 'rural') >= 0
+                ? 'green'
+                : 'red',
           }"
         >
-          {{ diffVotosPorZona(fernando.numero, josimar.numero, 'rural') >= 0 ? "+" : "-" }}
-          {{ Math.abs(diffVotosPorZona(fernando.numero, josimar.numero, 'rural')) }}
+          {{
+            diffVotosPorZona(fernando.numero, josimar.numero, "rural") >= 0
+              ? "+"
+              : "-"
+          }}
+          {{
+            Math.abs(diffVotosPorZona(fernando.numero, josimar.numero, "rural"))
+          }}
           <span class="legend">Diferença de votos</span>
         </p>
 
@@ -290,8 +308,11 @@ export default {
       return Number(this.votesByCandidate(a) - this.votesByCandidate(b));
     },
     diffVotosPorZona(a, b, zona) {
-      return Number(this.votesByCandidateAndZone(a, zona) - this.votesByCandidateAndZone(b, zona));
-    }
+      return Number(
+        this.votesByCandidateAndZone(a, zona) -
+          this.votesByCandidateAndZone(b, zona)
+      );
+    },
   },
 };
 </script>
@@ -430,10 +451,12 @@ section.apuracao-geral .other-candidates {
   margin-top: 0;
 }
 
-.filtros .diff { 
+.filtros .diff {
   font-size: 0.8rem;
   margin-top: 3px;
   margin-bottom: 13px;
 }
-.filtros .diff .legend { font-size: 0.6rem; }
+.filtros .diff .legend {
+  font-size: 0.6rem;
+}
 </style>
