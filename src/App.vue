@@ -11,21 +11,33 @@
   
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 import MyHeader from "./components/MyHeader";
+import { wsc } from "./main";
 
 export default {
   name: "App",
   components: {
-    MyHeader
+    MyHeader,
   },
   created() {
     this.fetchSections();
     this.fetchCandidates();
+    wsc.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      switch (message.type) {
+        case "UPDATED_SECTION":
+          console.log(message.payload);
+          this.updateSection(message.payload);
+          break;
+        default:
+          console.log(message);
+      }
+    };
   },
   methods: {
-    ...mapActions(["fetchSections", "fetchCandidates"])
-  }
+    ...mapActions(["fetchSections", "fetchCandidates", "updateSection"]),
+  },
 };
 </script>
 

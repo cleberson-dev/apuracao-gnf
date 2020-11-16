@@ -16,12 +16,12 @@ const getters = {
   closedSectionsByZone: (state) => (zone) =>
     state.sections.filter((s) => s.zona === zone && !!s.closed),
   section: (state) => (num) => state.sections.find((s) => s.num === num),
-  allSections: (state) => state.sections,
+  allSections: (state) => state.sections.sort((a, b) => Number(a.num) - Number(b.num)),
   sectionsByZone: (state) => (zone) =>
     state.sections.filter((s) => s.zona === zone),
   validVotes: (state) => state.sections
+    .filter(s => !!s.closed)
     .reduce((prev, acc) => {
-      if (!acc.closed) return prev + acc.eleitores;
       let votados = 0;
       for (let partidoVoto in acc.votos) {
         votados += acc.votos[partidoVoto];
@@ -29,9 +29,8 @@ const getters = {
       return prev + votados;
     }, 0),
   validVotesByZone: (state) => zone => state.sections
-    .filter(c => c.zona === zone)
+    .filter(s => s.zona === zone && !!s.closed)
     .reduce((prev, acc) => {
-      if (!acc.closed) return prev + acc.eleitores;
       let votados = 0;
       for (let partidoVoto in acc.votos) {
         votados += acc.votos[partidoVoto];
@@ -133,6 +132,10 @@ const actions = {
     } catch (err) {
       console.error(err);
     }
+  },
+  updateSection({ commit }, section) {
+    console.log('Update Section - Action', section);
+    commit("updateSection", section);
   }
 };
 
@@ -151,6 +154,13 @@ const mutations = {
   },
   fetchSections: (state, data) => {
     state.sections = data;
+  },
+  updateSection: (state, section) => {
+    console.log('Update Section - Mutation', section);
+    state.sections = [
+      ...state.sections.filter(s => s.num !== section.num),
+      section
+    ];
   }
 };
 

@@ -8,6 +8,9 @@ import ClearPage from './pages/Clear.vue';
 import App from './App.vue';
 import store from './store';
 
+export const wsc = new WebSocket('ws://localhost:5050');
+
+
 Vue.config.productionTip = false
 
 Vue.use(VueRouter);
