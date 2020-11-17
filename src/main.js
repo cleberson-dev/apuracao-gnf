@@ -18,7 +18,7 @@ Vue.use(VueRouter);
 const routes = [
   { path: '/', component: HomePage },
   { path: '/cadastrar', component: RegisterPage },
-  { path: '/limpar', component: ClearPage },
+  { path: '/limpar', component: ClearPage }
 ];
 
 const router = new VueRouter({ routes, mode: 'history' });

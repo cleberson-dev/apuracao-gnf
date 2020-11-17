@@ -1,11 +1,28 @@
 const express = require("express");
 const cors = require("cors");
+const puppeteer = require("puppeteer");
 const db = require("./db");
 const wss = require("./sockets");
+
+let browser;
+let page;
+
+(async function() {
+  browser = await puppeteer.launch({
+    headless: false,
+    defaultViewport: {
+      width: 720,
+      height: 1080,
+    },
+  });
+  page = await browser.newPage();
+  console.log("Puppeteer ready!");
+})();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+// app.use('/static', express.static('public'));
 
 app.get("/", (req, res) => {
   res.send("Olá!");
@@ -63,9 +80,13 @@ app.patch("/secoes/:numSecao/votos", async (req, res) => {
         .where("numero_secao", Number(numSecao))
         .update("votos", votos[numCandidato]);
     }
-    await db("section").where("num", Number(numSecao)).update("totalizada", true);
-    const voteSection = await db("section").where("num", Number(numSecao)).first();
-    const sectionVotes = await db('vote').where('numero_secao', numSecao);
+    await db("section")
+      .where("num", Number(numSecao))
+      .update("totalizada", true);
+    const voteSection = await db("section")
+      .where("num", Number(numSecao))
+      .first();
+    const sectionVotes = await db("vote").where("numero_secao", numSecao);
     let novosVotos = {};
     sectionVotes.forEach((sv) => {
       const key = sv.numero_candidato != 0 ? sv.numero_candidato : "outros";
@@ -78,9 +99,9 @@ app.patch("/secoes/:numSecao/votos", async (req, res) => {
       zona: voteSection.zona.toLowerCase(),
       closed: voteSection.totalizada === 0 ? false : true,
       votos: novosVotos,
-    }
-    wss.broadcast({ type: "UPDATED_SECTION", payload: voteSectionPayload }); 
-} catch (err) {
+    };
+    wss.broadcast({ type: "UPDATED_SECTION", payload: voteSectionPayload });
+  } catch (err) {
     console.error(err);
     res.status(400);
     return res.send({ success: false });
@@ -132,6 +153,32 @@ app.get("/limparVotos", async (req, res) => {
     console.error(err);
     res.status(400);
     return res.send({ success: false });
+  }
+});
+
+app.get("/print", async (req, res) => {
+  const dateString = new Date().toUTCString();
+  const screenshotName = dateString;
+  const screenshotPath = `../public/img/screenshots/${screenshotName}.jpg`;
+  try {
+    await page.goto("http://localhost:8080");
+    await page.waitForTimeout(1000);
+    await page.screenshot({
+      path: screenshotPath,
+      type: "jpeg",
+    });
+    return res.status(200).send({
+      success: true,
+      data: {
+        name: screenshotName,
+        path: screenshotPath,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(400).send({
+      success: false
+    });
   }
 });
 

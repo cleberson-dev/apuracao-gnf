@@ -22,18 +22,28 @@
           Cadastrar
         </router-link>
       </li>
+      <li>
+        <button @click.prevent="onPrint" class="item">
+          <img src="/img/icons/pen.svg" />
+          Screenshot
+        </button>
+      </li>
     </nav>
   </header>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import axios from 'axios';
 export default {
   name: 'MyHeader',
   methods: {
-    ...mapActions(["cleanVotes"]),
-    onClean() {
-      this.cleanVotes();
+    async onPrint() {
+      const res = await axios.get('http://localhost:5000/print');
+      const { data } = res.data;
+      const link = document.createElement("a");
+      link.download = data.name;
+      link.href = data.path;
+      link.click();
     }
   }
 }
