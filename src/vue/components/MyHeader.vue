@@ -1,12 +1,12 @@
 <template>
   <header>
     <div class="logo">
-      <img alt="Logo" src="/img/logo.png" />
+      <img alt="Logo" src="../assets/img/logo.png" />
     </div>
     <nav>
       <li>
         <router-link to="/" class="item">
-          <img src="/img/icons/home.svg" />
+          <img src="../assets/img/icons/home.svg" />
           Início
         </router-link>
       </li>
@@ -18,13 +18,13 @@
       </li> -->
       <li>
         <router-link to="/cadastrar" class="item">
-          <img src="/img/icons/pen.svg" />
+          <img src="../assets/img/icons/pen.svg" />
           Cadastrar
         </router-link>
       </li>
       <li>
         <button @click.prevent="onPrint" class="item">
-          <img src="/img/icons/pen.svg" />
+          <img src="../assets/img/icons/pen.svg" />
           Screenshot
         </button>
       </li>

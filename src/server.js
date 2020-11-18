@@ -1,32 +1,30 @@
-const express = require("express");
-const cors = require("cors");
-const puppeteer = require("puppeteer");
-const db = require("./db");
-const wss = require("./sockets");
+import express from "express";
+import cors from "cors";
+import puppeteer from "puppeteer";
+import path from 'path';
+import db from "./db";
+import wss from "./sockets";
 
+const ASSETS_DIR = path.resolve(__dirname, 'static');
 let browser;
 let page;
 
-(async function() {
-  browser = await puppeteer.launch({
-    headless: false,
-    defaultViewport: {
-      width: 720,
-      height: 1080,
-    },
-  });
-  page = await browser.newPage();
-  console.log("Puppeteer ready!");
-})();
+// (async function() {
+//   browser = await puppeteer.launch({
+//     headless: false,
+//     defaultViewport: {
+//       width: 720,
+//       height: 1080,
+//     },
+//   });
+//   page = await browser.newPage();
+//   console.log("Puppeteer ready!");
+// })();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-// app.use('/static', express.static('public'));
-
-app.get("/", (req, res) => {
-  res.send("Olá!");
-});
+app.use('/static', express.static(ASSETS_DIR));
 
 app.get("/candidatos", async (req, res) => {
   const candidates = await db("candidate");
@@ -182,4 +180,8 @@ app.get("/print", async (req, res) => {
   }
 });
 
-module.exports = app;
+app.get('*', (req, res) => {
+  res.sendFile(ASSETS_DIR + '/index.html');
+});
+
+export default app;

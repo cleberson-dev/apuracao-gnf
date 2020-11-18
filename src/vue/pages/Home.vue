@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <section class="apuracao-geral">
+    <section class="apuracao-geral" v-if="candidates.length > 0">
       <h1 class="pageTitle">Apuração Paralela de Gov. Nunes Freire - MA</h1>
       <div class="header">
         <div class="left">
@@ -24,7 +24,7 @@
       <candidate
         featured
         :name="fernando.nome"
-        :profilePicture="'/img/candidatos/' + fernando.numero + '.jpg'"
+        :profilePicture="fernando.perfil"
         :color="fernando.cor"
         :votes="votesByCandidate(fernando.numero)"
         :totalVotes="validVotes"
@@ -45,7 +45,7 @@
       <candidate
         featured
         :name="josimar.nome"
-        :profilePicture="'/img/candidatos/' + josimar.numero + '.jpg'"
+        :profilePicture="josimar.perfil"
         :color="josimar.cor"
         :votes="votesByCandidate(josimar.numero)"
         :totalVotes="validVotes"
@@ -60,7 +60,7 @@
           )"
           :key="candidato.numero"
           :name="candidato.nome"
-          :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
+          :profilePicture="candidato.perfil"
           :color="candidato.cor"
           :votes="votesByCandidate(candidato.numero)"
           :totalVotes="validVotes"
@@ -76,7 +76,7 @@
       </div>
     </section>
 
-    <div class="filtros">
+    <div class="filtros" v-if="candidates.length > 0">
       <section class="apuracao-urbana">
         <div class="header">
           <div class="left">
@@ -105,7 +105,7 @@
         <compact-candidate
           :key="fernando.numero"
           :name="fernando.nome"
-          :profilePicture="'/img/candidatos/' + fernando.numero + '.jpg'"
+          :profilePicture="fernando.perfil"
           :color="fernando.cor"
           :votes="votesByCandidateAndZone(fernando.numero, 'urbana')"
           :totalVotes="validVotesByZone('urbana')"
@@ -137,7 +137,7 @@
         <compact-candidate
           :key="josimar.numero"
           :name="josimar.nome"
-          :profilePicture="'/img/candidatos/' + josimar.numero + '.jpg'"
+          :profilePicture="josimar.perfil"
           :color="josimar.cor"
           :votes="votesByCandidateAndZone(josimar.numero, 'urbana')"
           :totalVotes="validVotesByZone('urbana')"
@@ -152,7 +152,7 @@
             )"
             :key="candidato.numero"
             :name="candidato.nome"
-            :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
+            :profilePicture="candidato.perfil"
             :color="candidato.cor"
             :votes="votesByCandidateAndZone(candidato.numero, 'urbana')"
             :totalVotes="validVotesByZone('urbana')"
@@ -194,7 +194,7 @@
         <compact-candidate
           :key="fernando.numero"
           :name="fernando.nome"
-          :profilePicture="'/img/candidatos/' + fernando.numero + '.jpg'"
+          :profilePicture="fernando.perfil"
           :color="fernando.cor"
           :votes="votesByCandidateAndZone(fernando.numero, 'rural')"
           :totalVotes="validVotesByZone('rural')"
@@ -224,7 +224,7 @@
         <compact-candidate
           :key="josimar.numero"
           :name="josimar.nome"
-          :profilePicture="'/img/candidatos/' + josimar.numero + '.jpg'"
+          :profilePicture="josimar.perfil"
           :color="josimar.cor"
           :votes="votesByCandidateAndZone(josimar.numero, 'rural')"
           :totalVotes="validVotesByZone('rural')"
@@ -239,7 +239,7 @@
             )"
             :key="candidato.numero"
             :name="candidato.nome"
-            :profilePicture="'/img/candidatos/' + candidato.numero + '.jpg'"
+            :profilePicture="candidato.perfil"
             :color="candidato.cor"
             :votes="votesByCandidateAndZone(candidato.numero, 'rural')"
             :totalVotes="validVotesByZone('rural')"

@@ -46,6 +46,8 @@ export default {
   props: {
     name: {
       type: String,
+      required: false,
+      default: ""
     },
     votes: {
       type: Number,

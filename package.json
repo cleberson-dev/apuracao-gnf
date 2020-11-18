@@ -3,17 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "dev:client": "vue-cli-service serve src/vue/main.js",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "dev:server": "cd server && npm run dev",
-    "dev": "concurrently \"npm run serve\" \"npm run dev:server\""
+    "dev": "concurrently \"npm run serve\" \"npm run dev:server\"",
+    "init": "knex init",
+    "seed": "knex seed:run",
+    "migrate": "knex migrate:latest",
+    "dev:server": "nodemon src/index.js",
+    "start": "npm run build && node dist/index.js",
+    "build": "npm run build:server && npm run build:client",
+    "build:client": "vue-cli-service build src/vue/main.js --dest dist/static",
+    "build:server": "babel src --out-dir dist --config-file ./babel.server.config.js"
   },
-  "main": "background.js",
+  "main": "src/index.js",
   "dependencies": {
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
@@ -22,9 +28,19 @@
     "vue": "^2.6.11",
     "vue-router": "^3.4.9",
     "vuex": "^3.5.1",
-    "xlsx": "^0.16.8"
+    "xlsx": "^0.16.8",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "knex": "^0.21.12",
+    "puppeteer": "^5.5.0",
+    "sqlite3": "^5.0.0",
+    "ws": "^7.4.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/node": "^7.12.6",
+    "@babel/preset-env": "^7.12.1",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
@@ -35,6 +51,7 @@
     "electron-rebuild": "^2.3.2",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "nodemon": "^2.0.6",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.5",
     "vue-template-compiler": "^2.6.11"
   },

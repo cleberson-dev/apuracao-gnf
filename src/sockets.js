@@ -1,4 +1,6 @@
-const WebSocket = require("ws");
+import WebSocket from "ws";
+
+const PORT = 5050;
 
 WebSocket.Server.prototype.broadcast = function(message) {
   this.clients.forEach((client) => {
@@ -8,6 +10,7 @@ WebSocket.Server.prototype.broadcast = function(message) {
   });
 };
 
-const wss = new WebSocket.Server({ port: 5050 });
+const wss = new WebSocket.Server({ port: PORT });
+wss.on('listening', () => console.log(`Web Socket Server listening on port ${PORT}`))
 
-module.exports = wss;
+export default wss;

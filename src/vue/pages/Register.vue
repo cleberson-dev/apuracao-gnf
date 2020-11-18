@@ -1,5 +1,5 @@
 <template>
-  <form>
+  <form v-if="allSections.length > 0 && candidates.length > 0">
     <div>
       <h1>Cadastrar votos</h1>
       <label>Selecione a seção</label>
@@ -21,14 +21,12 @@
     <div class="votos" v-if="candidates.length > 0">
       <div
         class="candidato"
-        v-for="candidate in candidates.sort(
-          (a, b) => ordering.indexOf(a.numero) - ordering.indexOf(b.numero)
-        )"
+        v-for="candidate in candidates"
         :key="candidate.numero"
       >
         <h4 class="nome">{{ candidate.nome }}</h4>
         <circular-picture
-          :src="'/img/candidatos/' + candidate.numero + '.jpg'"
+          :src="candidate.perfil"
           :size="4"
           :color="candidate.cor"
         />
@@ -52,6 +50,7 @@
       <button class="close" @click="onClose">Sair</button>
     </div>
   </form>
+  <div v-else>Nada</div>
 </template>
 
 <script>
@@ -70,13 +69,9 @@ export default {
         40: 0,
         77: 0,
         27: 0,
-        outros: 0
-      },
-      ordering: [22, 40, 77, 27, 'outros']
+        outros: 0,
+      }
     };
-  },
-  created() {
-    this.formVotes = {...this.currentFormSection.votos};
   },
   computed: {
     ...mapGetters(["allSections", "candidates"]),
@@ -91,33 +86,32 @@ export default {
       return Object.entries(this.formVotes).some(([, value]) => value < 0);
     },
     currentFormSection() {
-      return this.allSections.find(s => s.num === this.formSection);
+      return this.allSections.find((s) => s.num === this.formSection);
     },
     votesLeft() {
-      return this.currentFormSection.eleitores - this.votesEntered
-    }
+      return this.currentFormSection.eleitores - this.votesEntered;
+    },
   },
   methods: {
     ...mapActions(["registerVotes"]),
     onSelectChange() {
-      console.log(this.formVotes);
-      this.formVotes = {...this.currentFormSection.votos};
+      this.formVotes = { ...this.currentFormSection.votos };
     },
     onClose() {
       this.$router.push("/");
     },
     registrar() {
-      console.log(Object.fromEntries(
-          Object.entries(this.formVotes)
-            .map(([key, value]) => [key, Number(value)])));
-      if (this.votesEntered < 0 || this.areNegatives) return alert('Inválido!');
-      if (this.votesEntered > this.currentFormSection.eleitores) return alert('Votos inseridos excederam a quantidade máxima');
-      this.registerVotes({ 
+      if (this.votesEntered < 0 || this.areNegatives) return alert("Inválido!");
+      if (this.votesEntered > this.currentFormSection.eleitores)
+        return alert("Votos inseridos excederam a quantidade máxima");
+      this.registerVotes({
         sectionNum: this.formSection,
         votes: Object.fromEntries(
-          Object.entries(this.formVotes)
-            .map(([key, value]) => [key, Number(value)])
-        )
+          Object.entries(this.formVotes).map(([key, value]) => [
+            key,
+            Number(value),
+          ])
+        ),
       });
     },
   },
@@ -151,7 +145,7 @@ form label {
 }
 
 form select {
-  background-color: #E4E4E4;
+  background-color: #e4e4e4;
   border-radius: 5px;
   border: none;
   padding: 10px 10px;
@@ -160,7 +154,7 @@ form select {
 }
 
 form .votos input {
-  background-color: #E4E4E4;
+  background-color: #e4e4e4;
   border: none;
   outline: none;
   font-size: 28px;
@@ -217,7 +211,7 @@ button {
 }
 
 button[type="submit"] {
-  background-color: #0066FF;
+  background-color: #0066ff;
   color: white;
 }
 button:disabled {
