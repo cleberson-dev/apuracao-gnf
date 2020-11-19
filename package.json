@@ -9,7 +9,7 @@
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "dev": "concurrently \"npm run serve\" \"npm run dev:server\"",
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
     "init": "knex init",
     "seed": "knex seed:run",
     "migrate": "knex migrate:latest",
