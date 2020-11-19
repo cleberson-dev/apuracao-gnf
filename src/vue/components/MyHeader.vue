@@ -24,7 +24,7 @@
       </li>
       <li>
         <button @click.prevent="onPrint" class="item">
-          <img src="../assets/img/icons/pen.svg" />
+          <img src="../assets/img/icons/camera.svg" />
           Screenshot
         </button>
       </li>
