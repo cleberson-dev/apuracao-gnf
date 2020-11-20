@@ -30,7 +30,7 @@
           :size="4"
           :color="candidate.cor"
         />
-        <input type="number" v-model="formVotes[candidate.numero]" />
+        <input min="0" :max="Number(formVotes[candidate.numero]) + Number(votesLeft)" type="number" v-model="formVotes[candidate.numero]" />
         <span>votos</span>
       </div>
     </div>
@@ -40,14 +40,10 @@
       {{ 0 > votesLeft ? 0 : votesLeft }} nulos
     </p>
     <div class="btns">
-      <button
-        :disabled="votesEntered < 0 || areNegatives || votesLeft < 0"
-        @click.prevent="registrar"
-        type="submit"
-      >
+      <custom-button :disabled="isInvalid" @click="registrar" type="submit">
         Cadastrar
-      </button>
-      <button class="close" @click="onClose">Sair</button>
+      </custom-button>
+      <custom-button variant="danger" @click="onClose">Sair</custom-button>
     </div>
   </form>
   <div v-else>Nada</div>
@@ -55,11 +51,13 @@
 
 <script>
 import CircularPicture from "../components/CircularPicture";
+import CustomButton from "../components/CustomButton";
 import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
     CircularPicture,
+    CustomButton,
   },
   data() {
     return {
@@ -70,7 +68,7 @@ export default {
         77: 0,
         27: 0,
         outros: 0,
-      }
+      },
     };
   },
   computed: {
@@ -91,6 +89,9 @@ export default {
     votesLeft() {
       return this.currentFormSection.eleitores - this.votesEntered;
     },
+    isInvalid() {
+      return this.votesEntered < 0 || this.areNegatives || this.votesLeft < 0;
+    },
   },
   methods: {
     ...mapActions(["registerVotes"]),
@@ -100,7 +101,8 @@ export default {
     onClose() {
       this.$router.push("/");
     },
-    registrar() {
+    registrar(e) {
+      e.preventDefault();
       if (this.votesEntered < 0 || this.areNegatives) return alert("Inválido!");
       if (this.votesEntered > this.currentFormSection.eleitores)
         return alert("Votos inseridos excederam a quantidade máxima");
@@ -193,7 +195,13 @@ form .votos .candidato .nome {
   margin-bottom: 5px;
 }
 
-button {
+.btns {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* button {
   border-radius: 5px;
   font-family: "Montserrat", sans-serif;
   border: none;
@@ -202,12 +210,6 @@ button {
   font-size: 1.3rem;
   padding: 15px 22.5px;
   cursor: pointer;
-}
-
-.btns {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
 }
 
 button[type="submit"] {
@@ -226,7 +228,7 @@ button.close {
 
 button:hover {
   filter: grayscale(0.4);
-}
+} */
 
 form label {
   display: block;
