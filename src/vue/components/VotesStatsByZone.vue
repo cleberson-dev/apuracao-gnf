@@ -1,5 +1,5 @@
 <template>
-  <section class="votes-stats-by-zone">
+  <section class="votes-stats-by-zone" v-if="sortedCandidates.length > 0">
     <section-header
       :size="0.75"
       :leftTitle="zone"
@@ -19,37 +19,34 @@
     />
 
     <compact-candidate
-      :key="fernando.numero"
-      :name="fernando.nome"
-      :profilePicture="fernando.perfil"
-      :color="fernando.cor"
-      :votes="votesByCandidateAndZone(fernando.numero, zone)"
+      :key="challengers[0].numero"
+      :name="challengers[0].nome"
+      :profilePicture="challengers[0].perfil"
+      :color="challengers[0].cor"
+      :votes="votesByCandidateAndZone(challengers[0].numero, zone)"
       :totalVotes="validVotesByZone(zone)"
       featured
     />
 
     <votes-diff
-      :votesA="votesByCandidateAndZone(fernando.numero, zone)"
-      :votesB="votesByCandidateAndZone(josimar.numero, zone)"
+      :votesA="votesByCandidateAndZone(challengers[0].numero, zone)"
+      :votesB="votesByCandidateAndZone(challengers[1].numero, zone)"
       :size="0.8"
     />
 
     <compact-candidate
-      :key="josimar.numero"
-      :name="josimar.nome"
-      :profilePicture="josimar.perfil"
-      :color="josimar.cor"
-      :votes="votesByCandidateAndZone(josimar.numero, zone)"
+      :key="challengers[1].numero"
+      :name="challengers[1].nome"
+      :profilePicture="challengers[1].perfil"
+      :color="challengers[1].cor"
+      :votes="votesByCandidateAndZone(challengers[1].numero, zone)"
       :totalVotes="validVotesByZone(zone)"
       featured
     />
+
     <div class="other-candidates">
       <compact-candidate
-        v-for="candidato in outrosCandidatos.sort(
-          (a, b) =>
-            votesByCandidateAndZone(b.numero, zone) -
-            votesByCandidateAndZone(a.numero, zone)
-        )"
+        v-for="candidato in otherCandidates"
         :key="candidato.numero"
         :name="candidato.nome"
         :profilePicture="candidato.perfil"
@@ -88,7 +85,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "candidates",
+      "sortedCandidates",
       "totalElectorsByZone",
       "votesCountedByZone",
       "closedSectionsByZone",
@@ -98,14 +95,11 @@ export default {
       "validVotesByZone",
       "votosApuradosPorZona",
     ]),
-    fernando() {
-      return this.candidates.find((c) => c.numero === 22);
+    challengers() {
+      return this.sortedCandidates.slice(0, 2);
     },
-    josimar() {
-      return this.candidates.find((c) => c.numero === 40);
-    },
-    outrosCandidatos() {
-      return this.candidates.filter((c) => c.numero !== 40 && c.numero !== 22);
+    otherCandidates() {
+      return this.sortedCandidates.slice(2);
     },
   },
   methods: {
