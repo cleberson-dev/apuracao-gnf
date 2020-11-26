@@ -92,6 +92,16 @@ const getters = {
       .filter((s) => !!s.closed && s.zona === zone)
       .reduce((prev, acc) => prev + acc.votos[candidate], 0),
   candidates: (state) => state.candidates,
+  sortedCandidates: (state) => state.candidates.sort((a, b) => {
+    const votesA = state.sections
+      .filter((s) => !!s.closed)
+      .reduce((prev, acc) => prev + acc.votos[a.numero], 0);
+    const votesB = state.sections
+      .filter((s) => !!s.closed)
+      .reduce((prev, acc) => prev + acc.votos[b.numero], 0);
+
+    return votesB - votesA;
+  }),
   votosApurados: (state) => state.sections
     .filter(s => !!s.closed)
     .reduce((prev, acc) => prev + acc.eleitores, 0),
