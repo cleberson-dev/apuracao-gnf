@@ -10,12 +10,6 @@
           Início
         </router-link>
       </li>
-      <!-- <li>
-        <router-link to="/resultados" class="item">
-          <img src="/img/icons/result.svg" />
-          Resultados
-        </router-link>
-      </li> -->
       <li>
         <router-link to="/cadastrar" class="item">
           <img src="../assets/img/icons/pen.svg" />

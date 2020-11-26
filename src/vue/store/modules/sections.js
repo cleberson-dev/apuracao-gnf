@@ -1,9 +1,3 @@
-// import { initialSections } from "../data";
-// const Datastore = require('nedb');
-
-// export const db = {};
-// db.candidates = new Datastore({ filename: 'candidates.db' });
-// db.sections = new Datastore({ filename: 'sections.db' });
 import axios from 'axios';
 
 const state = {
@@ -154,10 +148,6 @@ const mutations = {
     const section = state.sections.find((s) => s.num === sectionNum);
     section.votos = votes;
     section.closed = true;
-
-
-    // state.sections = state.sections.filter((s) => s.num !== sectionNum);
-    // state.sections = [...state.sections, section];
   },
   fetchCandidates: (state, data) => {
     state.candidates = data.map(c => ({ ...c, numero: c.numero === 0 ? 'outros' : c.numero }));

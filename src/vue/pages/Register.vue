@@ -201,35 +201,6 @@ form .votos .candidato .nome {
   width: 100%;
 }
 
-/* button {
-  border-radius: 5px;
-  font-family: "Montserrat", sans-serif;
-  border: none;
-  outline: none;
-  font-weight: 700;
-  font-size: 1.3rem;
-  padding: 15px 22.5px;
-  cursor: pointer;
-}
-
-button[type="submit"] {
-  background-color: #0066ff;
-  color: white;
-}
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-button.close {
-  background-color: red;
-  color: white;
-}
-
-button:hover {
-  filter: grayscale(0.4);
-} */
-
 form label {
   display: block;
 }
