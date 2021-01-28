@@ -63,7 +63,7 @@ export default {
   background-color: #0066ff;
 }
 .btn.danger {
-  background-color: red;
+  background-color: #e63946;
 }
 .btn.warn {
   background-color: yellow;
