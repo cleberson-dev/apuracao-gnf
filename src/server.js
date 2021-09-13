@@ -45,41 +45,14 @@ app.patch("/secoes/:numSecao/votos", async (req, res) => {
   const { votos } = req.body;
 
   try {
-    for (const numCandidato in votos) {
-      await db("vote")
-        .where("numero_candidato", Number(numCandidato))
-        .where("numero_secao", Number(numSecao))
-        .update("votos", votos[numCandidato]);
-    }
-    await db("section")
-      .where("num", Number(numSecao))
-      .update("totalizada", true);
-    const voteSection = await db("section")
-      .where("num", Number(numSecao))
-      .first();
-    const sectionVotes = await db("vote").where("numero_secao", numSecao);
-    let novosVotos = {};
-    sectionVotes.forEach((sv) => {
-      const key = sv.numero_candidato != 0 ? sv.numero_candidato : "outros";
-      novosVotos[key] = sv.votos;
-    });
-    const voteSectionPayload = {
-      num: voteSection.num,
-      local: voteSection.local,
-      eleitores: voteSection.eleitores,
-      zona: voteSection.zona.toLowerCase(),
-      closed: voteSection.totalizada === 0 ? false : true,
-      votos: novosVotos,
-    };
+    const voteSectionPayload = await Vote.registerVoteOnSection(numSecao, votos);
+    
     wss.broadcast({ type: "UPDATED_SECTION", payload: voteSectionPayload });
+    return res.status(200).send({ success: true });
   } catch (err) {
     console.error(err);
-    res.status(400);
-    return res.send({ success: false });
+    return res.status(400).send({ success: false });
   }
-
-  res.status(200);
-  return res.send({ success: true });
 });
 
 app.get("/votos", async (req, res) => {
