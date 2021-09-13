@@ -25,4 +25,4 @@ pnpm-debug.log*
 #Electron-builder output
 /dist_electron
 
-server/database.sqlite3
+*.sqlite3

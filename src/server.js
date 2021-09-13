@@ -6,20 +6,6 @@ import db from "./db";
 import wss from "./sockets";
 
 const ASSETS_DIR = path.resolve(__dirname, 'static');
-let browser;
-let page;
-
-// (async function() {
-//   browser = await puppeteer.launch({
-//     headless: false,
-//     defaultViewport: {
-//       width: 720,
-//       height: 1080,
-//     },
-//   });
-//   page = await browser.newPage();
-//   console.log("Puppeteer ready!");
-// })();
 
 const app = express();
 app.use(express.json());
@@ -154,33 +140,7 @@ app.get("/limparVotos", async (req, res) => {
   }
 });
 
-app.get("/print", async (req, res) => {
-  const dateString = new Date().toUTCString();
-  const screenshotName = dateString;
-  const screenshotPath = `../public/img/screenshots/${screenshotName}.jpg`;
-  try {
-    await page.goto("http://localhost:8080");
-    await page.waitForTimeout(1000);
-    await page.screenshot({
-      path: screenshotPath,
-      type: "jpeg",
-    });
-    return res.status(200).send({
-      success: true,
-      data: {
-        name: screenshotName,
-        path: screenshotPath,
-      },
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(400).send({
-      success: false
-    });
-  }
-});
-
-app.get('*', (req, res) => {
+app.get('*', (_, res) => {
   res.sendFile(ASSETS_DIR + '/index.html');
 });
 
