@@ -3,6 +3,7 @@ import cors from "cors";
 import path from 'path';
 import * as Vote from './models/vote.model';
 import secoesRoutes from './routes/secoes.routes';
+import votosRoutes from './routes/votos.routes';
 
 const ASSETS_DIR = path.resolve(__dirname, 'static');
 
@@ -11,6 +12,9 @@ app.use(express.json());
 app.use(cors());
 app.use('/static', express.static(ASSETS_DIR));
 
+app.use('/secoes', secoesRoutes);
+app.use('/votos', votosRoutes);
+
 app.get("/candidatos", async (_, res) => {
   try {
     const candidates = await Vote.getAllCandidates();
@@ -18,30 +22,6 @@ app.get("/candidatos", async (_, res) => {
   } catch (err) {
     console.error(err);
     return res.status(400).send({ sucess: false, message: err.message || 'Error while retrieving all candidates.' });
-  }
-});
-
-app.use('/secoes', secoesRoutes);
-
-app.get("/votos", async (_, res) => {
-  try {
-    const votes = await Vote.getAllVotes();
-    return res.status(200).send(votes);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send({ message: err.message || 'Error while retrieving all votes.' })
-  }
-});
-
-app.post("/votos", async (req, res) => {
-  const { numSecao, numCandidato, votos } = req.body;
-  
-  try {
-    const newVote = await Vote.createVotes({ numSecao, numCandidato, votos });
-    return res.status(201).send({ success: true, data: newVote });
-  } catch (err) {
-    console.error(err);
-    return res.status(400).send({ success: false, message: err.message || 'Error while registering new votes.' });
   }
 });
 
