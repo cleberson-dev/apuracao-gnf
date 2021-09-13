@@ -31,10 +31,13 @@ app.get("/secoes", async (_, res) => {
 
 app.get("/secoes/:numSecao", async (req, res) => {
   const { numSecao } = req.params;
-  const section = await db("section").where("num", numSecao);
 
-  res.status(200);
-  return res.send({ success: true, data: section });
+  try {
+    const section = await Vote.getSectionByNumber(numSecao);
+    return res.status(200).send({ success: true, data: section });
+  } catch (err) {
+    return res.status(500).send({ success: false, message: err.message || "Error while retrieving section by its number." });
+  }
 });
 
 app.patch("/secoes/:numSecao/votos", async (req, res) => {

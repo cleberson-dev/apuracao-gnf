@@ -23,3 +23,8 @@ export async function getAllSections() {
 
   return sections;
 }
+
+export async function getSectionByNumber(sectionNum) {
+  const section = await db("section").where("num", sectionNum);
+  return section;
+}
