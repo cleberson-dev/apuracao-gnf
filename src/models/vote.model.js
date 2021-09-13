@@ -56,3 +56,8 @@ export async function registerVoteOnSection(sectionNum, votes) {
   };
   return voteSectionPayload;
 }
+
+export async function getAllVotes() {
+  const votes = await db("vote");
+  return votes;
+}

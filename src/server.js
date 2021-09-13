@@ -55,11 +55,14 @@ app.patch("/secoes/:numSecao/votos", async (req, res) => {
   }
 });
 
-app.get("/votos", async (req, res) => {
-  const votes = await db("vote");
-
-  res.status(200);
-  return res.send(votes);
+app.get("/votos", async (_, res) => {
+  try {
+    const votes = await Vote.getAllVotes();
+    return res.status(200).send(votes);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ message: err.message || 'Error while retrieving all votes.' })
+  }
 });
 
 app.post("/votos", async (req, res) => {
