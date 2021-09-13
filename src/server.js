@@ -77,30 +77,13 @@ app.post("/votos", async (req, res) => {
   }
 });
 
-app.get("/limparVotos", async (req, res) => {
+app.get("/limparVotos", async (_, res) => {
   try {
-    const votes = [];
-    await db("vote").del();
-    const sections = await db("section");
-    const candidates = await db("candidate");
-    sections.forEach((s) => {
-      candidates.forEach((c) => {
-        votes.push({
-          numero_secao: s.num,
-          numero_candidato: c.numero,
-          votos: 0,
-        });
-      });
-    });
-    await Promise.all(votes.map((v) => db("vote").insert(v)));
-    await db("vote").update("votos", 0);
-    await db("section").update("totalizada", false);
-    res.status(200);
-    return res.send({ success: true });
+    await Vote.cleanAllVotes();
+    return res.status(200).send({ success: true });
   } catch (err) {
     console.error(err);
-    res.status(400);
-    return res.send({ success: false });
+    return res.status(500).send({ success: false });
   }
 });
 

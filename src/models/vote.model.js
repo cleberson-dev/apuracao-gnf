@@ -71,3 +71,22 @@ export async function createVotes({ numSecao, numCandidato, votos }) {
 
   return newVote;
 }
+
+export async function cleanAllVotes() {
+  const votes = [];
+  await db("vote").del();
+  const sections = await db("section");
+  const candidates = await db("candidate");
+  sections.forEach((s) => {
+    candidates.forEach((c) => {
+      votes.push({
+        numero_secao: s.num,
+        numero_candidato: c.numero,
+        votos: 0,
+      });
+    });
+  });
+  await Promise.all(votes.map((v) => db("vote").insert(v)));
+  await db("vote").update("votos", 0);
+  await db("section").update("totalizada", false);
+}
