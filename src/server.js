@@ -4,6 +4,7 @@ import path from 'path';
 import * as Vote from './models/vote.model';
 import secoesRoutes from './routes/secoes.routes';
 import votosRoutes from './routes/votos.routes';
+import candidatosRoutes from './routes/candidatos.routes';
 
 const ASSETS_DIR = path.resolve(__dirname, 'static');
 
@@ -14,16 +15,7 @@ app.use('/static', express.static(ASSETS_DIR));
 
 app.use('/secoes', secoesRoutes);
 app.use('/votos', votosRoutes);
-
-app.get("/candidatos", async (_, res) => {
-  try {
-    const candidates = await Vote.getAllCandidates();
-    return res.status(200).send({ candidates });
-  } catch (err) {
-    console.error(err);
-    return res.status(400).send({ sucess: false, message: err.message || 'Error while retrieving all candidates.' });
-  }
-});
+app.use('/candidatos', candidatosRoutes);
 
 app.get("/limparVotos", async (_, res) => {
   try {
