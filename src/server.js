@@ -1,9 +1,8 @@
 import express from "express";
 import cors from "cors";
 import path from 'path';
-import db from "./db";
-import wss from "./sockets";
 import * as Vote from './models/vote.model';
+import secoesRoutes from './routes/secoes.routes';
 
 const ASSETS_DIR = path.resolve(__dirname, 'static');
 
@@ -22,41 +21,7 @@ app.get("/candidatos", async (_, res) => {
   }
 });
 
-app.get("/secoes", async (_, res) => {
-  try {
-    const sections = await Vote.getAllSections();
-    return res.status(200).send(sections);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send({ message: err.message || 'Error while retrieving all the sections' });
-  }
-});
-
-app.get("/secoes/:numSecao", async (req, res) => {
-  const { numSecao } = req.params;
-
-  try {
-    const section = await Vote.getSectionByNumber(numSecao);
-    return res.status(200).send({ success: true, data: section });
-  } catch (err) {
-    return res.status(500).send({ success: false, message: err.message || "Error while retrieving section by its number." });
-  }
-});
-
-app.patch("/secoes/:numSecao/votos", async (req, res) => {
-  const { numSecao } = req.params;
-  const { votos } = req.body;
-
-  try {
-    const voteSectionPayload = await Vote.registerVoteOnSection(numSecao, votos);
-    
-    wss.broadcast({ type: "UPDATED_SECTION", payload: voteSectionPayload });
-    return res.status(200).send({ success: true });
-  } catch (err) {
-    console.error(err);
-    return res.status(400).send({ success: false });
-  }
-});
+app.use('/secoes', secoesRoutes);
 
 app.get("/votos", async (_, res) => {
   try {
