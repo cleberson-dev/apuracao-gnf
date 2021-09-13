@@ -90,3 +90,8 @@ export async function cleanAllVotes() {
   await db("vote").update("votos", 0);
   await db("section").update("totalizada", false);
 }
+
+export async function getAllCandidates() {
+  const candidates = await db("candidate");
+  return candidates;
+}
