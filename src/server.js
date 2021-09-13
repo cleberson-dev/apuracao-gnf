@@ -67,13 +67,14 @@ app.get("/votos", async (_, res) => {
 
 app.post("/votos", async (req, res) => {
   const { numSecao, numCandidato, votos } = req.body;
-  const newVote = await db("vote").insert({
-    numero_secao: numSecao,
-    numero_candidato: numCandidato,
-    votos: votos || 0,
-  });
-  res.status(201);
-  return res.send({ success: true, data: newVote });
+  
+  try {
+    const newVote = await Vote.createVotes({ numSecao, numCandidato, votos });
+    return res.status(201).send({ success: true, data: newVote });
+  } catch (err) {
+    console.error(err);
+    return res.status(400).send({ success: false, message: err.message || 'Error while registering new votes.' });
+  }
 });
 
 app.get("/limparVotos", async (req, res) => {

@@ -61,3 +61,13 @@ export async function getAllVotes() {
   const votes = await db("vote");
   return votes;
 }
+
+export async function createVotes({ numSecao, numCandidato, votos }) {
+  const newVote = await db("vote").insert({
+    numero_secao: numSecao,
+    numero_candidato: numCandidato,
+    votos: votos || 0,
+  });
+
+  return newVote;
+}
