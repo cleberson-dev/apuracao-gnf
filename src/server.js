@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
-import puppeteer from "puppeteer";
 import path from 'path';
 import db from "./db";
 import wss from "./sockets";
+import * as Vote from './models/vote.model';
 
 const ASSETS_DIR = path.resolve(__dirname, 'static');
 
@@ -19,30 +19,14 @@ app.get("/candidatos", async (req, res) => {
   return res.send(candidates);
 });
 
-app.get("/secoes", async (req, res) => {
-  let sections = await db("section");
-  sections = await Promise.all(
-    sections.map(async (section) => {
-      let sectionVotes = await db("vote").where({ numero_secao: section.num });
-      let votos = {};
-      sectionVotes.forEach((sv) => {
-        const key = sv.numero_candidato != 0 ? sv.numero_candidato : "outros";
-        votos[key] = sv.votos;
-      });
-
-      return {
-        num: section.num,
-        local: section.local,
-        eleitores: section.eleitores,
-        zona: section.zona.toLowerCase(),
-        closed: section.totalizada === 0 ? false : true,
-        votos,
-      };
-    })
-  );
-
-  res.status(200);
-  return res.send(sections);
+app.get("/secoes", async (_, res) => {
+  try {
+    const sections = await Vote.getAllSections();
+    return res.status(200).send(sections);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ message: err.message || 'Error while retrieving all the sections' });
+  }
 });
 
 app.get("/secoes/:numSecao", async (req, res) => {
