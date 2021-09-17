@@ -1,4 +1,5 @@
 exports.seed = function(knex) {
+  let sections;
   return knex("vote")
     .del()
     .then(() => knex("section"))

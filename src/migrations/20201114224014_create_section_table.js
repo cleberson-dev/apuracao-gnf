@@ -1,4 +1,3 @@
-
 exports.up = (knex) => knex.schema.createTable('section', table => {
     table.integer('num').primary();
     table.string('local');
@@ -7,6 +6,4 @@ exports.up = (knex) => knex.schema.createTable('section', table => {
     table.boolean('totalizada').defaultTo(false);
 });
 
-exports.down = function(knex) {
-  
-};
+exports.down = (knex) => knex.schema.dropTable('section');

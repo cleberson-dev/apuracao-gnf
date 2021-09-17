@@ -34,7 +34,7 @@ export async function registerVoteOnSection(sectionNum, votes) {
     await db("vote").where({
       numero_candidato: Number(numCandidato),
       numero_secao: Number(sectionNum)
-    }).update("votos", votos[numCandidato]);
+    }).update("votos", votes[numCandidato]);
   }
   await db("section").where("num", Number(sectionNum)).update("totalizada", true);
   const voteSection = await db("section").where("num", Number(sectionNum)).first();

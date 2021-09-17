@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import wss from '../sockets';
 import * as Vote from './models/vote.model';
 
 const routes = Router();

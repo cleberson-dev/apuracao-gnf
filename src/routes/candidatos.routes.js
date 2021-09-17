@@ -3,7 +3,7 @@ import * as Vote from './models/vote.model';
 
 const routes = Router();
 
-app.get("/", async (_, res) => {
+routes.get("/", async (_, res) => {
   try {
     const candidates = await Vote.getAllCandidates();
     return res.status(200).send({ candidates });
