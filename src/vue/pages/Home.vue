@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <votes-stats />
-    
+
     <div class="filtros">
       <votes-stats-by-zone zone="urbana" />
       <votes-stats-by-zone zone="rural" />
@@ -17,14 +17,14 @@ export default {
   components: {
     VotesStats,
     VotesStatsByZone,
-  }
+  },
 };
 </script>
 
 <style scoped>
 .home {
   min-height: 100vh;
-  background-color: #EFEFEF;
+  background-color: #efefef;
   display: flex;
 }
 

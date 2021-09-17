@@ -27,25 +27,25 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
-  name: 'MyHeader',
+  name: "MyHeader",
   methods: {
     async onPrint() {
-      const res = await axios.get('http://localhost:5000/print');
+      const res = await axios.get("http://localhost:5000/print");
       const { data } = res.data;
       const link = document.createElement("a");
       link.download = data.name;
       link.href = data.path;
       link.click();
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
 header {
-  background-color: #2A9D8F;
+  background-color: #2a9d8f;
   height: 100vh;
   width: 80px;
   position: fixed;
@@ -61,7 +61,7 @@ li {
 }
 
 li:hover {
-  background-color: rgba(0, 0, 0, .2);
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 nav .item {
@@ -76,8 +76,6 @@ nav .item {
   font-weight: 700;
 }
 
-
-
 nav .item img {
   width: 28px;
   height: 28px;
@@ -89,7 +87,7 @@ button.item {
   border: none;
   outline: none;
   width: 100%;
-  font-family: 'Montserrat',sans-serif;
+  font-family: "Montserrat", sans-serif;
   cursor: pointer;
 }
 
@@ -100,5 +98,7 @@ button.item {
   align-items: center;
   padding: 20px 0;
 }
-.logo img { width: 36px; }
+.logo img {
+  width: 36px;
+}
 </style>

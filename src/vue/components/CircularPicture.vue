@@ -33,8 +33,8 @@ export default {
     },
     borderWidth: {
       type: Number,
-      default: 1
-    }
+      default: 1,
+    },
   },
 };
 </script>
@@ -46,6 +46,6 @@ export default {
   margin: 0;
   background-size: cover;
   background-position: center;
-  background-color: #C4C4C4;
+  background-color: #c4c4c4;
 }
 </style>

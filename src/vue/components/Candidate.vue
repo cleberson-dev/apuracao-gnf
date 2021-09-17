@@ -1,5 +1,5 @@
 <template>
-  <div v-if="featured" :class="['candidate', gray ? 'gray' : '' ]">
+  <div v-if="featured" :class="['candidate', gray ? 'gray' : '']">
     <circular-picture :src="profilePicture" :size="size" :color="color" />
     <div class="info">
       <div
@@ -10,13 +10,12 @@
         }"
       ></div>
       <div class="votes">
-      <p :style="{ color: color }" class="abs-votes">{{ votes }}</p>
-      <p v-if="votes > 0" :style="{ color: color }" class="rel-votes">
-        {{ formattedPercentage }}%
-      </p>
+        <p :style="{ color: color }" class="abs-votes">{{ votes }}</p>
+        <p v-if="votes > 0" :style="{ color: color }" class="rel-votes">
+          {{ formattedPercentage }}%
+        </p>
+      </div>
     </div>
-    </div>
-    
   </div>
 
   <div v-else class="candidate_compact">
@@ -38,7 +37,6 @@
   </div>
 </template>
 
-
 <script>
 import CircularPicture from "./CircularPicture.vue";
 
@@ -50,7 +48,7 @@ export default {
     name: {
       type: String,
       required: false,
-      default: ""
+      default: "",
     },
     votes: {
       type: Number,
@@ -71,12 +69,12 @@ export default {
     },
     gray: {
       type: Boolean,
-      default: false
+      default: false,
     },
     size: {
       type: Number,
-      default: 4
-    }
+      default: 4,
+    },
   },
   computed: {
     percentage() {
@@ -197,6 +195,6 @@ export default {
   border-radius: 50%;
   border: 5px solid;
   margin: 0;
-  background-color: #C4C4C4;
+  background-color: #c4c4c4;
 }
 </style>

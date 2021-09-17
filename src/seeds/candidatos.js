@@ -1,7 +1,7 @@
-exports.seed = function(knex) {
+exports.seed = function (knex) {
   return knex("candidate")
     .del()
-    .then(function() {
+    .then(function () {
       return knex("candidate").insert([
         {
           numero: 22,

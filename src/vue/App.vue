@@ -8,8 +8,6 @@
   </div>
 </template>
 
-  
-
 <script>
 import { mapActions } from "vuex";
 import MyHeader from "./components/MyHeader";

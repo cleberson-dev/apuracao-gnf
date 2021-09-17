@@ -1,4 +1,4 @@
-exports.seed = function(knex) {
+exports.seed = function (knex) {
   let sections;
   return knex("vote")
     .del()
@@ -23,5 +23,5 @@ exports.seed = function(knex) {
     .then((res) => {
       console.log("Terminado", res.length);
     })
-    .catch(err => console.error(err));
+    .catch((err) => console.error(err));
 };

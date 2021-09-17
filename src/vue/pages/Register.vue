@@ -30,7 +30,12 @@
           :size="4"
           :color="candidate.cor"
         />
-        <input min="0" :max="Number(formVotes[candidate.numero]) + Number(votesLeft)" type="number" v-model="formVotes[candidate.numero]" />
+        <input
+          min="0"
+          :max="Number(formVotes[candidate.numero]) + Number(votesLeft)"
+          type="number"
+          v-model="formVotes[candidate.numero]"
+        />
         <span>votos</span>
       </div>
     </div>

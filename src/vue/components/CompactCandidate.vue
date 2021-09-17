@@ -1,57 +1,50 @@
 <template>
   <div v-if="featured" class="compact-candidate">
     <div class="stats">
-      <div 
-        class="bar-wrapper"
-        :style="{ flexGrow: 1 }"
-      >
+      <div class="bar-wrapper" :style="{ flexGrow: 1 }">
         <div
           class="bar"
           :style="{
             backgroundColor: color,
-            width: `calc(100% * ${percentage})`
+            width: `calc(100% * ${percentage})`,
           }"
         />
       </div>
-      <circular-picture 
-        :src="profilePicture"
-        :color="color"
-        :size="1"
-      />
-      <p class="rel-votes" :style="{ color: color }">{{formattedPercentage}}%</p>
+      <circular-picture :src="profilePicture" :color="color" :size="1" />
+      <p class="rel-votes" :style="{ color: color }">
+        {{ formattedPercentage }}%
+      </p>
     </div>
-    <p class="abs-votes" :style="{ color: color }">{{votes}} votos</p>
+    <p class="abs-votes" :style="{ color: color }">{{ votes }} votos</p>
   </div>
 
   <div v-else class="compact-candidate_mini">
-    <circular-picture 
-      :src="profilePicture"
-      :color="color"
-      :size="1.2"
-    />
+    <circular-picture :src="profilePicture" :color="color" :size="1.2" />
     <div class="votes">
-      <p class="relative" :style="{ color: color }">{{formattedPercentage}}%</p>
-      <p class="absolute">{{votes}} votos</p>
+      <p class="relative" :style="{ color: color }">
+        {{ formattedPercentage }}%
+      </p>
+      <p class="absolute">{{ votes }} votos</p>
     </div>
   </div>
 </template>
 
 <script>
-import CircularPicture from './CircularPicture';
+import CircularPicture from "./CircularPicture";
 
 export default {
   components: {
-    CircularPicture
+    CircularPicture,
   },
   props: {
     name: {
       type: String,
       required: false,
-      default: ""
+      default: "",
     },
     votes: {
       type: Number,
-      default: 0
+      default: 0,
     },
     totalVotes: Number,
     profilePicture: {
@@ -72,7 +65,7 @@ export default {
       return this.votes / this.totalVotes;
     },
     formattedPercentage() {
-      const val = isNaN(this.percentage) ? 0 : this.percentage; 
+      const val = isNaN(this.percentage) ? 0 : this.percentage;
       return (val * 100).toFixed(2).replace(".", ",");
     },
   },
@@ -97,18 +90,24 @@ export default {
   font-weight: 700;
   margin: 0;
 }
-.compact-candidate .rel-votes { font-size: 1.1rem; }
-.compact-candidate .abs-votes { font-size: 0.9rem; }
+.compact-candidate .rel-votes {
+  font-size: 1.1rem;
+}
+.compact-candidate .abs-votes {
+  font-size: 0.9rem;
+}
 
-
-.compact-candidate .rel-votes { margin-left: 5px; }
-
+.compact-candidate .rel-votes {
+  margin-left: 5px;
+}
 
 .compact-candidate_mini {
   display: flex;
 }
 
-.compact-candidate_mini .votes p { margin: 0; }
+.compact-candidate_mini .votes p {
+  margin: 0;
+}
 
 .compact-candidate_mini .votes {
   display: flex;

@@ -969,15 +969,18 @@ const data = [
 
 exports.seed = function (knex) {
   // Deletes ALL existing entries
-  return knex('section').del()
+  return knex("section")
+    .del()
     .then(function () {
       // Inserts seed entries
-      return knex('section').insert(data.map(s => ({
-        num: s.num,
-        local: s.local,
-        eleitores: s.eleitores,
-        zona: s.zona,
-        totalizada: s.closed
-      })));
+      return knex("section").insert(
+        data.map((s) => ({
+          num: s.num,
+          local: s.local,
+          eleitores: s.eleitores,
+          zona: s.zona,
+          totalizada: s.closed,
+        }))
+      );
     });
 };

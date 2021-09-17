@@ -4,8 +4,16 @@
     <section-header
       leftTitle="Geral"
       :leftSubtitle="votosApurados + ' votos apurados'"
-      :rightTitle="formatarPercentual(closedSections.length / allSections.length) + '%'"
-      :rightSubtitle="'Seções totalizadas (' + closedSections.length + '/' + allSections.length + ')'"
+      :rightTitle="
+        formatarPercentual(closedSections.length / allSections.length) + '%'
+      "
+      :rightSubtitle="
+        'Seções totalizadas (' +
+        closedSections.length +
+        '/' +
+        allSections.length +
+        ')'
+      "
     />
 
     <candidate
@@ -17,7 +25,7 @@
       :totalVotes="validVotes"
     />
 
-    <votes-diff 
+    <votes-diff
       :votesA="votesByCandidate(challengers[0].numero)"
       :votesB="votesByCandidate(challengers[1].numero)"
     />
@@ -56,14 +64,14 @@
 <script>
 import { mapGetters } from "vuex";
 import Candidate from "./Candidate";
-import SectionHeader from './SectionHeader.vue';
-import VotesDiff from './VotesDiff.vue';
+import SectionHeader from "./SectionHeader.vue";
+import VotesDiff from "./VotesDiff.vue";
 
 export default {
   components: {
     Candidate,
     SectionHeader,
-    VotesDiff
+    VotesDiff,
   },
   computed: {
     ...mapGetters([
@@ -82,13 +90,13 @@ export default {
     },
     otherCandidates() {
       return this.sortedCandidates.slice(2);
-    }
+    },
   },
   methods: {
     formatarPercentual(decimal) {
       const val = isNaN(decimal) ? 0 : decimal;
       return (val * 100).toFixed(2).replace(".", ",");
-    }
+    },
   },
 };
 </script>
