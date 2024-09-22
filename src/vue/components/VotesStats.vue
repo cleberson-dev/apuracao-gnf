@@ -63,7 +63,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import Candidate from "./Candidate";
+import Candidate from "./Candidate.vue";
 import SectionHeader from "./SectionHeader.vue";
 import VotesDiff from "./VotesDiff.vue";
 

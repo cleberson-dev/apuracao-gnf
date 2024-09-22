@@ -10,7 +10,7 @@
 
 <script>
 import { mapActions } from "vuex";
-import MyHeader from "./components/MyHeader";
+import MyHeader from "./components/MyHeader.vue";
 import { wsc } from "./main";
 
 export default {

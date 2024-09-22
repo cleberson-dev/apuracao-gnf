@@ -55,8 +55,8 @@
 </template>
 
 <script>
-import CircularPicture from "../components/CircularPicture";
-import CustomButton from "../components/CustomButton";
+import CircularPicture from "../components/CircularPicture.vue";
+import CustomButton from "../components/CustomButton.vue";
 import { mapGetters, mapActions } from "vuex";
 
 export default {

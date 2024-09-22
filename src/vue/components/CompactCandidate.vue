@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import CircularPicture from "./CircularPicture";
+import CircularPicture from "./CircularPicture.vue";
 
 export default {
   components: {

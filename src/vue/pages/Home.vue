@@ -10,8 +10,8 @@
 </template>
 
 <script>
-import VotesStats from "../components/VotesStats";
-import VotesStatsByZone from "../components/VotesStatsByZone";
+import VotesStats from "../components/VotesStats.vue";
+import VotesStatsByZone from "../components/VotesStatsByZone.vue";
 
 export default {
   components: {

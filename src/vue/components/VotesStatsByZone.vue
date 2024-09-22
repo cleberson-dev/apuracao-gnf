@@ -66,9 +66,9 @@
 
 <script>
 import { mapGetters } from "vuex";
-import CompactCandidate from "./CompactCandidate";
-import SectionHeader from "./SectionHeader";
-import VotesDiff from "./VotesDiff";
+import CompactCandidate from "./CompactCandidate.vue";
+import SectionHeader from "./SectionHeader.vue";
+import VotesDiff from "./VotesDiff.vue";
 
 export default {
   components: {
