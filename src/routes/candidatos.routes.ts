@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as Vote from "./models/vote.model";
+import * as Vote from "../models/vote.model";
 
 const routes = Router();
 
@@ -9,12 +9,11 @@ routes.get("/", async (_, res) => {
     return res.status(200).send({ candidates });
   } catch (err) {
     console.error(err);
-    return res
-      .status(400)
-      .send({
-        sucess: false,
-        message: err.message || "Error while retrieving all candidates.",
-      });
+    return res.status(400).send({
+      sucess: false,
+      message:
+        (err as Error).message || "Error while retrieving all candidates.",
+    });
   }
 });
 

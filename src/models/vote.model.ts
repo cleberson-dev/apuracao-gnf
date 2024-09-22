@@ -1,12 +1,29 @@
 import db from "../db";
 
+export type Vote = {
+  numero_secao: number;
+  numero_candidato: number;
+  votos: number;
+};
+
+type SectionVotes = Record<string | number, Vote>;
+
+export type Section = {
+  num: number;
+  local: string;
+  eleitores: number;
+  zona: string;
+  closed?: boolean;
+  votos: SectionVotes;
+};
+
 export async function getAllSections() {
   const rows = await db("section");
-  const sections = [];
+  const sections: Section[] = [];
 
   for (const section of rows) {
     let sectionVotes = await db("vote").where({ numero_secao: section.num });
-    let votos = {};
+    let votos: SectionVotes = {};
     sectionVotes.forEach((sv) => {
       const key = sv.numero_candidato != 0 ? sv.numero_candidato : "outros";
       votos[key] = sv.votos;
@@ -24,12 +41,15 @@ export async function getAllSections() {
   return sections;
 }
 
-export async function getSectionByNumber(sectionNum) {
+export async function getSectionByNumber(sectionNum: number) {
   const section = await db("section").where("num", sectionNum);
   return section;
 }
 
-export async function registerVoteOnSection(sectionNum, votes) {
+export async function registerVoteOnSection(
+  sectionNum: number,
+  votes: SectionVotes
+) {
   for (const numCandidato in votes) {
     await db("vote")
       .where({
@@ -46,7 +66,7 @@ export async function registerVoteOnSection(sectionNum, votes) {
     .first();
   const sectionVotes = await db("vote").where("numero_secao", sectionNum);
 
-  let novosVotos = {};
+  let novosVotos: SectionVotes = {};
   sectionVotes.forEach((sv) => {
     const key = sv.numero_candidato != 0 ? sv.numero_candidato : "outros";
     novosVotos[key] = sv.votos;
@@ -68,7 +88,15 @@ export async function getAllVotes() {
   return votes;
 }
 
-export async function createVotes({ numSecao, numCandidato, votos }) {
+export async function createVotes({
+  numSecao,
+  numCandidato,
+  votos,
+}: {
+  numSecao: number;
+  numCandidato: number;
+  votos: number;
+}) {
   const newVote = await db("vote").insert({
     numero_secao: numSecao,
     numero_candidato: numCandidato,
@@ -79,7 +107,7 @@ export async function createVotes({ numSecao, numCandidato, votos }) {
 }
 
 export async function cleanAllVotes() {
-  const votes = [];
+  const votes: Vote[] = [];
   await db("vote").del();
   const sections = await db("section");
   const candidates = await db("candidate");

@@ -125,7 +125,8 @@ const actions = {
     axios
       .get("http://localhost:5000/candidatos")
       .then(({ data }) => {
-        commit("fetchCandidates", data);
+        console.log("Fetched", data);
+        commit("fetchCandidates", data.candidates);
       })
       .catch(console.error);
   },

@@ -21,6 +21,7 @@ export default {
   created() {
     this.fetchSections();
     this.fetchCandidates();
+
     wsc.onmessage = (event) => {
       const message = JSON.parse(event.data);
       switch (message.type) {
