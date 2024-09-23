@@ -5,8 +5,8 @@
   "scripts": {
     "dev:client": "vite",
     "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build",
-    "electron:serve": "vue-cli-service electron:serve",
+    "electron:build": "electron-vite build",
+    "electron:dev": "electron-vite dev",
     "postuninstall": "electron-builder install-app-deps",
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
     "init": "knex init",
@@ -19,7 +19,7 @@
     "build:server": "babel src --out-dir dist --config-file ./babel.server.config.js",
     "format": "prettier --write ."
   },
-  "main": "src/index.ts",
+  "main": "src/vue/background.js",
   "type": "module",
   "dependencies": {
     "@vue/compat": "^3.2.25",
@@ -50,6 +50,7 @@
     "electron": "^32.1.2",
     "electron-devtools-installer": "^3.2.0",
     "electron-rebuild": "^3.2.9",
+    "electron-vite": "^2.3.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^9.28.0",
     "nodemon": "^2.0.6",
