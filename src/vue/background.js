@@ -1,6 +1,7 @@
 "use strict";
 
 import { app, protocol, BrowserWindow } from "electron";
+
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Scheme must be registered before the app is ready
@@ -22,7 +23,11 @@ async function createWindow() {
     },
   });
 
-  await win.loadURL(isDevelopment ? "http://localhost:5173" : "index.html");
+  if (isDevelopment) {
+    win.loadURL("http://localhost:5173");
+  } else {
+    win.loadFile("index.html");
+  }
 }
 
 // Quit when all windows are closed.
