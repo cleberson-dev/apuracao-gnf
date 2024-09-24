@@ -1,11 +1,14 @@
-import axios from "axios";
-
-const client = axios.create({
-  baseURL: "http://localhost:5000",
-});
+import sections from "../../sections";
+import { RepositorySection, Zone } from "../../repositories/vote.repository";
 
 export default class SectionService {
-  static fetchAll() {
-    return client.get("/secoes");
+  static fetchAll(): RepositorySection[] {
+    return sections.map((section) => ({
+      number: section.numero,
+      local: section.local,
+      voters: section.eleitores,
+      zone: section.zona as Zone,
+      closed: section.totalizada,
+    }));
   }
 }

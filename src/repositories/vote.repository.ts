@@ -1,80 +1,44 @@
-import db, { DbCandidate, DbSection, DbVote } from "../db";
-import { RepositorySection, SectionVotes, Zone } from "./section.repository";
+import db from "../db/db";
+import { votos } from "../db/schema";
 
-export async function registerVoteOnSection(
-  sectionNum: number,
-  votes: SectionVotes
-) {
-  for (const candidateNumber in votes) {
-    await db("vote")
-      .where({
-        numero_candidato: candidateNumber === "outros" ? 0 : +candidateNumber,
-        numero_secao: +sectionNum,
-      })
-      .update("votos", votes[candidateNumber]);
-  }
-  await db("section")
-    .where("num", +sectionNum)
-    .update("totalizada", true);
-  const voteSection = await db("section")
-    .where("num", +sectionNum)
-    .first();
-  const sectionVotes = await db("vote").where("numero_secao", sectionNum);
-
-  let newVotes: SectionVotes = { outros: 0 };
-  sectionVotes.forEach((sv) => {
-    const key = sv.numero_candidato != 0 ? sv.numero_candidato : "outros";
-    newVotes[key] = sv.votos;
-  });
-
-  const voteSectionPayload: RepositorySection = {
-    number: voteSection.num,
-    local: voteSection.local,
-    voters: voteSection.eleitores,
-    zone: voteSection.zona.toLowerCase() as Zone,
-    closed: voteSection.totalizada !== 0,
-    votes: newVotes,
-  };
-
-  return voteSectionPayload;
-}
-
-export async function getAllVotes(): Promise<DbVote[]> {
-  const votes = await db("vote");
-  return votes;
-}
+export type SectionVotes = Record<number | "outros", number>;
 
 export async function cleanAllVotes(): Promise<void> {
-  const votes: DbVote[] = [];
-  await db("vote").del();
-
-  const sections = (await db("section")) as DbSection[];
-  const candidates = (await db("candidate")) as DbCandidate[];
-
-  sections.forEach((s) => {
-    candidates.forEach((c) => {
-      votes.push({
-        numero_secao: s.num,
-        numero_candidato: c.numero,
-        votos: 0,
-      });
-    });
-  });
-  await Promise.all(votes.map((v) => db("vote").insert(v)));
-  await db("vote").update("votos", 0);
-  await db("section").update("totalizada", false);
+  await db.delete(votos);
+  // TODO: Limpar seções totalizadas
 }
 
-export async function addVotes(
-  sectionNumber: number,
-  candidateNumber: number,
-  amount: number
-) {
-  const newVote = await db("vote").insert({
-    numero_secao: sectionNumber,
-    numero_candidato: candidateNumber,
-    votos: amount || 0,
+export async function getVotesBySection(
+  sectionNumber: number
+): Promise<SectionVotes> {
+  const votes = await db.query.votos.findMany({
+    where: (votos, { eq }) => eq(votos.sectionNumber, sectionNumber),
   });
 
-  return newVote;
+  const sectionVotes: SectionVotes = { outros: 0 };
+  votes.forEach((v) => {
+    sectionVotes[v.candidateNumber === 0 ? "outros" : v.candidateNumber] =
+      v.amount;
+  });
+  return sectionVotes;
+}
+
+export async function vote(sectionNumber: number, sectionVotes: SectionVotes) {
+  for (const candidate in sectionVotes) {
+    const candidateNumber = candidate === "outros" ? 0 : +candidate;
+    const payload = {
+      sectionNumber,
+      candidateNumber,
+      amount: sectionVotes[candidate],
+    };
+    console.log({ payload });
+    await db
+      .insert(votos)
+      .values(payload)
+      .onConflictDoUpdate({
+        target: [votos.candidateNumber, votos.sectionNumber],
+        set: { amount: sectionVotes[candidate] },
+      });
+  }
+  // TODO: Marcar seção como totalizada
 }

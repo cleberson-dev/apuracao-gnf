@@ -2,9 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import * as VoteRepository from "./repositories/vote.repository";
-import secoesRoutes from "./routes/secoes.routes";
-import votosRoutes from "./routes/votos.routes";
-import candidatosRoutes from "./routes/candidatos.routes";
+import votosRoutes from "./routes/votes.routes";
 
 const ASSETS_DIR = path.resolve(__dirname, "static");
 
@@ -13,9 +11,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/static", express.static(ASSETS_DIR));
 
-app.use("/secoes", secoesRoutes);
 app.use("/votos", votosRoutes);
-app.use("/candidatos", candidatosRoutes);
 
 app.get("/limparVotos", async (_, res) => {
   try {
