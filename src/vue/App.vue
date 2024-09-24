@@ -23,7 +23,6 @@ import { wsc } from "./main";
 const store = useStore();
 onMounted(() => {
   store.dispatch('fetchSections');
-  store.dispatch('fetchCandidates');
 
   wsc.onmessage = (event) => {
     const message = JSON.parse(event.data);

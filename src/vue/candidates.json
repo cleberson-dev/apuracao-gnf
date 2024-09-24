@@ -1,0 +1,37 @@
+[
+  {
+    "numero": 22,
+    "nome": "FERNANDO PL",
+    "codigo": "100002207926",
+    "partido": "PARTIDO LIBERAL",
+    "cor": "blue"
+  },
+  {
+    "numero": 30,
+    "nome": "ZÉ RAMOS",
+    "codigo": "100002211467",
+    "partido": "PARTIDO NOVO",
+    "cor": "orange"
+  },
+  {
+    "numero": 40,
+    "nome": "STEFANO BRANDÃO",
+    "codigo": "100002022611",
+    "partido": "PARTIDO SOCIALISTA BRASILEIRO",
+    "cor": "yellow"
+  },
+  {
+    "numero": 55,
+    "nome": "IRMÃO CARLOS",
+    "codigo": "100002213883",
+    "partido": "PARTIDO SOCIAL DEMOCRÁTICO",
+    "cor": "pink"
+  },
+  {
+    "numero": 44,
+    "nome": "MARCEL CURIÓ",
+    "codigo": "100002341975",
+    "partido": "UNIÃO BRASIL",
+    "cor": "green"
+  }
+]

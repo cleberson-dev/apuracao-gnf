@@ -1,5 +1,5 @@
 <template>
-  <form v-if="store.getters.allSections.length > 0 && store.getters.candidates.length > 0">
+  <form v-if="store.getters.allSections.length > 0 && candidates.length > 0">
     <div>
       <h1>Cadastrar votos</h1>
       <label>Selecione a seção</label>
@@ -14,8 +14,8 @@
       </select>
     </div>
 
-    <div class="votos" v-if="store.getters.candidates.length > 0">
-      <div class="candidato" v-for="candidate in store.getters.candidates" :key="candidate.number">
+    <div class="votos" v-if="candidates.length > 0">
+      <div class="candidato" v-for="candidate in candidates" :key="candidate.number">
         <h4 class="nome">{{ candidate.name }}</h4>
         <circular-picture :src="candidate.profilePicture" :size="4" :color="candidate.color" />
         <input min="0" :max="Number(formVotes[candidate.number]) + Number(votesLeft)" type="number"
@@ -47,18 +47,15 @@ import { push } from "notivue";
 import CircularPicture from "../components/CircularPicture.vue";
 import CustomButton from "../components/CustomButton.vue";
 import { RepositorySection } from "../../repositories/section.repository";
+import CandidateService from "../services/candidate.service";
 
 const store = useStore();
 const router = useRouter();
 
 const formSection = ref(26);
-let formVotes: Record<number | "outros", number> = reactive({
-  22: 0,
-  40: 0,
-  77: 0,
-  27: 0,
-  outros: 0,
-});
+const candidates = CandidateService.getAll();
+let formVotes: Record<number | "outros", number> = reactive(Object.fromEntries([...candidates.map(candidate => [candidate.number, 0]), ["outros", 0]]));
+console.log({ formVotes })
 
 const votesEntered = computed(() => {
   let votos = 0;

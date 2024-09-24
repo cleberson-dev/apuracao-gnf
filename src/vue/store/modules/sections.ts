@@ -1,6 +1,5 @@
 import { Commit } from "vuex";
 import { VoteService } from "../../services/vote.service";
-import CandidateService from "../../services/candidate.service";
 import SectionService from "../../services/section.service";
 import type { Candidate } from "../../../types";
 import {
@@ -10,12 +9,10 @@ import {
 
 type State = {
   sections: RepositorySection[];
-  candidates: Candidate[];
 };
 
 const state: State = {
   sections: [],
-  candidates: [],
 };
 
 const getters = {
@@ -103,18 +100,7 @@ const getters = {
       state.sections
         .filter((s) => !!s.closed && s.zone === zone)
         .reduce((prev, acc) => prev + acc.votes[candidate], 0),
-  candidates: (state: State) => state.candidates,
-  sortedCandidates: (state: State) =>
-    state.candidates.sort((a, b) => {
-      const votesA = state.sections
-        .filter((s) => !!s.closed)
-        .reduce((prev, acc) => prev + acc.votes[a.number], 0);
-      const votesB = state.sections
-        .filter((s) => !!s.closed)
-        .reduce((prev, acc) => prev + acc.votes[b.number], 0);
 
-      return votesB - votesA;
-    }),
   votosApurados: (state: State) =>
     state.sections
       .filter((s) => !!s.closed)
@@ -135,10 +121,6 @@ const actions: Record<
   ) {
     await VoteService.vote(sectionNumber, votes);
     commit("updateVotes", { sectionNumber, votes });
-  },
-  async fetchCandidates({ commit }) {
-    const candidates = await CandidateService.fetchAll();
-    commit("fetchCandidates", candidates);
   },
   async fetchSections({ commit }) {
     const { data } = await SectionService.fetchAll();
@@ -166,12 +148,6 @@ const mutations = {
     const section = state.sections.find((s) => s.number === sectionNumber)!;
     section.votes = votes;
     section.closed = true;
-  },
-  fetchCandidates: (state: State, candidates: Candidate[]) => {
-    state.candidates = candidates.map((candidate: Candidate) => ({
-      ...candidate,
-      numero: candidate.number === 0 ? "outros" : candidate.number,
-    }));
   },
   fetchSections: (state: State, sections: RepositorySection[]) => {
     state.sections = sections;

@@ -1,5 +1,5 @@
 <template>
-  <section class="apuracao-geral" v-if="store.getters.sortedCandidates.length > 0">
+  <section class="apuracao-geral" v-if="candidates.length > 0">
     <h1 class="pageTitle">Apuração Paralela de Gov. Nunes Freire - MA</h1>
     <section-header leftTitle="Geral" :leftSubtitle="store.getters.votosApurados + ' votos apurados'" :rightTitle="formatarPercentual(store.getters.closedSections.length / store.getters.allSections.length) + '%'
       " :rightSubtitle="'Seções totalizadas (' +
@@ -16,7 +16,7 @@
     <votes-diff :votesA="store.getters.votesByCandidate(challengers[0].number)"
       :votesB="store.getters.votesByCandidate(challengers[1].number)" />
 
-    <candidate featured :name="challengers[1].nome" :profilePicture="challengers[1].profilePicture"
+    <candidate featured :name="challengers[1].name" :profilePicture="challengers[1].profilePicture"
       :color="challengers[1].color" :votes="store.getters.votesByCandidate(challengers[1].number)"
       :totalVotes="store.getters.validVotes" />
 
@@ -37,14 +37,17 @@ import { useStore } from "vuex";
 import Candidate from "./Candidate.vue";
 import SectionHeader from "./SectionHeader.vue";
 import VotesDiff from "./VotesDiff.vue";
+import { sortCandidates } from "../utils";
+import CandidateService from "../services/candidate.service";
 
 const store = useStore();
-
+const candidates = CandidateService.getAll();
+const sortedCandidates = computed(() => sortCandidates(candidates, store.state.sections.sections));
 const challengers = computed(() => {
-  return store.getters.sortedCandidates.slice(0, 2);
+  return sortedCandidates.value.slice(0, 2);
 });
 const otherCandidates = computed(() => {
-  return store.getters.sortedCandidates.slice(2);
+  return sortedCandidates.value.slice(2);
 });
 
 const formatarPercentual = (decimal: number) => {

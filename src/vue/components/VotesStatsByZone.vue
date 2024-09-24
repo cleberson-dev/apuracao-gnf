@@ -1,5 +1,5 @@
 <template>
-  <section class="votes-stats-by-zone" v-if="store.getters.sortedCandidates.length > 0">
+  <section class="votes-stats-by-zone" v-if="candidates.length > 0">
     <section-header :size="0.75" :leftTitle="zone"
       :leftSubtitle="store.getters.votosApuradosPorZona(zone) + ' votos apurados'" :rightTitle="formatarPercentual(
         store.getters.closedSectionsByZone(zone).length / store.getters.sectionsByZone(zone).length
@@ -42,6 +42,8 @@ import { useStore } from "vuex";
 import CompactCandidate from "./CompactCandidate.vue";
 import SectionHeader from "./SectionHeader.vue";
 import VotesDiff from "./VotesDiff.vue";
+import CandidateService from "../services/candidate.service";
+import { sortCandidates } from "../utils";
 
 const store = useStore();
 
@@ -53,11 +55,14 @@ defineProps({
   },
 });
 
+const candidates = CandidateService.getAll();
+const sortedCandidates = computed(() => sortCandidates(candidates, store.state.sections.sections));
+
 const challengers = computed(() => {
-  return store.getters.sortedCandidates.slice(0, 2);
+  return sortedCandidates.value.slice(0, 2);
 });
 const otherCandidates = computed(() => {
-  return store.getters.sortedCandidates.slice(2);
+  return sortedCandidates.value.slice(2);
 });
 
 function formatarPercentual(decimal: number) {

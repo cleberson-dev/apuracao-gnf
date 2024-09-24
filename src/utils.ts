@@ -1,7 +1,8 @@
 import { readFile, writeFile } from "fs/promises";
 import { parse } from "csv-parse";
 import xlsx from "xlsx";
-import { Section } from "./types";
+import { Candidate, Section } from "./types";
+import { RepositorySection } from "./repositories/section.repository";
 
 const CD_MUNICIPIO = "07668"; // GOVERNADOR NUNES FREIRE => 07668
 
@@ -96,4 +97,50 @@ export const getSectionDataFromCSV = async (path: string) => {
   });
   records.read();
   console.log("Reading file...");
+};
+
+export const getCandidateDataFromCSV = async (path: string) => {
+  const headers: Record<string, number> = {};
+  const candidates: any[] = [];
+
+  const file = await readFile(path);
+  const records = parse(file, {
+    delimiter: ";",
+    bom: true,
+    relax_quotes: true,
+    encoding: "latin1",
+  });
+
+  records.on("error", (err) => {
+    console.error(err);
+  });
+
+  records.on("close", async () => {
+    const outputFilename = path.split(".").slice(0, -1).join(".") + ".json";
+    await writeFile(outputFilename, JSON.stringify(candidates));
+    console.log(`Read complete, saved as ${outputFilename}`);
+  });
+
+  records.on("data", (chunk: string[]) => {
+    if (Object.keys(headers).length === 0) {
+      chunk.forEach((col, idx) => (headers[col] = idx));
+      return;
+    }
+
+    if (
+      chunk[headers["SG_UE"]] === CD_MUNICIPIO &&
+      chunk[headers["DS_CARGO"]] === "PREFEITO"
+    ) {
+      const newCandidate = {
+        numero: +chunk[headers["NR_CANDIDATO"]],
+        nome: chunk[headers["NM_URNA_CANDIDATO"]],
+        codigo: chunk[headers["SQ_CANDIDATO"]],
+        partido: chunk[headers["NM_PARTIDO"]],
+      };
+
+      candidates.push(newCandidate);
+    }
+  });
+  records.read();
+  console.log(`Reading ${path}...`);
 };

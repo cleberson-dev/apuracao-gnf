@@ -1,19 +1,13 @@
-import axios from "axios";
-import { DbCandidate } from "../../db";
 import { Candidate } from "../../types";
-
-const client = axios.create({
-  baseURL: "http://localhost:5000",
-});
+import candidates from "../candidates.json";
 
 export default class CandidateService {
-  static async fetchAll(): Promise<Candidate[]> {
-    const { data } = await client.get<DbCandidate[]>("/candidatos");
-    return data.map((dbCandidate) => ({
-      number: dbCandidate.numero !== 0 ? dbCandidate.numero : "outros",
-      name: dbCandidate.nome,
-      color: dbCandidate.cor,
-      profilePicture: dbCandidate.perfil,
+  static getAll(): Candidate[] {
+    return candidates.map((candidate) => ({
+      name: candidate.nome,
+      number: candidate.numero,
+      profilePicture: `/candidates/${candidate.codigo}.jpg`,
+      color: candidate.cor,
     }));
   }
 }
