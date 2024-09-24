@@ -1,32 +1,27 @@
 <template>
-  <p
-    :class="['diff', difference >= 0 ? 'positive' : 'negative']"
-    :style="{ fontSize: `calc(1.25rem * ${size})` }"
-  >
+  <p :class="['diff', difference >= 0 ? 'positive' : 'negative']" :style="{ fontSize: `calc(1.25rem * ${size})` }">
     {{ difference >= 0 ? "+" : "-" }}
     {{ Math.abs(difference) }}
-    <span class="legend" :style="{ fontSize: `calc(0.75rem * ${size})` }"
-      >Diferença de votos</span
-    >
+    <span class="legend" :style="{ fontSize: `calc(0.75rem * ${size})` }">Diferença de votos</span>
   </p>
 </template>
 
-<script>
-export default {
-  props: {
-    votesA: Number,
-    votesB: Number,
-    size: {
-      type: Number,
-      default: 1,
-    },
+<script setup lang="ts">
+import { computed } from 'vue';
+
+const props = defineProps({
+  votesA: Number,
+  votesB: Number,
+  size: {
+    type: Number,
+    default: 1,
   },
-  computed: {
-    difference() {
-      return this.votesA - this.votesB;
-    },
-  },
-};
+});
+
+const difference = computed(() => {
+  if (props.votesA === undefined || props.votesB === undefined) return 0;
+  return props.votesA - props.votesB;
+});
 </script>
 
 <style scoped>

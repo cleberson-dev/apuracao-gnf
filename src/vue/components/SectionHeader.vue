@@ -19,19 +19,17 @@
   </header>
 </template>
 
-<script>
-export default {
-  props: {
-    leftTitle: String,
-    leftSubtitle: String,
-    rightTitle: String,
-    rightSubtitle: String,
-    size: {
-      type: Number,
-      default: 1,
-    },
+<script setup lang="ts">
+defineProps({
+  leftTitle: String,
+  leftSubtitle: String,
+  rightTitle: String,
+  rightSubtitle: String,
+  size: {
+    type: Number,
+    default: 1,
   },
-};
+});
 </script>
 
 <style scoped>
@@ -41,6 +39,7 @@ export default {
   align-items: flex-start;
   margin-bottom: 15px;
 }
+
 .section-header .right {
   text-align: right;
 }
@@ -50,6 +49,7 @@ export default {
   font-weight: 800;
   margin: 0;
 }
+
 .left .subtitle {
   font-size: 1rem;
   color: #909090;

@@ -1,20 +1,30 @@
 import axios from "axios";
+import { Commit } from "vuex";
 
-const state = {
+type Section = any;
+type Candidate = any;
+
+type State = {
+  sections: Section[];
+  candidates: Candidate[];
+};
+
+const state: State = {
   sections: [],
   candidates: [],
 };
 
 const getters = {
-  closedSections: (state) => state.sections.filter((s) => !!s.closed),
-  closedSectionsByZone: (state) => (zone) =>
+  closedSections: (state: State) => state.sections.filter((s) => !!s.closed),
+  closedSectionsByZone: (state: State) => (zone: string) =>
     state.sections.filter((s) => s.zona === zone && !!s.closed),
-  section: (state) => (num) => state.sections.find((s) => s.num === num),
-  allSections: (state) =>
+  section: (state: State) => (num: number) =>
+    state.sections.find((s) => s.num === num),
+  allSections: (state: State) =>
     state.sections.sort((a, b) => Number(a.num) - Number(b.num)),
-  sectionsByZone: (state) => (zone) =>
+  sectionsByZone: (state: State) => (zone: string) =>
     state.sections.filter((s) => s.zona === zone),
-  validVotes: (state) =>
+  validVotes: (state: State) =>
     state.sections
       .filter((s) => !!s.closed)
       .reduce((prev, acc) => {
@@ -24,7 +34,7 @@ const getters = {
         }
         return prev + votados;
       }, 0),
-  validVotesByZone: (state) => (zone) =>
+  validVotesByZone: (state: State) => (zone: string) =>
     state.sections
       .filter((s) => s.zona === zone && !!s.closed)
       .reduce((prev, acc) => {
@@ -34,7 +44,7 @@ const getters = {
         }
         return prev + votados;
       }, 0),
-  votesCounted: (state) =>
+  votesCounted: (state: State) =>
     state.sections
       .filter((s) => !!s.closed)
       .reduce((prev, acc) => {
@@ -44,7 +54,7 @@ const getters = {
         }
         return prev + votados;
       }, 0),
-  votesCountedByZone: (state) => (zone) =>
+  votesCountedByZone: (state: State) => (zone: string) =>
     state.sections
       .filter((s) => !!s.closed && s.zona === zone)
       .reduce((prev, acc) => {
@@ -54,13 +64,13 @@ const getters = {
         }
         return prev + votados;
       }, 0),
-  totalElectors: (state) =>
+  totalElectors: (state: State) =>
     state.sections.reduce((prev, acc) => prev + acc.eleitores, 0),
-  totalElectorsByZone: (state) => (zone) =>
+  totalElectorsByZone: (state: State) => (zone: string) =>
     state.sections
       .filter((s) => s.zona === zone)
       .reduce((prev, acc) => prev + acc.eleitores, 0),
-  nullVotes: (state) =>
+  nullVotes: (state: State) =>
     state.sections
       .filter((s) => !!s.closed)
       .reduce((prev, acc) => {
@@ -70,7 +80,7 @@ const getters = {
         }
         return prev + (acc.eleitores - votados);
       }, 0),
-  nullVotesByZone: (state) => (zone) =>
+  nullVotesByZone: (state: State) => (zone: string) =>
     state.sections
       .filter((s) => !!s.closed && s.zona === zone)
       .reduce((prev, acc) => {
@@ -80,16 +90,17 @@ const getters = {
         }
         return prev + (acc.eleitores - votados);
       }, 0),
-  votesByCandidate: (state) => (candidate) =>
+  votesByCandidate: (state: State) => (candidate: number) =>
     state.sections
       .filter((s) => !!s.closed)
       .reduce((prev, acc) => prev + acc.votos[candidate], 0),
-  votesByCandidateAndZone: (state) => (candidate, zone) =>
-    state.sections
-      .filter((s) => !!s.closed && s.zona === zone)
-      .reduce((prev, acc) => prev + acc.votos[candidate], 0),
-  candidates: (state) => state.candidates,
-  sortedCandidates: (state) =>
+  votesByCandidateAndZone:
+    (state: State) => (candidate: number, zone: string) =>
+      state.sections
+        .filter((s) => !!s.closed && s.zona === zone)
+        .reduce((prev, acc) => prev + acc.votos[candidate], 0),
+  candidates: (state: State) => state.candidates,
+  sortedCandidates: (state: State) =>
     state.candidates.sort((a, b) => {
       const votesA = state.sections
         .filter((s) => !!s.closed)
@@ -100,17 +111,20 @@ const getters = {
 
       return votesB - votesA;
     }),
-  votosApurados: (state) =>
+  votosApurados: (state: State) =>
     state.sections
       .filter((s) => !!s.closed)
       .reduce((prev, acc) => prev + acc.eleitores, 0),
-  votosApuradosPorZona: (state) => (zone) =>
+  votosApuradosPorZona: (state: State) => (zone: string) =>
     state.sections
       .filter((s) => !!s.closed && s.zona === zone)
       .reduce((prev, acc) => prev + acc.eleitores, 0),
 };
 
-const actions = {
+const actions: Record<
+  string,
+  ({ commit }: { commit: Commit }, ...args: any[]) => void
+> = {
   registerVotes({ commit }, { sectionNum, votes }) {
     axios
       .patch(`http://localhost:5000/secoes/${sectionNum}/votos`, {
@@ -154,21 +168,24 @@ const actions = {
 };
 
 const mutations = {
-  updateVotes: (state, { sectionNum, votes }) => {
+  updateVotes: (
+    state: State,
+    { sectionNum, votes }: { sectionNum: number; votes: number }
+  ) => {
     const section = state.sections.find((s) => s.num === sectionNum);
     section.votos = votes;
     section.closed = true;
   },
-  fetchCandidates: (state, data) => {
-    state.candidates = data.map((c) => ({
-      ...c,
-      numero: c.numero === 0 ? "outros" : c.numero,
+  fetchCandidates: (state: State, candidates: Candidate[]) => {
+    state.candidates = candidates.map((candidate: Candidate) => ({
+      ...candidate,
+      numero: candidate.numero === 0 ? "outros" : candidate.numero,
     }));
   },
-  fetchSections: (state, data) => {
-    state.sections = data;
+  fetchSections: (state: State, sections: Section[]) => {
+    state.sections = sections;
   },
-  updateSection: (state, section) => {
+  updateSection: (state: State, section: Section) => {
     console.log("Update Section - Mutation", section);
     state.sections = [
       ...state.sections.filter((s) => s.num !== section.num),

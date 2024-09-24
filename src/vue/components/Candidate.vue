@@ -2,13 +2,10 @@
   <div v-if="featured" :class="['candidate', gray ? 'gray' : '']">
     <circular-picture :src="profilePicture" :size="size" :color="color" />
     <div class="info">
-      <div
-        class="bar"
-        :style="{
-          backgroundColor: color,
-          width: `calc(100% * ${percentage})`,
-        }"
-      ></div>
+      <div class="bar" :style="{
+        backgroundColor: color,
+        width: `calc(100% * ${percentage})`,
+      }"></div>
       <div class="votes">
         <p :style="{ color: color }" class="abs-votes">{{ votes }}</p>
         <p v-if="votes > 0" :style="{ color: color }" class="rel-votes">
@@ -19,14 +16,10 @@
   </div>
 
   <div v-else class="candidate_compact">
-    <figure
-      class="profile-picture"
-      alt="Foto do candidato"
-      :style="{
-        borderColor: color,
-        backgroundImage: `url(${profilePicture})`,
-      }"
-    />
+    <figure class="profile-picture" alt="Foto do candidato" :style="{
+      borderColor: color,
+      backgroundImage: `url(${profilePicture})`,
+    }" />
     <div class="info">
       <p class="name">{{ name }}</p>
       <p class="abs-votes">{{ votes }} votos</p>
@@ -37,55 +30,48 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { computed, defineProps } from "vue";
 import CircularPicture from "./CircularPicture.vue";
 
-export default {
-  components: {
-    CircularPicture,
+const props = defineProps({
+  name: {
+    type: String,
+    required: false,
+    default: "",
   },
-  props: {
-    name: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    votes: {
-      type: Number,
-      default: 0,
-    },
-    totalVotes: Number,
-    profilePicture: {
-      type: String,
-      default: "",
-    },
-    color: {
-      type: String,
-      default: "#000",
-    },
-    featured: {
-      type: Boolean,
-      default: false,
-    },
-    gray: {
-      type: Boolean,
-      default: false,
-    },
-    size: {
-      type: Number,
-      default: 4,
-    },
+  votes: {
+    type: Number,
+    default: 0,
   },
-  computed: {
-    percentage() {
-      return this.votes / this.totalVotes;
-    },
-    formattedPercentage() {
-      const val = isNaN(this.percentage) ? 0 : this.percentage;
-      return (val * 100).toFixed(2).replace(".", ",");
-    },
+  totalVotes: Number,
+  profilePicture: {
+    type: String,
+    default: "",
   },
-};
+  color: {
+    type: String,
+    default: "#000",
+  },
+  featured: {
+    type: Boolean,
+    default: false,
+  },
+  gray: {
+    type: Boolean,
+    default: false,
+  },
+  size: {
+    type: Number,
+    default: 4,
+  },
+});
+
+const percentage = computed(() => props.totalVotes && props.votes / props.totalVotes);
+const formattedPercentage = computed(() => {
+  const val = percentage.value === undefined || isNaN(percentage.value) ? 0 : percentage.value;
+  return (val * 100).toFixed(2).replace(".", ",");
+});
 </script>
 
 <style scoped>

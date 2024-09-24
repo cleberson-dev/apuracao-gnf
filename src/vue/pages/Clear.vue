@@ -2,15 +2,16 @@
   <div></div>
 </template>
 
-<script>
-import { mapActions } from "vuex";
-export default {
-  async created() {
-    await this.cleanVotes();
-    this.$router.push("/");
-  },
-  methods: {
-    ...mapActions(["cleanVotes"]),
-  },
-};
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+
+const store = useStore();
+const router = useRouter();
+
+onMounted(async () => {
+  await store.dispatch("cleanVotes");
+  router.push("/");
+});
 </script>

@@ -1,40 +1,32 @@
 <template>
-  <button
-    :class="['btn', variant]"
-    @click="$emit('click', $event)"
-    :disabled="disabled"
-    :type="type"
-  >
+  <button :class="['btn', variant]" @click="$emit('click', $event)" :disabled="disabled" :type="type">
     <slot></slot>
   </button>
 </template>
 
-<script>
-export default {
-  name: "CustomButton",
-  props: {
-    type: {
-      type: String,
-      default: "button",
-      validator: (value) => {
-        return ["submit", "button"].indexOf(value) !== -1;
-      },
-    },
-    variant: {
-      type: String,
-      default: "primary",
-      validator: (value) => {
-        return (
-          ["primary", "light", "dark", "danger", "warn"].indexOf(value) !== -1
-        );
-      },
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
+<script setup lang="ts">
+defineProps({
+  type: {
+    type: String,
+    default: "button",
+    validator: (value: string) => {
+      return ["submit", "button"].indexOf(value) !== -1;
     },
   },
-};
+  variant: {
+    type: String,
+    default: "primary",
+    validator: (value: string) => {
+      return (
+        ["primary", "light", "dark", "danger", "warn"].indexOf(value) !== -1
+      );
+    },
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+});
 </script>
 
 <style scoped>
@@ -62,15 +54,19 @@ export default {
 .btn.primary {
   background-color: #0066ff;
 }
+
 .btn.danger {
   background-color: #e63946;
 }
+
 .btn.warn {
   background-color: yellow;
 }
+
 .btn.dark {
   background-color: black;
 }
+
 .btn.light {
   background-color: white;
   color: black;

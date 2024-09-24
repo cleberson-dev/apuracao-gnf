@@ -1,41 +1,24 @@
 <template>
-  <form v-if="allSections.length > 0 && candidates.length > 0">
+  <form v-if="store.getters.allSections.length > 0 && store.getters.candidates.length > 0">
     <div>
       <h1>Cadastrar votos</h1>
       <label>Selecione a seção</label>
       <select v-model="formSection" @change="onSelectChange">
-        <option
-          v-for="section in allSections"
-          :key="section.num"
-          :value="section.num"
-          :style="{
-            backgroundColor: section.closed && '#ffdb57',
-            color: section.closed && 'gray',
-          }"
-        >
+        <option v-for="section in store.getters.allSections" :key="section.num" :value="section.num" :style="{
+          backgroundColor: section.closed && '#ffdb57',
+          color: section.closed && 'gray',
+        }">
           {{ section.num }} - {{ section.local }}
         </option>
       </select>
     </div>
 
-    <div class="votos" v-if="candidates.length > 0">
-      <div
-        class="candidato"
-        v-for="candidate in candidates"
-        :key="candidate.numero"
-      >
+    <div class="votos" v-if="store.getters.candidates.length > 0">
+      <div class="candidato" v-for="candidate in store.getters.candidates" :key="candidate.numero">
         <h4 class="nome">{{ candidate.nome }}</h4>
-        <circular-picture
-          :src="candidate.perfil"
-          :size="4"
-          :color="candidate.cor"
-        />
-        <input
-          min="0"
-          :max="Number(formVotes[candidate.numero]) + Number(votesLeft)"
-          type="number"
-          v-model="formVotes[candidate.numero]"
-        />
+        <circular-picture :src="candidate.perfil" :size="4" :color="candidate.cor" />
+        <input min="0" :max="Number(formVotes[candidate.numero]) + Number(votesLeft)" type="number"
+          v-model="formVotes[candidate.numero]" />
         <span>votos</span>
       </div>
     </div>
@@ -45,7 +28,7 @@
       {{ 0 > votesLeft ? 0 : votesLeft }} nulos
     </p>
     <div class="btns">
-      <custom-button :disabled="isInvalid" @click="registrar" type="submit">
+      <custom-button :disabled="isInvalid" @click="registrar" type="button">
         Cadastrar
       </custom-button>
       <custom-button variant="danger" @click="onClose">Sair</custom-button>
@@ -54,74 +37,70 @@
   <div v-else>Nada</div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { computed, reactive, ref } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import CircularPicture from "../components/CircularPicture.vue";
 import CustomButton from "../components/CustomButton.vue";
-import { mapGetters, mapActions } from "vuex";
 
-export default {
-  components: {
-    CircularPicture,
-    CustomButton,
-  },
-  data() {
-    return {
-      formSection: 26,
-      formVotes: {
-        22: 0,
-        40: 0,
-        77: 0,
-        27: 0,
-        outros: 0,
-      },
-    };
-  },
-  computed: {
-    ...mapGetters(["allSections", "candidates"]),
-    votesEntered() {
-      let votos = 0;
-      for (const numCandidato in this.formVotes) {
-        votos += Number(this.formVotes[numCandidato]);
-      }
-      return votos;
-    },
-    areNegatives() {
-      return Object.entries(this.formVotes).some(([, value]) => value < 0);
-    },
-    currentFormSection() {
-      return this.allSections.find((s) => s.num === this.formSection);
-    },
-    votesLeft() {
-      return this.currentFormSection.eleitores - this.votesEntered;
-    },
-    isInvalid() {
-      return this.votesEntered < 0 || this.areNegatives || this.votesLeft < 0;
-    },
-  },
-  methods: {
-    ...mapActions(["registerVotes"]),
-    onSelectChange() {
-      this.formVotes = { ...this.currentFormSection.votos };
-    },
-    onClose() {
-      this.$router.push("/");
-    },
-    registrar(e) {
-      e.preventDefault();
-      if (this.votesEntered < 0 || this.areNegatives) return alert("Inválido!");
-      if (this.votesEntered > this.currentFormSection.eleitores)
-        return alert("Votos inseridos excederam a quantidade máxima");
-      this.registerVotes({
-        sectionNum: this.formSection,
-        votes: Object.fromEntries(
-          Object.entries(this.formVotes).map(([key, value]) => [
-            key,
-            Number(value),
-          ])
-        ),
-      });
-    },
-  },
+const store = useStore();
+const router = useRouter();
+
+const formSection = ref(26);
+const formVotes: Record<string | number, number> = reactive({
+  22: 0,
+  40: 0,
+  77: 0,
+  27: 0,
+  outros: 0,
+});
+
+const votesEntered = computed(() => {
+  let votos = 0;
+  for (const numCandidato in formVotes) {
+    votos += Number(formVotes[numCandidato]);
+  }
+  return votos;
+});
+const areNegatives = computed(() => {
+  return Object.entries(formVotes).some(([, value]) => value < 0);
+});
+const currentFormSection = computed(() => {
+  return store.getters.allSections.find((s: any) => s.num === formSection.value);
+});
+const votesLeft = computed(() => {
+  return currentFormSection.value.eleitores - votesEntered.value;
+});
+const isInvalid = computed(() => {
+  return votesEntered.value < 0 || areNegatives.value || votesLeft.value < 0;
+});
+
+function onSelectChange() {
+  formVotes.value = { ...currentFormSection.value.votos };
+};
+
+function onClose() {
+  router.push("/");
+};
+
+function registrar(e: any) {
+  e.preventDefault();
+
+  if (votesEntered.value < 0 || areNegatives.value) return alert("Inválido!");
+  if (votesEntered.value > currentFormSection.value.eleitores) {
+    return alert("Votos inseridos excederam a quantidade máxima");
+  }
+
+  store.dispatch("registerVotes", {
+    sectionNum: formSection.value,
+    votes: Object.fromEntries(
+      Object.entries(formVotes).map(([key, value]) => [
+        key,
+        Number(value),
+      ])
+    ),
+  });
 };
 </script>
 

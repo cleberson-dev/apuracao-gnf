@@ -26,21 +26,16 @@
   </header>
 </template>
 
-<script>
+<script setup lang="ts">
 import axios from "axios";
-export default {
-  name: "MyHeader",
-  methods: {
-    async onPrint() {
-      const res = await axios.get("http://localhost:5000/print");
-      const { data } = res.data;
-      const link = document.createElement("a");
-      link.download = data.name;
-      link.href = data.path;
-      link.click();
-    },
-  },
-};
+async function onPrint() {
+  const res = await axios.get("http://localhost:5000/print");
+  const { data } = res.data;
+  const link = document.createElement("a");
+  link.download = data.name;
+  link.href = data.path;
+  link.click();
+}
 </script>
 
 <style scoped>
@@ -98,6 +93,7 @@ button.item {
   align-items: center;
   padding: 20px 0;
 }
+
 .logo img {
   width: 36px;
 }

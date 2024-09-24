@@ -1,42 +1,36 @@
 <template>
-  <figure
-    class="circular-picture"
-    :alt="description"
-    :style="{
-      borderColor: color,
-      borderWidth: `calc(borderWidth * 1px)`,
-      backgroundImage: `url(${src})`,
-      width: `calc(2rem * ${size})`,
-      height: `calc(2rem * ${size})`,
-    }"
-  />
+  <figure class="circular-picture" :alt="description" :style="{
+    borderColor: color,
+    borderWidth: `calc(borderWidth * 1px)`,
+    backgroundImage: `url(${src})`,
+    width: `calc(2rem * ${size})`,
+    height: `calc(2rem * ${size})`,
+  }" />
 </template>
 
-<script>
-export default {
-  props: {
-    description: {
-      type: String,
-      default: "",
-    },
-    src: {
-      type: String,
-      default: "",
-    },
-    size: {
-      type: Number,
-      default: 1,
-    },
-    color: {
-      type: String,
-      default: "#000",
-    },
-    borderWidth: {
-      type: Number,
-      default: 1,
-    },
+<script setup lang="ts">
+defineProps({
+  description: {
+    type: String,
+    default: "",
   },
-};
+  src: {
+    type: String,
+    default: "",
+  },
+  size: {
+    type: Number,
+    default: 1,
+  },
+  color: {
+    type: String,
+    default: "#000",
+  },
+  borderWidth: {
+    type: Number,
+    default: 1,
+  },
+})
 </script>
 
 <style scoped>

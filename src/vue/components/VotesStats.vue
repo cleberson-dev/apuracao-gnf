@@ -1,104 +1,54 @@
 <template>
-  <section class="apuracao-geral" v-if="sortedCandidates.length > 0">
+  <section class="apuracao-geral" v-if="store.getters.sortedCandidates.length > 0">
     <h1 class="pageTitle">Apuração Paralela de Gov. Nunes Freire - MA</h1>
-    <section-header
-      leftTitle="Geral"
-      :leftSubtitle="votosApurados + ' votos apurados'"
-      :rightTitle="
-        formatarPercentual(closedSections.length / allSections.length) + '%'
-      "
-      :rightSubtitle="
-        'Seções totalizadas (' +
-        closedSections.length +
+    <section-header leftTitle="Geral" :leftSubtitle="store.getters.votosApurados + ' votos apurados'" :rightTitle="formatarPercentual(store.getters.closedSections.length / store.getters.allSections.length) + '%'
+      " :rightSubtitle="'Seções totalizadas (' +
+        store.getters.closedSections.length +
         '/' +
-        allSections.length +
+        store.getters.allSections.length +
         ')'
-      "
-    />
+        " />
 
-    <candidate
-      featured
-      :name="challengers[0].nome"
-      :profilePicture="challengers[0].perfil"
-      :color="challengers[0].cor"
-      :votes="votesByCandidate(challengers[0].numero)"
-      :totalVotes="validVotes"
-    />
+    <candidate featured :name="challengers[0].nome" :profilePicture="challengers[0].perfil" :color="challengers[0].cor"
+      :votes="store.getters.votesByCandidate(challengers[0].numero)" :totalVotes="store.getters.validVotes" />
 
-    <votes-diff
-      :votesA="votesByCandidate(challengers[0].numero)"
-      :votesB="votesByCandidate(challengers[1].numero)"
-    />
+    <votes-diff :votesA="store.getters.votesByCandidate(challengers[0].numero)"
+      :votesB="store.getters.votesByCandidate(challengers[1].numero)" />
 
-    <candidate
-      featured
-      :name="challengers[1].nome"
-      :profilePicture="challengers[1].perfil"
-      :color="challengers[1].cor"
-      :votes="votesByCandidate(challengers[1].numero)"
-      :totalVotes="validVotes"
-    />
+    <candidate featured :name="challengers[1].nome" :profilePicture="challengers[1].perfil" :color="challengers[1].cor"
+      :votes="store.getters.votesByCandidate(challengers[1].numero)" :totalVotes="store.getters.validVotes" />
 
     <div class="other-candidates">
-      <candidate
-        v-for="candidato in otherCandidates"
-        :key="candidato.numero"
-        :name="candidato.nome"
-        :profilePicture="candidato.perfil"
-        :color="candidato.cor"
-        :votes="votesByCandidate(candidato.numero)"
-        :totalVotes="validVotes"
-      />
+      <candidate v-for="candidato in otherCandidates" :key="candidato.numero" :name="candidato.nome"
+        :profilePicture="candidato.perfil" :color="candidato.cor"
+        :votes="store.getters.votesByCandidate(candidato.numero)" :totalVotes="store.getters.validVotes" />
 
-      <candidate
-        key="null"
-        name="Brancos, nulos e abstenções"
-        color="red"
-        :votes="nullVotes"
-        :totalVotes="votosApurados"
-      />
+      <candidate key="null" name="Brancos, nulos e abstenções" color="red" :votes="store.getters.nullVotes"
+        :totalVotes="store.getters.votosApurados" />
     </div>
   </section>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
+<script setup lang="ts">
+import { computed } from "vue";
+import { useStore } from "vuex";
 import Candidate from "./Candidate.vue";
 import SectionHeader from "./SectionHeader.vue";
 import VotesDiff from "./VotesDiff.vue";
 
-export default {
-  components: {
-    Candidate,
-    SectionHeader,
-    VotesDiff,
-  },
-  computed: {
-    ...mapGetters([
-      "totalElectors",
-      "votesCounted",
-      "closedSections",
-      "allSections",
-      "votesByCandidate",
-      "sortedCandidates",
-      "nullVotes",
-      "validVotes",
-      "votosApurados",
-    ]),
-    challengers() {
-      return this.sortedCandidates.slice(0, 2);
-    },
-    otherCandidates() {
-      return this.sortedCandidates.slice(2);
-    },
-  },
-  methods: {
-    formatarPercentual(decimal) {
-      const val = isNaN(decimal) ? 0 : decimal;
-      return (val * 100).toFixed(2).replace(".", ",");
-    },
-  },
-};
+const store = useStore();
+
+const challengers = computed(() => {
+  return store.getters.sortedCandidates.slice(0, 2);
+});
+const otherCandidates = computed(() => {
+  return store.getters.sortedCandidates.slice(2);
+});
+
+const formatarPercentual = (decimal: number) => {
+  const val = isNaN(decimal) ? 0 : decimal;
+  return (val * 100).toFixed(2).replace(".", ",");
+} 
 </script>
 
 <style scoped>
@@ -115,6 +65,7 @@ export default {
   align-items: flex-start;
   margin-bottom: 15px;
 }
+
 .header .right {
   text-align: right;
 }
@@ -144,17 +95,20 @@ section.apuracao-geral .other-candidates {
   font-weight: 800;
   margin: 0;
 }
+
 .apuracao-geral .subtitulo-apuracao {
   font-size: 1rem;
   color: #909090;
   font-weight: 700;
   margin: 0;
 }
+
 .apuracao-geral .secoes-rel {
   color: #2a9d8f;
   margin: 0;
   font-size: 2rem;
 }
+
 .apuracao-geral .secoes-abs {
   color: #909090;
   font-size: 1rem;

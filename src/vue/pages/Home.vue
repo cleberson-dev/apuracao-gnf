@@ -9,16 +9,9 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import VotesStats from "../components/VotesStats.vue";
 import VotesStatsByZone from "../components/VotesStatsByZone.vue";
-
-export default {
-  components: {
-    VotesStats,
-    VotesStatsByZone,
-  },
-};
 </script>
 
 <style scoped>

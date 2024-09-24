@@ -8,36 +8,30 @@
   </div>
 </template>
 
-<script>
-import { mapActions } from "vuex";
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { useStore } from "vuex";
+
 import MyHeader from "./components/MyHeader.vue";
 import { wsc } from "./main";
 
-export default {
-  name: "App",
-  components: {
-    MyHeader,
-  },
-  created() {
-    this.fetchSections();
-    this.fetchCandidates();
-
+  const store = useStore();
+  onMounted(() => {
+    store.dispatch('fetchSections');
+    store.dispatch('fetchCandidates');
+    
     wsc.onmessage = (event) => {
       const message = JSON.parse(event.data);
       switch (message.type) {
         case "UPDATED_SECTION":
           console.log(message.payload);
-          this.updateSection(message.payload);
+          store.dispatch('updateSection', message.payload);
           break;
         default:
           console.log(message);
       }
     };
-  },
-  methods: {
-    ...mapActions(["fetchSections", "fetchCandidates", "updateSection"]),
-  },
-};
+  });
 </script>
 
 <style>

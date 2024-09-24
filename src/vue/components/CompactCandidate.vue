@@ -2,13 +2,10 @@
   <div v-if="featured" class="compact-candidate">
     <div class="stats">
       <div class="bar-wrapper" :style="{ flexGrow: 1 }">
-        <div
-          class="bar"
-          :style="{
-            backgroundColor: color,
-            width: `calc(100% * ${percentage})`,
-          }"
-        />
+        <div class="bar" :style="{
+          backgroundColor: color,
+          width: `calc(100% * ${percentage})`,
+        }" />
       </div>
       <circular-picture :src="profilePicture" :color="color" :size="1" />
       <p class="rel-votes" :style="{ color: color }">
@@ -29,47 +26,41 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { computed } from "vue";
 import CircularPicture from "./CircularPicture.vue";
 
-export default {
-  components: {
-    CircularPicture,
+const props = defineProps({
+  name: {
+    type: String,
+    required: false,
+    default: "",
   },
-  props: {
-    name: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    votes: {
-      type: Number,
-      default: 0,
-    },
-    totalVotes: Number,
-    profilePicture: {
-      type: String,
-      default: "",
-    },
-    color: {
-      type: String,
-      default: "#000",
-    },
-    featured: {
-      type: Boolean,
-      default: false,
-    },
+  votes: {
+    type: Number,
+    default: 0,
   },
-  computed: {
-    percentage() {
-      return this.votes / this.totalVotes;
-    },
-    formattedPercentage() {
-      const val = isNaN(this.percentage) ? 0 : this.percentage;
-      return (val * 100).toFixed(2).replace(".", ",");
-    },
+  totalVotes: Number,
+  profilePicture: {
+    type: String,
+    default: "",
   },
-};
+  color: {
+    type: String,
+    default: "#000",
+  },
+  featured: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const percentage = computed(() => props.totalVotes && props.votes / props.totalVotes);
+const formattedPercentage = computed(() => {
+  const val = percentage.value === undefined || isNaN(percentage.value) ? 0 : percentage.value;
+  return (val * 100).toFixed(2).replace(".", ",");
+});
+
 </script>
 
 <style scoped>
@@ -90,9 +81,11 @@ export default {
   font-weight: 700;
   margin: 0;
 }
+
 .compact-candidate .rel-votes {
   font-size: 1.1rem;
 }
+
 .compact-candidate .abs-votes {
   font-size: 0.9rem;
 }

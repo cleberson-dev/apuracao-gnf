@@ -1,17 +1,14 @@
 import { createApp } from "vue";
-import { createRouter } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 
+import App from "./App.vue";
 import HomePage from "./pages/Home.vue";
 import RegisterPage from "./pages/Register.vue";
 import ClearPage from "./pages/Clear.vue";
 
-import App from "./App.vue";
-import store from "./store";
-import { createWebHistory } from "vue-router";
+import store from "./store/index";
 
 export const wsc = new WebSocket("ws://localhost:5050");
-
-// Vue.config.productionTip = false;
 
 const routes = [
   { path: "/", component: HomePage },
