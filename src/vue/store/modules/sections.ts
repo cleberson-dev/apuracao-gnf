@@ -1,5 +1,8 @@
-import axios from "axios";
 import { Commit } from "vuex";
+import { VoteService } from "../../services/vote.service";
+import Candidate from "../../components/Candidate.vue";
+import CandidateService from "../../services/candidate.service";
+import SectionService from "../../services/section.service";
 
 type Section = any;
 type Candidate = any;
@@ -125,43 +128,28 @@ const actions: Record<
   string,
   ({ commit }: { commit: Commit }, ...args: any[]) => void
 > = {
-  registerVotes({ commit }, { sectionNum, votes }) {
-    axios
-      .patch(`http://localhost:5000/secoes/${sectionNum}/votos`, {
-        votos: votes,
-      })
-      .then(() => {
-        commit("updateVotes", { sectionNum, votes });
-      });
+  async registerVotes({ commit }, { sectionNum, votes }) {
+    await VoteService.vote(sectionNum, votes);
+    commit("updateVotes", { sectionNum, votes });
   },
-  fetchCandidates({ commit }) {
-    axios
-      .get("http://localhost:5000/candidatos")
-      .then(({ data }) => {
-        console.log("Fetched", data);
-        commit("fetchCandidates", data.candidates);
-      })
-      .catch(console.error);
+  async fetchCandidates({ commit }) {
+    const { data } = await CandidateService.fetchAll();
+    commit("fetchCandidates", data.candidates);
   },
-  fetchSections({ commit }) {
-    axios
-      .get("http://localhost:5000/secoes")
-      .then(({ data }) => {
-        commit("fetchSections", data);
-      })
-      .catch(console.error);
+  async fetchSections({ commit }) {
+    const { data } = await SectionService.fetchAll();
+    commit("fetchSections", data);
   },
   async cleanVotes({ commit }) {
     try {
-      await axios.get("http://localhost:5000/limparVotos");
-      const { data } = await axios.get("http://localhost:5000/secoes");
+      await VoteService.cleanVotes();
+      const { data } = await SectionService.fetchAll();
       commit("fetchSections", data);
     } catch (err) {
       console.error(err);
     }
   },
   updateSection({ commit }, section) {
-    console.log("Update Section - Action", section);
     commit("updateSection", section);
   },
 };
