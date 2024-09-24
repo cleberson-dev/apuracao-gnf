@@ -43,6 +43,7 @@ import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import CircularPicture from "../components/CircularPicture.vue";
 import CustomButton from "../components/CustomButton.vue";
+import { push } from "notivue";
 
 const store = useStore();
 const router = useRouter();
@@ -84,15 +85,15 @@ function onClose() {
   router.push("/");
 };
 
-function registrar(e: any) {
+async function registrar(e: any) {
   e.preventDefault();
 
-  if (votesEntered.value < 0 || areNegatives.value) return alert("Inválido!");
+  if (votesEntered.value < 0 || areNegatives.value) return push.error("Inválido!");
   if (votesEntered.value > currentFormSection.value.eleitores) {
-    return alert("Votos inseridos excederam a quantidade máxima");
+    return push.error("Votos inseridos excederam a quantidade máxima");
   }
 
-  store.dispatch("registerVotes", {
+  await store.dispatch("registerVotes", {
     sectionNum: formSection.value,
     votes: Object.fromEntries(
       Object.entries(formVotes).map(([key, value]) => [
@@ -101,6 +102,8 @@ function registrar(e: any) {
       ])
     ),
   });
+
+  push.success("Votos computados com sucesso!");
 };
 </script>
 

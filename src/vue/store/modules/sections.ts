@@ -131,7 +131,6 @@ const actions: Record<
         votos: votes,
       })
       .then(() => {
-        alert("Votos cadastrados!!!");
         commit("updateVotes", { sectionNum, votes });
       });
   },
