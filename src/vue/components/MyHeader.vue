@@ -28,6 +28,7 @@
 
 <script setup lang="ts">
 import axios from "axios";
+
 async function onPrint() {
   const res = await axios.get("http://localhost:5000/print");
   const { data } = res.data;
@@ -36,6 +37,7 @@ async function onPrint() {
   link.href = data.path;
   link.click();
 }
+
 </script>
 
 <style scoped>

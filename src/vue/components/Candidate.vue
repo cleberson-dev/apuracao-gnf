@@ -1,6 +1,6 @@
 <template>
-  <div v-if="featured" :class="['candidate', gray ? 'gray' : '']">
-    <circular-picture :src="profilePicture" :size="size" :color="color" />
+  <div v-if="featured" :class="['candidate', gray ? 'gray' : '']" :title="name">
+    <circular-picture :src="profilePicture ?? '/empty-profile-picture.png'" :size="size" :color="color" />
     <div class="info">
       <div class="bar" :style="{
         backgroundColor: color,
@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div v-else class="candidate_compact">
+  <div v-else class="candidate_compact" :title="name">
     <figure class="profile-picture" alt="Foto do candidato" :style="{
       borderColor: color,
       backgroundImage: `url(${profilePicture})`,
