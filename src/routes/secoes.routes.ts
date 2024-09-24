@@ -1,12 +1,14 @@
 import { Router } from "express";
 import wss from "../sockets";
-import * as Vote from "../models/vote.model";
+import * as VoteRepository from "../repositories/vote.repository";
+import * as SectionRepository from "../repositories/section.repository";
+import { RepositorySection, Zone } from "../repositories/section.repository";
 
 const routes = Router();
 
 routes.get("/", async (_, res) => {
   try {
-    const sections = await Vote.getAllSections();
+    const sections = await SectionRepository.getAllSections();
     return res.status(200).send(sections);
   } catch (err) {
     console.error(err);
@@ -21,8 +23,20 @@ routes.get("/:numSecao", async (req, res) => {
   const { numSecao } = req.params;
 
   try {
-    const section = await Vote.getSectionByNumber(+numSecao);
-    return res.status(200).send({ success: true, data: section });
+    const section = await SectionRepository.getSectionByNumber(+numSecao);
+    if (!section) {
+      return res.status(404).send({ success: false });
+    }
+    return res.status(200).send({
+      success: true, 
+      data: { 
+        number: section.num,
+        local: section.local,
+        voters: section.eleitores,
+        zone: section.zona as Zone,
+        closed: !!section.totalizada,
+      } satisfies Omit<RepositorySection, "votes"> 
+    });
   } catch (err) {
     return res.status(500).send({
       success: false,
@@ -38,7 +52,14 @@ routes.patch("/:numSecao/votos", async (req, res) => {
   const { votos } = req.body;
 
   try {
-    const voteSectionPayload = await Vote.registerVoteOnSection(
+    const section = await SectionRepository.getSectionByNumber(+numSecao);
+    if (!section) {
+      return res.status(404).send({
+        success: false,
+        message: `Seção de nº ${numSecao} não encontrada`,
+      });
+    }
+    const voteSectionPayload = await VoteRepository.registerVoteOnSection(
       +numSecao,
       votos
     );

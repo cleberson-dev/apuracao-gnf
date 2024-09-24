@@ -5,3 +5,23 @@ declare module "ws" {
     broadcast: (message: any) => void;
   }
 }
+
+type Section = {
+  number: number;
+  voters: number;
+  local: string;
+  zone?: "URBANA" | "RURAL";
+};
+
+type Vote = {
+  sectionNumber: number;
+  candidateNumber: number;
+  amount: number;
+};
+
+type Candidate = {
+  number: number | "outros";
+  name: string;
+  color: string;
+  profilePicture: string;
+};

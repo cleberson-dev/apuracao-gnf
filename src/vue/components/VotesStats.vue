@@ -9,19 +9,21 @@
         ')'
         " />
 
-    <candidate featured :name="challengers[0].nome" :profilePicture="challengers[0].perfil" :color="challengers[0].cor"
-      :votes="store.getters.votesByCandidate(challengers[0].numero)" :totalVotes="store.getters.validVotes" />
+    <candidate featured :name="challengers[0].name" :profilePicture="challengers[0].profilePicture"
+      :color="challengers[0].color" :votes="store.getters.votesByCandidate(challengers[0].number)"
+      :totalVotes="store.getters.validVotes" />
 
-    <votes-diff :votesA="store.getters.votesByCandidate(challengers[0].numero)"
-      :votesB="store.getters.votesByCandidate(challengers[1].numero)" />
+    <votes-diff :votesA="store.getters.votesByCandidate(challengers[0].number)"
+      :votesB="store.getters.votesByCandidate(challengers[1].number)" />
 
-    <candidate featured :name="challengers[1].nome" :profilePicture="challengers[1].perfil" :color="challengers[1].cor"
-      :votes="store.getters.votesByCandidate(challengers[1].numero)" :totalVotes="store.getters.validVotes" />
+    <candidate featured :name="challengers[1].nome" :profilePicture="challengers[1].profilePicture"
+      :color="challengers[1].color" :votes="store.getters.votesByCandidate(challengers[1].number)"
+      :totalVotes="store.getters.validVotes" />
 
     <div class="other-candidates">
-      <candidate v-for="candidato in otherCandidates" :key="candidato.numero" :name="candidato.nome"
-        :profilePicture="candidato.perfil" :color="candidato.cor"
-        :votes="store.getters.votesByCandidate(candidato.numero)" :totalVotes="store.getters.validVotes" />
+      <candidate v-for="candidate in otherCandidates" :key="candidate.number" :name="candidate.name"
+        :profilePicture="candidate.profilePicture" :color="candidate.color"
+        :votes="store.getters.votesByCandidate(candidate.number)" :totalVotes="store.getters.validVotes" />
 
       <candidate key="null" name="Brancos, nulos e abstenções" color="red" :votes="store.getters.nullVotes"
         :totalVotes="store.getters.votosApurados" />

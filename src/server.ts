@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
-import * as Vote from "./models/vote.model";
+import * as VoteRepository from "./repositories/vote.repository";
 import secoesRoutes from "./routes/secoes.routes";
 import votosRoutes from "./routes/votos.routes";
 import candidatosRoutes from "./routes/candidatos.routes";
@@ -19,7 +19,7 @@ app.use("/candidatos", candidatosRoutes);
 
 app.get("/limparVotos", async (_, res) => {
   try {
-    await Vote.cleanAllVotes();
+    await VoteRepository.cleanAllVotes();
     return res.status(200).send({ success: true });
   } catch (err) {
     console.error(err);

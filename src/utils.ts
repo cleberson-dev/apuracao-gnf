@@ -1,27 +1,14 @@
 import { readFile, writeFile } from "fs/promises";
 import { parse } from "csv-parse";
 import xlsx from "xlsx";
-
-type SectionData = {
-  local: string;
-  zona: string;
-  numSecao: number;
-  eleitores: number;
-}[];
-
-type Section = {
-  eleitores: number;
-  cod_secao: number;
-  local: string;
-  zona?: "URBANA" | "RURAL";
-};
+import { Section } from "./types";
 
 const CD_MUNICIPIO = "07668"; // GOVERNADOR NUNES FREIRE => 07668
 
 // path: Relative to Project Dir
 export const getSectionDataFromXLSX = async (path: string) => {
   const fileData = xlsx.readFile(path);
-  const data: SectionData = [];
+  const data: Section[] = [];
 
   Object.entries(fileData.Sheets[fileData.SheetNames[0]])
     .filter(([key]) => !["!margins", "!ref"].includes(key))
@@ -41,18 +28,18 @@ export const getSectionDataFromXLSX = async (path: string) => {
         return;
       }
 
-      if (!data[normalIndex].zona) {
-        data[normalIndex].zona = val;
+      if (!data[normalIndex].zone) {
+        data[normalIndex].zone = val;
         return;
       }
 
-      if (!data[normalIndex].numSecao) {
-        data[normalIndex].numSecao = val;
+      if (!data[normalIndex].number) {
+        data[normalIndex].number = val;
         return;
       }
 
-      if (!data[normalIndex].eleitores) {
-        data[normalIndex].eleitores = val;
+      if (!data[normalIndex].voters) {
+        data[normalIndex].voters = val;
         return;
       }
     });
@@ -89,19 +76,19 @@ export const getSectionDataFromCSV = async (path: string) => {
 
     if (section[headers["CD_MUNICIPIO"]] === CD_MUNICIPIO) {
       const newSection: typeof sections[number] = {
-        eleitores:
+        voters:
           +section[headers["QT_ELEITOR_ELEICAO_MUNICIPAL"]] ||
           +section[headers["QT_ELEITOR_SECAO"]],
-        cod_secao: +section[headers["NR_SECAO"]],
+        number: +section[headers["NR_SECAO"]],
         local: section[headers["NM_LOCAL_VOTACAO"]],
       };
 
       const NM_BAIRRO = section[headers["NM_BAIRRO"]];
       if (NM_BAIRRO.includes("ZONA URBANA")) {
-        newSection.zona = "URBANA";
+        newSection.zone = "URBANA";
       }
       if (NM_BAIRRO.includes("ZONA RURAL")) {
-        newSection.zona = "RURAL";
+        newSection.zone = "RURAL";
       }
 
       sections.push(newSection);

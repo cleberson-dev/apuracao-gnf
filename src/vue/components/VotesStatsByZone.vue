@@ -11,21 +11,23 @@
           ')'
           " />
 
-    <compact-candidate :key="challengers[0].numero" :name="challengers[0].nome" :profilePicture="challengers[0].perfil"
-      :color="challengers[0].cor" :votes="store.getters.votesByCandidateAndZone(challengers[0].numero, zone)"
-      :totalVotes="store.getters.validVotesByZone(zone)" featured />
+    <compact-candidate featured :key="challengers[0].number" :name="challengers[0].name"
+      :profilePicture="challengers[0].profilePicture" :color="challengers[0].color"
+      :votes="store.getters.votesByCandidateAndZone(challengers[0].number, zone)"
+      :totalVotes="store.getters.validVotesByZone(zone)" />
 
-    <votes-diff :votesA="store.getters.votesByCandidateAndZone(challengers[0].numero, zone)"
-      :votesB="store.getters.votesByCandidateAndZone(challengers[1].numero, zone)" :size="0.8" />
+    <votes-diff :votesA="store.getters.votesByCandidateAndZone(challengers[0].number, zone)"
+      :votesB="store.getters.votesByCandidateAndZone(challengers[1].number, zone)" :size="0.8" />
 
-    <compact-candidate :key="challengers[1].numero" :name="challengers[1].nome" :profilePicture="challengers[1].perfil"
-      :color="challengers[1].cor" :votes="store.getters.votesByCandidateAndZone(challengers[1].numero, zone)"
-      :totalVotes="store.getters.validVotesByZone(zone)" featured />
+    <compact-candidate featured :key="challengers[1].number" :name="challengers[1].name"
+      :profilePicture="challengers[1].profilePicture" :color="challengers[1].color"
+      :votes="store.getters.votesByCandidateAndZone(challengers[1].number, zone)"
+      :totalVotes="store.getters.validVotesByZone(zone)" />
 
     <div class="other-candidates">
-      <compact-candidate v-for="candidato in otherCandidates" :key="candidato.numero" :name="candidato.nome"
-        :profilePicture="candidato.perfil" :color="candidato.cor"
-        :votes="store.getters.votesByCandidateAndZone(candidato.numero, zone)"
+      <compact-candidate v-for="candidato in otherCandidates" :key="candidato.number" :name="candidato.name"
+        :profilePicture="candidato.profilePicture" :color="candidato.color"
+        :votes="store.getters.votesByCandidateAndZone(candidato.number, zone)"
         :totalVotes="store.getters.validVotesByZone(zone)" />
       <compact-candidate name="Brancos, nulos e abstenções" color="red" :votes="store.getters.nullVotesByZone(zone)"
         :totalVotes="store.getters.votosApuradosPorZona(zone)" />

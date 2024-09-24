@@ -3,29 +3,30 @@
     <div>
       <h1>Cadastrar votos</h1>
       <label>Selecione a seção</label>
-      <select v-model="formSection" @change="onSelectChange">
-        <option v-for="section in store.getters.allSections" :key="section.num" :value="section.num" :style="{
+      <select :value="formSection" @input="formSection = +($event.target as HTMLSelectElement).value"
+        @change="onSelectChange">
+        <option v-for="section in store.getters.allSections" :key="section.number" :value="section.number" :style="{
           backgroundColor: section.closed && '#ffdb57',
           color: section.closed && 'gray',
         }">
-          {{ section.num }} - {{ section.local }}
+          {{ section.number }} - {{ section.local }}
         </option>
       </select>
     </div>
 
     <div class="votos" v-if="store.getters.candidates.length > 0">
-      <div class="candidato" v-for="candidate in store.getters.candidates" :key="candidate.numero">
-        <h4 class="nome">{{ candidate.nome }}</h4>
-        <circular-picture :src="candidate.perfil" :size="4" :color="candidate.cor" />
-        <input min="0" :max="Number(formVotes[candidate.numero]) + Number(votesLeft)" type="number"
-          v-model="formVotes[candidate.numero]" />
+      <div class="candidato" v-for="candidate in store.getters.candidates" :key="candidate.number">
+        <h4 class="nome">{{ candidate.name }}</h4>
+        <circular-picture :src="candidate.profilePicture" :size="4" :color="candidate.color" />
+        <input min="0" :max="Number(formVotes[candidate.number]) + Number(votesLeft)" type="number"
+          v-model="formVotes[candidate.number]" />
         <span>votos</span>
       </div>
     </div>
     <p>
-      {{ votesEntered }} votos inseridos de {{ currentFormSection.eleitores }}
+      {{ votesEntered }} votos inseridos de {{ currentFormSection.voters }}
       <br />
-      {{ 0 > votesLeft ? 0 : votesLeft }} nulos
+      {{ votesLeft > 0 ? votesLeft : 0 }} nulos
     </p>
     <div class="btns">
       <custom-button :disabled="isInvalid" @click="registrar" type="button">
@@ -41,15 +42,17 @@
 import { computed, reactive, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { push } from "notivue";
+
 import CircularPicture from "../components/CircularPicture.vue";
 import CustomButton from "../components/CustomButton.vue";
-import { push } from "notivue";
+import { RepositorySection } from "../../repositories/section.repository";
 
 const store = useStore();
 const router = useRouter();
 
 const formSection = ref(26);
-const formVotes: Record<string | number, number> = reactive({
+let formVotes: Record<number | "outros", number> = reactive({
   22: 0,
   40: 0,
   77: 0,
@@ -67,18 +70,18 @@ const votesEntered = computed(() => {
 const areNegatives = computed(() => {
   return Object.entries(formVotes).some(([, value]) => value < 0);
 });
-const currentFormSection = computed(() => {
-  return store.getters.allSections.find((s: any) => s.num === formSection.value);
+const currentFormSection = computed<RepositorySection>(() => {
+  return store.getters.allSections.find((section: RepositorySection) => section.number === formSection.value);
 });
 const votesLeft = computed(() => {
-  return currentFormSection.value.eleitores - votesEntered.value;
+  return currentFormSection.value.voters - votesEntered.value;
 });
 const isInvalid = computed(() => {
   return votesEntered.value < 0 || areNegatives.value || votesLeft.value < 0;
 });
 
 function onSelectChange() {
-  formVotes.value = { ...currentFormSection.value.votos };
+  formVotes = { ...currentFormSection.value.votes };
 };
 
 function onClose() {
@@ -89,12 +92,11 @@ async function registrar(e: any) {
   e.preventDefault();
 
   if (votesEntered.value < 0 || areNegatives.value) return push.error("Inválido!");
-  if (votesEntered.value > currentFormSection.value.eleitores) {
+  if (votesEntered.value > currentFormSection.value.voters) {
     return push.error("Votos inseridos excederam a quantidade máxima");
   }
-
   await store.dispatch("registerVotes", {
-    sectionNum: formSection.value,
+    sectionNumber: formSection.value,
     votes: Object.fromEntries(
       Object.entries(formVotes).map(([key, value]) => [
         key,
