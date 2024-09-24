@@ -1,14 +1,16 @@
 import { Commit } from "vuex";
 import { VoteService } from "../../services/vote.service";
-import SectionService from "../../services/section.service";
-import type { Candidate } from "../../../types";
-import {
-  RepositorySection,
-  SectionVotes,
-} from "../../../repositories/section.repository";
+import SectionService, { Section } from "../../services/section.service";
+import { Candidate } from "../../../types";
+import CandidateService from "../../services/candidate.service";
+
+export type StateSection = Section & {
+  closed: boolean;
+  votes: Record<number | "outros", number>;
+};
 
 type State = {
-  sections: RepositorySection[];
+  sections: StateSection[];
 };
 
 const state: State = {
@@ -117,20 +119,28 @@ const actions: Record<
 > = {
   async registerVotes(
     { commit },
-    { sectionNumber, votes }: { sectionNumber: number; votes: SectionVotes }
+    {
+      sectionNumber,
+      votes,
+    }: { sectionNumber: number; votes: Record<number | "outros", number> }
   ) {
     await VoteService.vote(sectionNumber, votes);
     commit("updateVotes", { sectionNumber, votes });
   },
   async fetchSections({ commit }) {
-    const { data } = await SectionService.fetchAll();
-    commit("fetchSections", data);
+    const sections = await SectionService.fetchAll();
+    const candidates = await CandidateService.getAll();
+    commit("fetchSections", { sections, candidates });
+  },
+  async fetchVotes({ commit }) {
+    const votes = await VoteService.getAllVotes();
+    commit("updateSectionsVotes", votes);
   },
   async cleanVotes({ commit }) {
     try {
       await VoteService.cleanVotes();
-      const { data } = await SectionService.fetchAll();
-      commit("fetchSections", data);
+      const sections = await SectionService.fetchAll();
+      commit("fetchSections", sections);
     } catch (err) {
       console.error(err);
     }
@@ -143,21 +153,49 @@ const actions: Record<
 const mutations = {
   updateVotes: (
     state: State,
-    { sectionNumber, votes }: { sectionNumber: number; votes: SectionVotes }
+    {
+      sectionNumber,
+      votes,
+    }: { sectionNumber: number; votes: Record<number | "outros", number> }
   ) => {
     const section = state.sections.find((s) => s.number === sectionNumber)!;
     section.votes = votes;
     section.closed = true;
   },
-  fetchSections: (state: State, sections: RepositorySection[]) => {
-    state.sections = sections;
+  fetchSections: (
+    state: State,
+    { sections, candidates }: { sections: Section[]; candidates: Candidate[] }
+  ) => {
+    state.sections = sections.map((s) => ({
+      ...s,
+      closed: false,
+      votes: Object.fromEntries([
+        ...candidates.map((candidate) => [candidate.number, 0]),
+        ["outros", 0],
+      ]),
+    }));
   },
-  updateSection: (state: State, section: RepositorySection) => {
+  updateSection: (state: State, section: StateSection) => {
     console.log("Update Section - Mutation", section);
     state.sections = [
       ...state.sections.filter((s) => s.number !== section.number),
       section,
     ];
+  },
+
+  // NEW
+  updateSectionsVotes(
+    state: State,
+    votes: Awaited<ReturnType<typeof VoteService.getAllVotes>>
+  ) {
+    votes.forEach((vote) => {
+      const section = state.sections.find(
+        (s) => s.number === vote.sectionNumber
+      );
+      if (!section) return;
+      section.votes = vote.votes;
+      section.closed = true;
+    });
   },
 };
 

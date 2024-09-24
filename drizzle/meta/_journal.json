@@ -8,6 +8,13 @@
       "when": 1727163056419,
       "tag": "0000_freezing_yellow_claw",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1727215037965,
+      "tag": "0001_tricky_serpent_society",
+      "breakpoints": true
     }
   ]
 }

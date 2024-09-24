@@ -1,6 +1,6 @@
 import { integer, primaryKey, sqliteTable } from "drizzle-orm/sqlite-core";
 
-export const votos = sqliteTable(
+export const votes = sqliteTable(
   "votos",
   {
     sectionNumber: integer("numero_secao").notNull(),
@@ -13,3 +13,8 @@ export const votos = sqliteTable(
     };
   }
 );
+
+export const closedSections = sqliteTable("secoes_totalizadas", {
+  sectionNumber: integer("numero_secao").primaryKey(),
+  closed: integer("totalizada").notNull(),
+});

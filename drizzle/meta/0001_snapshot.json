@@ -1,0 +1,78 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "bf4ff4a8-9f98-4af0-a41c-11e958153d8b",
+  "prevId": "bf9a9e6d-e4d9-41fb-b358-12459ca6e8e2",
+  "tables": {
+    "secoes_totalizadas": {
+      "name": "secoes_totalizadas",
+      "columns": {
+        "numero_secao": {
+          "name": "numero_secao",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "totalizada": {
+          "name": "totalizada",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "votos": {
+      "name": "votos",
+      "columns": {
+        "numero_secao": {
+          "name": "numero_secao",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "numero_candidato": {
+          "name": "numero_candidato",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quantidade": {
+          "name": "quantidade",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "votos_numero_secao_numero_candidato_pk": {
+          "columns": [
+            "numero_secao",
+            "numero_candidato"
+          ],
+          "name": "votos_numero_secao_numero_candidato_pk"
+        }
+      },
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

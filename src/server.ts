@@ -13,7 +13,17 @@ app.use("/static", express.static(ASSETS_DIR));
 
 app.use("/votos", votosRoutes);
 
-app.get("/limparVotos", async (_, res) => {
+app.get("/secoes-totalizadas", async (_, res) => {
+  const closedSections = await VoteRepository.getAllClosedSections();
+  return res.status(200).send(
+    closedSections.map((section) => ({
+      ...section,
+      closed: !!section.closed,
+    }))
+  );
+});
+
+app.get("/limpar-votos", async (_, res) => {
   try {
     await VoteRepository.cleanAllVotes();
     return res.status(200).send({ success: true });

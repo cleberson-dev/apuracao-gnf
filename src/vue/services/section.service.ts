@@ -1,14 +1,21 @@
-import sections from "../../sections";
-import { RepositorySection, Zone } from "../../repositories/vote.repository";
+import sections from "../../data/sections";
+
+export type Zone = "urbana" | "rural";
+
+export type Section = {
+  number: number;
+  local: string;
+  voters: number;
+  zone: Zone;
+};
 
 export default class SectionService {
-  static fetchAll(): RepositorySection[] {
+  static fetchAll(): Section[] {
     return sections.map((section) => ({
       number: section.numero,
       local: section.local,
       voters: section.eleitores,
       zone: section.zona as Zone,
-      closed: section.totalizada,
     }));
   }
 }

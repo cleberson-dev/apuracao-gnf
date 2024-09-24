@@ -46,8 +46,8 @@ import { push } from "notivue";
 
 import CircularPicture from "../components/CircularPicture.vue";
 import CustomButton from "../components/CustomButton.vue";
-import { RepositorySection } from "../../repositories/section.repository";
 import CandidateService from "../services/candidate.service";
+import { StateSection } from "../store/modules/sections";
 
 const store = useStore();
 const router = useRouter();
@@ -55,7 +55,6 @@ const router = useRouter();
 const formSection = ref(26);
 const candidates = CandidateService.getAll();
 let formVotes: Record<number | "outros", number> = reactive(Object.fromEntries([...candidates.map(candidate => [candidate.number, 0]), ["outros", 0]]));
-console.log({ formVotes })
 
 const votesEntered = computed(() => {
   let votos = 0;
@@ -67,8 +66,8 @@ const votesEntered = computed(() => {
 const areNegatives = computed(() => {
   return Object.entries(formVotes).some(([, value]) => value < 0);
 });
-const currentFormSection = computed<RepositorySection>(() => {
-  return store.getters.allSections.find((section: RepositorySection) => section.number === formSection.value);
+const currentFormSection = computed<StateSection>(() => {
+  return store.getters.allSections.find((section: StateSection) => section.number === formSection.value);
 });
 const votesLeft = computed(() => {
   return currentFormSection.value.voters - votesEntered.value;
@@ -78,7 +77,9 @@ const isInvalid = computed(() => {
 });
 
 function onSelectChange() {
-  formVotes = { ...currentFormSection.value.votes };
+  Object.entries(currentFormSection.value.votes).forEach(([candidateNumber, votes]) => {
+    formVotes[Number.isNaN(+candidateNumber) ? "outros" : +candidateNumber] = votes;
+  })
 };
 
 function onClose() {
@@ -92,6 +93,7 @@ async function registrar(e: any) {
   if (votesEntered.value > currentFormSection.value.voters) {
     return push.error("Votos inseridos excederam a quantidade máxima");
   }
+
   await store.dispatch("registerVotes", {
     sectionNumber: formSection.value,
     votes: Object.fromEntries(
