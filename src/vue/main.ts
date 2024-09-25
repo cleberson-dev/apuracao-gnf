@@ -7,7 +7,7 @@ import HomePage from "./pages/Home.vue";
 import RegisterPage from "./pages/Register.vue";
 import ClearPage from "./pages/Clear.vue";
 
-import store from "./store/index";
+import store, { key } from "./store";
 
 import "notivue/notification.css";
 import "notivue/animations.css";
@@ -23,4 +23,4 @@ const router = createRouter({ routes, history: createWebHistory() });
 
 const notivue = createNotivue();
 
-createApp(App).use(router).use(store).use(notivue).mount("#app");
+createApp(App).use(router).use(store, key).use(notivue).mount("#app");

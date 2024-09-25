@@ -4,9 +4,9 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { push } from "notivue";
+import { useStore } from "../store";
 
 const store = useStore();
 const router = useRouter();

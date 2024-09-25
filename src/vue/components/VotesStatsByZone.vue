@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useStore } from "vuex";
+import { useStore } from "../store";
 
 import CompactCandidate from "./CompactCandidate.vue";
 import SectionHeader from "./SectionHeader.vue";

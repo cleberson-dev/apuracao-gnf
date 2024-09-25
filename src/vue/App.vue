@@ -14,11 +14,11 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { useStore } from "vuex";
 import { Notivue, Notification } from 'notivue'
 
 import MyHeader from "./components/MyHeader.vue";
 import { wsc } from "./main";
+import { useStore } from "./store";
 
 const store = useStore();
 onMounted(() => {

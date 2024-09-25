@@ -1,10 +1,16 @@
-import { createStore } from "vuex";
+import { InjectionKey } from "vue";
+import { createStore, Store, useStore as baseUseStore } from "vuex";
 import sections from "./modules/sections";
+import type { State as SectionsState } from "./modules/sections";
 
-const store = createStore({
-  state: {
-    latestUpdate: <number | undefined>undefined,
-  },
+type State = {
+  latestUpdate?: number;
+  sections: SectionsState;
+};
+
+export const key: InjectionKey<Store<State>> = Symbol();
+
+const store = createStore<State>({
   mutations: {
     updateTime(state) {
       state.latestUpdate = Date.now();
@@ -19,5 +25,7 @@ const store = createStore({
   },
   modules: { sections },
 });
+
+export const useStore = () => baseUseStore(key);
 
 export default store;

@@ -37,11 +37,11 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useStore } from "vuex";
 import Candidate from "./Candidate.vue";
 import SectionHeader from "./SectionHeader.vue";
 import VotesDiff from "./VotesDiff.vue";
 import { sortCandidates } from "../utils";
+import { useStore } from "../store";
 import CandidateService from "../services/candidate.service";
 
 const store = useStore();

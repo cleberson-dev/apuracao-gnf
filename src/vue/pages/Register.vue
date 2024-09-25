@@ -40,9 +40,9 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { push } from "notivue";
+import { useStore } from "../store";
 
 import CircularPicture from "../components/CircularPicture.vue";
 import CustomButton from "../components/CustomButton.vue";
@@ -51,10 +51,11 @@ import { StateSection } from "../store/modules/sections";
 
 const store = useStore();
 const router = useRouter();
-
-const formSection = ref(26);
 const candidates = CandidateService.getAll();
-let formVotes: Record<number | "outros", number> = reactive(Object.fromEntries([...candidates.map(candidate => [candidate.number, 0]), ["outros", 0]]));
+
+const initialSection = store.state.sections.sections[0];
+const formSection = ref(initialSection.number);
+const formVotes: Record<number | "outros", number> = reactive({ ...initialSection.votes });
 
 const votesEntered = computed(() => {
   let votos = 0;

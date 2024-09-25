@@ -9,7 +9,7 @@ export type StateSection = Section & {
   votes: Record<number | "outros", number>;
 };
 
-type State = {
+export type State = {
   sections: StateSection[];
 };
 
@@ -17,17 +17,17 @@ const state: State = {
   sections: [],
 };
 
-const getters = {
-  closedSections: (state: State) => state.sections.filter((s) => !!s.closed),
-  closedSectionsByZone: (state: State) => (zone: string) =>
+const getters: Record<string, (state: State) => any> = {
+  closedSections: (state) => state.sections.filter((s) => !!s.closed),
+  closedSectionsByZone: (state) => (zone: string) =>
     state.sections.filter((s) => s.zone === zone && !!s.closed),
-  section: (state: State) => (num: number) =>
+  section: (state) => (num: number) =>
     state.sections.find((s) => s.number === num),
-  allSections: (state: State) =>
+  allSections: (state) =>
     state.sections.sort((a, b) => Number(a.number) - Number(b.number)),
-  sectionsByZone: (state: State) => (zone: string) =>
+  sectionsByZone: (state) => (zone: string) =>
     state.sections.filter((s) => s.zone === zone),
-  validVotes: (state: State) =>
+  validVotes: (state) =>
     state.sections
       .filter((s) => !!s.closed)
       .reduce((prev, acc) => {
@@ -37,7 +37,7 @@ const getters = {
         }
         return prev + votados;
       }, 0),
-  validVotesByZone: (state: State) => (zone: string) =>
+  validVotesByZone: (state) => (zone: string) =>
     state.sections
       .filter((s) => s.zone === zone && !!s.closed)
       .reduce((prev, acc) => {
@@ -47,7 +47,7 @@ const getters = {
         }
         return prev + votados;
       }, 0),
-  votesCounted: (state: State) =>
+  votesCounted: (state) =>
     state.sections
       .filter((s) => !!s.closed)
       .reduce((prev, acc) => {
@@ -57,7 +57,7 @@ const getters = {
         }
         return prev + votados;
       }, 0),
-  votesCountedByZone: (state: State) => (zone: string) =>
+  votesCountedByZone: (state) => (zone: string) =>
     state.sections
       .filter((s) => !!s.closed && s.zone === zone)
       .reduce((prev, acc) => {
@@ -67,13 +67,13 @@ const getters = {
         }
         return prev + votados;
       }, 0),
-  totalElectors: (state: State) =>
+  totalElectors: (state) =>
     state.sections.reduce((prev, acc) => prev + acc.voters, 0),
-  totalElectorsByZone: (state: State) => (zone: string) =>
+  totalElectorsByZone: (state) => (zone: string) =>
     state.sections
       .filter((s) => s.zone === zone)
       .reduce((prev, acc) => prev + acc.voters, 0),
-  nullVotes: (state: State) =>
+  nullVotes: (state) =>
     state.sections
       .filter((s) => !!s.closed)
       .reduce((prev, acc) => {
@@ -83,7 +83,7 @@ const getters = {
         }
         return prev + (acc.voters - votados);
       }, 0),
-  nullVotesByZone: (state: State) => (zone: string) =>
+  nullVotesByZone: (state) => (zone: string) =>
     state.sections
       .filter((s) => !!s.closed && s.zone === zone)
       .reduce((prev, acc) => {
@@ -93,21 +93,20 @@ const getters = {
         }
         return prev + (acc.voters - votados);
       }, 0),
-  votesByCandidate: (state: State) => (candidate: number) =>
+  votesByCandidate: (state) => (candidate: number) =>
     state.sections
       .filter((s) => !!s.closed)
       .reduce((prev, acc) => prev + acc.votes[candidate], 0),
-  votesByCandidateAndZone:
-    (state: State) => (candidate: number, zone: string) =>
-      state.sections
-        .filter((s) => !!s.closed && s.zone === zone)
-        .reduce((prev, acc) => prev + acc.votes[candidate], 0),
+  votesByCandidateAndZone: (state) => (candidate: number, zone: string) =>
+    state.sections
+      .filter((s) => !!s.closed && s.zone === zone)
+      .reduce((prev, acc) => prev + acc.votes[candidate], 0),
 
-  votosApurados: (state: State) =>
+  votosApurados: (state) =>
     state.sections
       .filter((s) => !!s.closed)
       .reduce((prev, acc) => prev + acc.voters, 0),
-  votosApuradosPorZona: (state: State) => (zone: string) =>
+  votosApuradosPorZona: (state) => (zone: string) =>
     state.sections
       .filter((s) => !!s.closed && s.zone === zone)
       .reduce((prev, acc) => prev + acc.voters, 0),
@@ -115,7 +114,7 @@ const getters = {
 
 const actions: Record<
   string,
-  ({ commit }: { commit: Commit }, ...args: any[]) => void
+  ({ commit }: { commit: Commit }, payload: any) => void
 > = {
   async registerVotes(
     { commit },
@@ -152,9 +151,9 @@ const actions: Record<
   },
 };
 
-const mutations = {
+const mutations: Record<string, (state: State, payload: any) => any> = {
   updateVotes: (
-    state: State,
+    state,
     {
       sectionNumber,
       votes,
@@ -165,7 +164,7 @@ const mutations = {
     section.closed = true;
   },
   fetchSections: (
-    state: State,
+    state,
     { sections, candidates }: { sections: Section[]; candidates: Candidate[] }
   ) => {
     state.sections = sections.map((s) => ({
@@ -178,7 +177,7 @@ const mutations = {
     }));
   },
   updateSection: (
-    state: State,
+    state,
     payload: { section: string; votes: Record<number | "outros", number> }
   ) => {
     const section = state.sections.find((s) => s.number === +payload.section);
@@ -189,7 +188,7 @@ const mutations = {
 
   // NEW
   updateSectionsVotes(
-    state: State,
+    state,
     votes: Awaited<ReturnType<typeof VoteService.getAllVotes>>
   ) {
     votes.forEach((vote) => {
