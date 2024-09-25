@@ -126,6 +126,7 @@ const actions: Record<
   ) {
     await VoteService.vote(sectionNumber, votes);
     commit("updateVotes", { sectionNumber, votes });
+    commit("updateTime");
   },
   async fetchSections({ commit }) {
     const sections = await SectionService.fetchAll();
@@ -147,6 +148,7 @@ const actions: Record<
   },
   updateSection({ commit }, section) {
     commit("updateSection", section);
+    commit("updateTime");
   },
 };
 

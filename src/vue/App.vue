@@ -24,6 +24,7 @@ const store = useStore();
 onMounted(() => {
   store.dispatch('fetchSections');
   store.dispatch('fetchVotes');
+  store.commit('initializeTime');
 
   wsc.onmessage = (event) => {
     const message = JSON.parse(event.data);

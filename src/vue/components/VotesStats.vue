@@ -1,6 +1,10 @@
 <template>
   <section class="apuracao-geral" v-if="candidates.length > 0">
-    <h1 class="pageTitle">Apuração Paralela de Gov. Nunes Freire - MA</h1>
+    <h1 class="pageTitle">Apuração Paralela de Gov. Nunes Freire - MA
+      <small :style="{ margin: 0, fontWeight: 400, fontSize: '0.9rem', opacity: 0.6, display: 'block' }"
+        v-if="formattedLatestUpdate">Última
+        Atualização: {{ formattedLatestUpdate }}</small>
+    </h1>
     <section-header leftTitle="Geral" :leftSubtitle="store.getters.votosApurados + ' votos apurados'" :rightTitle="formatarPercentual(store.getters.closedSections.length / store.getters.allSections.length) + '%'
       " :rightSubtitle="'Seções totalizadas (' +
         store.getters.closedSections.length +
@@ -49,6 +53,8 @@ const challengers = computed(() => {
 const otherCandidates = computed(() => {
   return sortedCandidates.value.slice(2);
 });
+
+const formattedLatestUpdate = computed(() => store.state.latestUpdate ? new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "medium" }).format(store.state.latestUpdate) : undefined)
 
 const formatarPercentual = (decimal: number) => {
   const val = isNaN(decimal) ? 0 : decimal;
