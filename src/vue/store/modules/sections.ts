@@ -175,12 +175,14 @@ const mutations = {
       ]),
     }));
   },
-  updateSection: (state: State, section: StateSection) => {
-    console.log("Update Section - Mutation", section);
-    state.sections = [
-      ...state.sections.filter((s) => s.number !== section.number),
-      section,
-    ];
+  updateSection: (
+    state: State,
+    payload: { section: string; votes: Record<number | "outros", number> }
+  ) => {
+    const section = state.sections.find((s) => s.number === +payload.section);
+    if (!section) return;
+
+    section.votes = payload.votes;
   },
 
   // NEW

@@ -29,7 +29,6 @@ onMounted(() => {
     const message = JSON.parse(event.data);
     switch (message.type) {
       case "UPDATED_SECTION":
-        console.log(message.payload);
         store.dispatch('updateSection', message.payload);
         break;
       default:
