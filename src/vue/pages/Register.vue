@@ -1,13 +1,13 @@
 <template>
-  <form v-if="store.getters.allSections.length > 0 && candidates.length > 0">
+  <form v-if="sectionStore.sections.length > 0 && candidates.length > 0">
     <div>
       <h1>Cadastrar votos</h1>
       <label>Selecione a seção</label>
       <select :value="formSection" @input="formSection = +($event.target as HTMLSelectElement).value"
         @change="onSelectChange">
-        <option v-for="section in store.getters.allSections" :key="section.number" :value="section.number" :style="{
-          backgroundColor: section.closed && '#ffdb57',
-          color: section.closed && 'gray',
+        <option v-for="section in sectionStore.allSections" :key="section.number" :value="section.number" :style="{
+          backgroundColor: section.closed ? '#ffdb57' : undefined,
+          color: section.closed ? 'gray' : undefined,
         }">
           {{ section.number }} - {{ section.local }}
         </option>
@@ -42,33 +42,35 @@
 import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { push } from "notivue";
-import { useStore } from "../store";
 
 import CircularPicture from "../components/CircularPicture.vue";
 import CustomButton from "../components/CustomButton.vue";
 import CandidateService from "../services/candidate.service";
-import { StateSection } from "../store/modules/sections";
+import { StateSection, useSectionStore } from "../store/section.store";
+import { useMainStore } from "../store/main.store";
 
-const store = useStore();
+const sectionStore = useSectionStore();
+const mainStore = useMainStore();
+
 const router = useRouter();
 const candidates = CandidateService.getAll();
 
-const initialSection = store.state.sections.sections[0];
+const initialSection = sectionStore.sections[0];
 const formSection = ref(initialSection.number);
 const formVotes: Record<number | "outros", number> = reactive({ ...initialSection.votes });
 
 const votesEntered = computed(() => {
-  let votos = 0;
+  let votes = 0;
   for (const numCandidato in formVotes) {
-    votos += Number(formVotes[numCandidato]);
+    votes += Number(formVotes[numCandidato]);
   }
-  return votos;
+  return votes;
 });
 const areNegatives = computed(() => {
   return Object.entries(formVotes).some(([, value]) => value < 0);
 });
 const currentFormSection = computed<StateSection>(() => {
-  return store.getters.allSections.find((section: StateSection) => section.number === formSection.value);
+  return sectionStore.sections.find((section: StateSection) => section.number === formSection.value)!;
 });
 const votesLeft = computed(() => {
   return currentFormSection.value.voters - votesEntered.value;
@@ -95,15 +97,11 @@ async function registrar(e: any) {
     return push.error("Votos inseridos excederam a quantidade máxima");
   }
 
-  await store.dispatch("registerVotes", {
+  await sectionStore.registerVotes({
     sectionNumber: formSection.value,
-    votes: Object.fromEntries(
-      Object.entries(formVotes).map(([key, value]) => [
-        key,
-        Number(value),
-      ])
-    ),
+    votes: { ...formVotes },
   });
+  mainStore.updateTime();
 
   push.success("Votos computados com sucesso!");
 };

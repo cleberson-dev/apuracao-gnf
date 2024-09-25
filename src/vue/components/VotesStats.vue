@@ -5,32 +5,32 @@
         v-if="formattedLatestUpdate">Última
         Atualização: {{ formattedLatestUpdate }}</small>
     </h1>
-    <section-header leftTitle="Geral" :leftSubtitle="store.getters.votosApurados + ' votos apurados'" :rightTitle="formatarPercentual(store.getters.closedSections.length / store.getters.allSections.length) + '%'
+    <section-header leftTitle="Geral" :leftSubtitle="sectionStore.votosApurados + ' votos apurados'" :rightTitle="formatarPercentual(sectionStore.closedSections.length / sectionStore.allSections.length) + '%'
       " :rightSubtitle="'Seções totalizadas (' +
-        store.getters.closedSections.length +
+        sectionStore.closedSections.length +
         '/' +
-        store.getters.allSections.length +
+        sectionStore.allSections.length +
         ')'
         " />
 
     <candidate featured :name="challengers[0].name" :profilePicture="challengers[0].profilePicture"
-      :color="challengers[0].color" :votes="store.getters.votesByCandidate(challengers[0].number)"
-      :totalVotes="store.getters.validVotes" />
+      :color="challengers[0].color" :votes="sectionStore.votesByCandidate(challengers[0].number)"
+      :totalVotes="sectionStore.validVotes" />
 
-    <votes-diff :votesA="store.getters.votesByCandidate(challengers[0].number)"
-      :votesB="store.getters.votesByCandidate(challengers[1].number)" />
+    <votes-diff :votesA="sectionStore.votesByCandidate(challengers[0].number)"
+      :votesB="sectionStore.votesByCandidate(challengers[1].number)" />
 
     <candidate featured :name="challengers[1].name" :profilePicture="challengers[1].profilePicture"
-      :color="challengers[1].color" :votes="store.getters.votesByCandidate(challengers[1].number)"
-      :totalVotes="store.getters.validVotes" />
+      :color="challengers[1].color" :votes="sectionStore.votesByCandidate(challengers[1].number)"
+      :totalVotes="sectionStore.validVotes" />
 
     <div class="other-candidates">
       <candidate v-for="candidate in otherCandidates" :key="candidate.number" :name="candidate.name"
         :profilePicture="candidate.profilePicture" :color="candidate.color"
-        :votes="store.getters.votesByCandidate(candidate.number)" :totalVotes="store.getters.validVotes" />
+        :votes="sectionStore.votesByCandidate(candidate.number)" :totalVotes="sectionStore.validVotes" />
 
-      <candidate key="null" name="Brancos, nulos e abstenções" color="red" :votes="store.getters.nullVotes"
-        :totalVotes="store.getters.votosApurados" />
+      <candidate key="null" name="Brancos, nulos e abstenções" color="red" :votes="sectionStore.nullVotes"
+        :totalVotes="sectionStore.votosApurados" />
     </div>
   </section>
 </template>
@@ -41,12 +41,15 @@ import Candidate from "./Candidate.vue";
 import SectionHeader from "./SectionHeader.vue";
 import VotesDiff from "./VotesDiff.vue";
 import { sortCandidates } from "../utils";
-import { useStore } from "../store";
 import CandidateService from "../services/candidate.service";
+import { useSectionStore } from "../store/section.store";
+import { useMainStore } from "../store/main.store";
 
-const store = useStore();
+const mainStore = useMainStore();
+const sectionStore = useSectionStore();
+
 const candidates = CandidateService.getAll();
-const sortedCandidates = computed(() => sortCandidates(candidates, store.state.sections.sections));
+const sortedCandidates = computed(() => sortCandidates(candidates, sectionStore.sections));
 const challengers = computed(() => {
   return sortedCandidates.value.slice(0, 2);
 });
@@ -54,7 +57,7 @@ const otherCandidates = computed(() => {
   return sortedCandidates.value.slice(2);
 });
 
-const formattedLatestUpdate = computed(() => store.state.latestUpdate ? new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "medium" }).format(store.state.latestUpdate) : undefined)
+const formattedLatestUpdate = computed(() => mainStore.latestUpdate ? new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "medium" }).format(mainStore.latestUpdate) : undefined)
 
 const formatarPercentual = (decimal: number) => {
   const val = isNaN(decimal) ? 0 : decimal;

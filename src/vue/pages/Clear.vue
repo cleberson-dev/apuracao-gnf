@@ -6,13 +6,18 @@
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { push } from "notivue";
-import { useStore } from "../store";
 
-const store = useStore();
+import { useSectionStore } from "../store/section.store";
+import { useMainStore } from "../store/main.store";
+
+const sectionStore = useSectionStore();
+const mainStore = useMainStore();
+
 const router = useRouter();
 
 onMounted(async () => {
-  await store.dispatch("cleanVotes");
+  await sectionStore.cleanVotes();
+  mainStore.clearTime();
   push.success("Votos limpos com sucesso!");
   router.push("/");
 });

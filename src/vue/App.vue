@@ -18,19 +18,23 @@ import { Notivue, Notification } from 'notivue'
 
 import MyHeader from "./components/MyHeader.vue";
 import { wsc } from "./main";
-import { useStore } from "./store";
 
-const store = useStore();
+import { useSectionStore } from './store/section.store';
+import { useMainStore } from './store/main.store';
+
+const sectionsStore = useSectionStore();
+const mainStore = useMainStore();
+
 onMounted(() => {
-  store.dispatch('fetchSections');
-  store.dispatch('fetchVotes');
-  store.commit('initializeTime');
+  sectionsStore.fetchSections();
+  sectionsStore.fetchVotes();
+  mainStore.initializeTime();
 
   wsc.onmessage = (event) => {
     const message = JSON.parse(event.data);
     switch (message.type) {
       case "UPDATED_SECTION":
-        store.dispatch('updateSection', message.payload);
+        sectionsStore.updateSection(message.payload);
         break;
       default:
         console.log(message);
