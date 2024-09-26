@@ -1,8 +1,10 @@
 <template>
-  <p :class="['diff', difference >= 0 ? 'positive' : 'negative']" :style="{ fontSize: `calc(1.25rem * ${size})` }">
+  <p :class="['font-bold w-full text-right flex flex-col m-0 text-black', difference >= 0 ? 'text-[#2b9348]' : 'text-[#d62828]']"
+    :style="{ fontSize: `calc(1.25rem * ${size})` }">
     {{ difference >= 0 ? "+" : "-" }}
     {{ Math.abs(difference) }}
-    <span class="legend" :style="{ fontSize: `calc(0.75rem * ${size})` }">Diferença de votos</span>
+    <span class="uppercase font-medium text-black" :style="{ fontSize: `calc(0.75rem * ${size})` }">Diferença de
+      votos</span>
   </p>
 </template>
 
@@ -19,33 +21,7 @@ const props = defineProps({
 });
 
 const difference = computed(() => {
-  if (props.votesA === undefined || props.votesB === undefined) return 0;
-  return props.votesA - props.votesB;
+  if ([props.votesA, props.votesB].includes(undefined)) return 0;
+  return props.votesA! - props.votesB!;
 });
 </script>
-
-<style scoped>
-.diff {
-  font-weight: 700;
-  width: 100%;
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  color: black;
-}
-
-.diff span {
-  text-transform: uppercase;
-  font-weight: 500;
-  color: black;
-}
-
-.diff.positive {
-  color: #2b9348;
-}
-
-.diff.negative {
-  color: #d62828;
-}
-</style>

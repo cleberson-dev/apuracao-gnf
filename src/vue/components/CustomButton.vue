@@ -1,5 +1,10 @@
 <template>
-  <button :class="['btn', variant]" @click="$emit('click', $event)" :disabled="disabled" :type="type">
+  <button
+    class="rounded-md border-none outline-none font-bold text-xl px-6 py-4 cursor-pointer text-white disabled:opacity-50 disabled:cursor-not-allowed hover:grayscale-[0.4]"
+    @click="$emit('click', $event)" :disabled="disabled" :type="type" :style="{
+      backgroundColor: getBgColorByVariant(variant),
+      color: variant === 'light' ? 'black' : 'white',
+    }">
     <slot></slot>
   </button>
 </template>
@@ -27,48 +32,14 @@ defineProps({
     default: false,
   },
 });
+
+const getBgColorByVariant = (variant: string): string => {
+  return {
+    primary: '#0066ff',
+    danger: '#e63946',
+    warn: 'yellow',
+    dark: 'black',
+    light: 'white',
+  }[variant] ?? '';
+}
 </script>
-
-<style scoped>
-.btn {
-  border-radius: 5px;
-  font-family: "Montserrat", sans-serif;
-  border: none;
-  outline: none;
-  font-weight: 700;
-  font-size: 1.3rem;
-  padding: 15px 22.5px;
-  cursor: pointer;
-  color: white;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn:hover {
-  filter: grayscale(0.4);
-}
-
-.btn.primary {
-  background-color: #0066ff;
-}
-
-.btn.danger {
-  background-color: #e63946;
-}
-
-.btn.warn {
-  background-color: yellow;
-}
-
-.btn.dark {
-  background-color: black;
-}
-
-.btn.light {
-  background-color: white;
-  color: black;
-}
-</style>

@@ -1,11 +1,9 @@
 <template>
-  <div id="app">
-    <my-header />
+  <my-header />
 
-    <main>
-      <router-view />
-    </main>
-  </div>
+  <main class="h-full ml-20">
+    <router-view />
+  </main>
 
   <Notivue v-slot="item">
     <Notification :item="item" />
@@ -42,19 +40,3 @@ onMounted(() => {
   };
 });
 </script>
-
-<style>
-body {
-  margin: 0;
-}
-
-#app {
-  font-family: "Montserrat", sans-serif;
-  min-height: 100vh;
-}
-
-main {
-  margin-left: 80px;
-  height: 100%;
-}
-</style>

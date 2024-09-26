@@ -1,10 +1,11 @@
 <template>
-  <form v-if="sectionStore.sections.length > 0 && candidates.length > 0">
+  <form v-if="sectionStore.sections.length > 0 && candidates.length > 0"
+    class="h-[100vh] box-border px-20 py-10 flex flex-col justify-between items-start">
     <div>
-      <h1>Cadastrar votos</h1>
-      <label>Selecione a seção</label>
-      <select :value="formSection" @input="formSection = +($event.target as HTMLSelectElement).value"
-        @change="onSelectChange">
+      <h1 class="text-4xl font-black">Cadastrar votos</h1>
+      <label class="block text-base font-bold text-[#909090]">Selecione a seção</label>
+      <select class="bg-[#e4e4e4] rounded-md border-none p-3 w-[40vw] mt-1" :value="formSection"
+        @input="formSection = +($event.target as HTMLSelectElement).value" @change="onSelectChange">
         <option v-for="section in sectionStore.allSections" :key="section.number" :value="section.number" :style="{
           backgroundColor: section.closed ? '#ffdb57' : undefined,
           color: section.closed ? 'gray' : undefined,
@@ -14,11 +15,13 @@
       </select>
     </div>
 
-    <div class="votos" v-if="candidates.length > 0">
-      <div class="candidato" v-for="candidate in candidates" :key="candidate.number">
-        <h4 class="nome">{{ candidate.name }}</h4>
+    <div class="flex justify-between w-full" v-if="candidates.length > 0">
+      <div class="flex flex-col items-center" v-for="candidate in candidates" :key="candidate.number">
+        <h4 class="mt-0 mb-1 font-extrabold">{{ candidate.name }}</h4>
         <circular-picture :src="candidate.profilePicture" :size="4" :color="candidate.color" />
-        <input min="0" :max="Number(formVotes[candidate.number]) + Number(votesLeft)" type="number"
+        <input
+          class="bg-[#e4e4e4] border-none outline-none text-3xl w-20 text-center px-3 py-2 mt-3 rounded focus:outline-1 focus:outline-gray"
+          min="0" :max="Number(formVotes[candidate.number]) + Number(votesLeft)" type="number"
           v-model="formVotes[candidate.number]" />
         <span>votos</span>
       </div>
@@ -28,7 +31,7 @@
       <br />
       {{ votesLeft > 0 ? votesLeft : 0 }} nulos
     </p>
-    <div class="btns">
+    <div class="flex justify-between w-full">
       <custom-button :disabled="isInvalid" @click="registrar" type="button">
         Cadastrar
       </custom-button>
@@ -108,87 +111,9 @@ async function registrar(e: any) {
 </script>
 
 <style scoped>
-form {
-  height: 100vh;
-  box-sizing: border-box;
-  padding: 40px 80px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-form h1 {
-  font-size: 2.25rem;
-  font-weight: 900;
-}
-
-form h4 {
-  font-weight: 800;
-}
-
-form label {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #909090;
-}
-
-form select {
-  background-color: #e4e4e4;
-  border-radius: 5px;
-  border: none;
-  padding: 10px 10px;
-  width: 40vw;
-  margin-top: 5px;
-}
-
-form .votos input {
-  background-color: #e4e4e4;
-  border: none;
-  outline: none;
-  font-size: 28px;
-  width: 5rem;
-  padding: 8px 10px;
-  font-family: "Montserrat", sans-serif;
-  text-align: center;
-  margin-top: 10px;
-  border-radius: 5px;
-}
-
-form .votos input:focus {
-  outline: 1px solid gray;
-}
-
-form .votos input::-webkit-outer-spin-button,
-form .votos input::-webkit-inner-spin-button {
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-form .votos {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-form .votos .candidato {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-form .votos .candidato .nome {
-  margin-top: 0;
-  margin-bottom: 5px;
-}
-
-.btns {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-form label {
-  display: block;
 }
 </style>

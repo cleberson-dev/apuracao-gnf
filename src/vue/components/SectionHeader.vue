@@ -1,18 +1,18 @@
 <template>
-  <header class="section-header">
-    <div class="left">
-      <h1 class="title" :style="{ fontSize: `calc(1.8rem * ${size})` }">
+  <header class="flex justify-between items-start mb-4 capitalize">
+    <div>
+      <h1 class="font-bold m-0" :style="{ fontSize: `calc(1.8rem * ${size})` }">
         {{ leftTitle }}
       </h1>
-      <h2 class="subtitle" :style="{ fontSize: `calc(1rem * ${size})` }">
+      <h2 class="text-[#909090] font-bold m-0" :style="{ fontSize: `calc(1rem * ${size})` }">
         {{ leftSubtitle }}
       </h2>
     </div>
-    <div class="right">
-      <h1 class="title" :style="{ fontSize: `calc(2rem * ${size})` }">
+    <div class="text-right">
+      <h1 class="m-0 text-[#2a9d8f]" :style="{ fontSize: `calc(2rem * ${size})` }">
         {{ rightTitle }}
       </h1>
-      <h2 class="subtitle" :style="{ fontSize: `calc(1rem * ${size})` }">
+      <h2 class="m-0 text-[#909090]" :style="{ fontSize: `calc(1rem * ${size})` }">
         {{ rightSubtitle }}
       </h2>
     </div>
@@ -31,46 +31,3 @@ defineProps({
   },
 });
 </script>
-
-<style scoped>
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 15px;
-}
-
-.section-header .right {
-  text-align: right;
-}
-
-.left .title {
-  font-size: 1.8rem;
-  font-weight: 800;
-  margin: 0;
-}
-
-.left .subtitle {
-  font-size: 1rem;
-  color: #909090;
-  font-weight: 700;
-  margin: 0;
-}
-
-.right .title {
-  color: #2a9d8f;
-  margin: 0;
-  font-size: 2rem;
-}
-
-.right .subtitle {
-  color: #909090;
-  font-size: 1rem;
-  margin: 0;
-}
-
-.title,
-.subtitle {
-  text-transform: capitalize;
-}
-</style>

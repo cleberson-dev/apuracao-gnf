@@ -8,6 +8,7 @@ import HomePage from "./pages/Home.vue";
 import RegisterPage from "./pages/Register.vue";
 import ClearPage from "./pages/Clear.vue";
 
+import "./index.css";
 import "notivue/notification.css";
 import "notivue/animations.css";
 
@@ -18,6 +19,7 @@ const routes = [
   { path: "/cadastrar", component: RegisterPage },
   { path: "/limpar", component: ClearPage },
 ];
+
 const router = createRouter({ routes, history: createWebHistory() });
 
 const pinia = createPinia();

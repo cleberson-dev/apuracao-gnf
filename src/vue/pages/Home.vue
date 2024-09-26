@@ -1,8 +1,8 @@
 <template>
-  <div class="home">
+  <div class="min-h-[100vh] bg-[#efefef] flex">
     <votes-stats />
 
-    <div class="filtros">
+    <div class="flex-grow px-10 py-8 w-2/5 flex flex-col justify-evenly">
       <votes-stats-by-zone zone="urbana" />
       <votes-stats-by-zone zone="rural" />
     </div>
@@ -13,21 +13,3 @@
 import VotesStats from "../components/VotesStats.vue";
 import VotesStatsByZone from "../components/VotesStatsByZone.vue";
 </script>
-
-<style scoped>
-.home {
-  min-height: 100vh;
-  background-color: #efefef;
-  display: flex;
-}
-
-.filtros {
-  flex-grow: 1;
-  padding: 30px 40px;
-  padding-right: 40px;
-  width: 40%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-}
-</style>

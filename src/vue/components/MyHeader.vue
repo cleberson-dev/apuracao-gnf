@@ -1,24 +1,25 @@
 <template>
-  <header>
-    <div class="logo">
-      <img alt="Logo" src="../assets/img/logo.png" />
+  <header class="bg-[#2a9d8f] h-[100vh] w-20 fixed">
+    <div class="w-full flex justify-center items-center py-5">
+      <img alt="Logo" src="../assets/img/logo.png" class="w-9" />
     </div>
-    <nav>
-      <li>
-        <router-link to="/" class="item">
-          <img src="../assets/img/icons/home.svg" />
+    <nav class="text-white text-[0.8rem] decoration-none font-bold lowercase">
+      <li class="p-4 hover:bg-[rgba(0,0,0,.2)] list-none transition-colors">
+        <router-link to="/" class="flex flex-col justify-center items-center">
+          <HomeIcon class="size-7 mb-2" />
           Início
         </router-link>
       </li>
-      <li>
-        <router-link to="/cadastrar" class="item">
-          <img src="../assets/img/icons/pen.svg" />
+      <li class="p-4 hover:bg-[rgba(0,0,0,.2)] list-none transition-colors">
+        <router-link to="/cadastrar" class="flex flex-col justify-center items-center">
+          <PencilSquareIcon class="size-7 mb-2" />
           Cadastrar
         </router-link>
       </li>
-      <li>
-        <button @click.prevent="onPrint" class="item">
-          <img src="../assets/img/icons/camera.svg" />
+      <li class="p-4 hover:bg-[rgba(0,0,0,.2)] list-none transition-colors">
+        <button @click.prevent="onPrint"
+          class="bg-none border-none outline-none w-full cursor-pointer flex flex-col justify-center items-center">
+          <CameraIcon class="size-7 mb-2" />
           Screenshot
         </button>
       </li>
@@ -28,6 +29,7 @@
 
 <script setup lang="ts">
 import axios from "axios";
+import { HomeIcon, PencilSquareIcon, CameraIcon } from '@heroicons/vue/24/outline'
 
 async function onPrint() {
   const res = await axios.get("http://localhost:5000/print");
@@ -37,66 +39,4 @@ async function onPrint() {
   link.href = data.path;
   link.click();
 }
-
 </script>
-
-<style scoped>
-header {
-  background-color: #2a9d8f;
-  height: 100vh;
-  width: 80px;
-  position: fixed;
-}
-
-header ul {
-  margin: 0;
-}
-
-li {
-  list-style: none;
-  padding: 15px 0;
-}
-
-li:hover {
-  background-color: rgba(0, 0, 0, 0.2);
-}
-
-nav .item {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  text-decoration: none;
-  font-size: 0.8rem;
-  text-transform: lowercase;
-  font-weight: 700;
-}
-
-nav .item img {
-  width: 28px;
-  height: 28px;
-  margin-bottom: 8px;
-}
-
-button.item {
-  background: none;
-  border: none;
-  outline: none;
-  width: 100%;
-  font-family: "Montserrat", sans-serif;
-  cursor: pointer;
-}
-
-.logo {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px 0;
-}
-
-.logo img {
-  width: 36px;
-}
-</style>

@@ -24,7 +24,7 @@
       :votes="sectionStore.votesByCandidateAndZone(challengers[1].number, zone)"
       :totalVotes="sectionStore.validVotesByZone(zone)" />
 
-    <div class="other-candidates">
+    <div class="flex flex-wrap mt-4">
       <compact-candidate v-for="candidato in otherCandidates" :key="candidato.number" :name="candidato.name"
         :profilePicture="candidato.profilePicture" :color="candidato.color"
         :votes="sectionStore.votesByCandidateAndZone(candidato.number, zone)"
@@ -70,48 +70,3 @@ function formatarPercentual(decimal: number) {
   return (val * 100).toFixed(2).replace(".", ",");
 }
 </script>
-
-<style scoped>
-.left .title {
-  font-size: 1.25rem;
-  font-weight: 800;
-  margin: 0;
-}
-
-.left .subtitle {
-  font-size: 0.8rem;
-  color: #909090;
-  font-weight: 700;
-  margin: 0;
-}
-
-.right .title,
-.right .subtitle {
-  margin: 0;
-}
-
-.right .title {
-  font-size: 1rem;
-  color: #2a9d8f;
-}
-
-.right .subtitle {
-  color: #909090;
-  font-size: 0.8rem;
-}
-
-.other-candidates {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 1.1rem;
-}
-
-.other-candidates .compact-candidate_mini {
-  margin-right: 2rem;
-  margin-bottom: 1rem;
-}
-
-.diff {
-  margin-bottom: 1rem;
-}
-</style>

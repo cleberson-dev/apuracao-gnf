@@ -1,11 +1,12 @@
 <template>
-  <figure class="circular-picture" :alt="description" :style="{
-    borderColor: color,
-    borderWidth: `calc(borderWidth * 1px)`,
-    backgroundImage: `url(${src})`,
-    width: `calc(2rem * ${size})`,
-    height: `calc(2rem * ${size})`,
-  }" />
+  <figure :class="['rounded-full border-solid m-0 bg-cover bg-center bg-[#c4c4c4]', gray ? 'grayscale-[0.7]' : '']"
+    :alt="description" :style="{
+      borderColor: color,
+      borderWidth: `calc(${borderWidth} * 1px)`,
+      backgroundImage: `url(${src})`,
+      width: `calc(2rem * ${size})`,
+      height: `calc(2rem * ${size})`,
+    }" />
 </template>
 
 <script setup lang="ts">
@@ -30,16 +31,9 @@ defineProps({
     type: Number,
     default: 1,
   },
+  gray: {
+    type: Boolean,
+    default: false,
+  },
 })
 </script>
-
-<style scoped>
-.circular-picture {
-  border-radius: 50%;
-  border-style: solid;
-  margin: 0;
-  background-size: cover;
-  background-position: center;
-  background-color: #c4c4c4;
-}
-</style>

@@ -1,27 +1,27 @@
 <template>
-  <div v-if="featured" class="compact-candidate">
-    <div class="stats">
-      <div class="bar-wrapper" :style="{ flexGrow: 1 }">
-        <div class="bar" :style="{
+  <div v-if="featured">
+    <div class="flex items-center justify-start">
+      <div class="flex-grow">
+        <div class="h-5 rounded-md" :style="{
           backgroundColor: color,
           width: `calc(100% * ${percentage})`,
         }" />
       </div>
       <circular-picture :src="profilePicture" :color="color" :size="1" />
-      <p class="rel-votes" :style="{ color: color }">
+      <p class="font-bold m-0 ml-1 text-lg" :style="{ color: color }">
         {{ formattedPercentage }}%
       </p>
     </div>
-    <p class="abs-votes" :style="{ color: color }">{{ votes }} votos</p>
+    <p class="font-bold m-0 text-sm" :style="{ color: color }">{{ votes }} votos</p>
   </div>
 
-  <div v-else class="compact-candidate_mini">
+  <div v-else class="compact-candidate_mini flex">
     <circular-picture :src="profilePicture" :color="color" :size="1.2" />
-    <div class="votes">
-      <p class="relative" :style="{ color: color }">
+    <div class="flex flex-col justify-between ml-2">
+      <p class="text-base font-bold m-0" :style="{ color: color }">
         {{ formattedPercentage }}%
       </p>
-      <p class="absolute">{{ votes }} votos</p>
+      <p class="text-xs font-bold text-[#909090] m-0">{{ votes }} votos</p>
     </div>
   </div>
 </template>
@@ -62,61 +62,3 @@ const formattedPercentage = computed(() => {
 });
 
 </script>
-
-<style scoped>
-.compact-candidate .stats {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.compact-candidate .bar {
-  flex-grow: 1;
-  height: 20px;
-  border-radius: 4px;
-}
-
-.compact-candidate .rel-votes,
-.compact-candidate .abs-votes {
-  font-weight: 700;
-  margin: 0;
-}
-
-.compact-candidate .rel-votes {
-  font-size: 1.1rem;
-}
-
-.compact-candidate .abs-votes {
-  font-size: 0.9rem;
-}
-
-.compact-candidate .rel-votes {
-  margin-left: 5px;
-}
-
-.compact-candidate_mini {
-  display: flex;
-}
-
-.compact-candidate_mini .votes p {
-  margin: 0;
-}
-
-.compact-candidate_mini .votes {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  margin-left: 10px;
-}
-
-.compact-candidate_mini .votes .relative {
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.compact-candidate_mini .votes .absolute {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #909090;
-}
-</style>

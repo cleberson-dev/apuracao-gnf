@@ -1,6 +1,6 @@
 <template>
-  <section class="apuracao-geral" v-if="candidates.length > 0">
-    <h1 class="pageTitle">Apuração Paralela de Gov. Nunes Freire - MA
+  <section class="flex-grow-[3] min-h-full bg-white shadow-lg px-10 py-16" v-if="candidates.length > 0">
+    <h1 class="text-3xl font-extrabold w-full mt-0">Apuração Paralela de Gov. Nunes Freire - MA
       <small :style="{ margin: 0, fontWeight: 400, fontSize: '0.9rem', opacity: 0.6, display: 'block' }"
         v-if="formattedLatestUpdate">Última
         Atualização: {{ formattedLatestUpdate }}</small>
@@ -24,7 +24,7 @@
       :color="challengers[1].color" :votes="sectionStore.votesByCandidate(challengers[1].number)"
       :totalVotes="sectionStore.validVotes" />
 
-    <div class="other-candidates">
+    <div class="mt-20 flex justify-between flex-wrap h-[160px]">
       <candidate v-for="candidate in otherCandidates" :key="candidate.number" :name="candidate.name"
         :profilePicture="candidate.profilePicture" :color="candidate.color"
         :votes="sectionStore.votesByCandidate(candidate.number)" :totalVotes="sectionStore.validVotes" />
@@ -64,68 +64,3 @@ const formatarPercentual = (decimal: number) => {
   return (val * 100).toFixed(2).replace(".", ",");
 } 
 </script>
-
-<style scoped>
-.pageTitle {
-  font-size: 2rem;
-  font-weight: 800;
-  width: 100%;
-  margin-top: 0;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 15px;
-}
-
-.header .right {
-  text-align: right;
-}
-
-section.apuracao-geral {
-  flex-grow: 3;
-  min-height: 100%;
-  background-color: white;
-  box-shadow: 0 10px 20px 5px rgba(0, 0, 0, 0.25);
-  padding: 60px 40px;
-}
-
-section.apuracao-geral .header {
-  margin-bottom: 1.6rem;
-}
-
-section.apuracao-geral .other-candidates {
-  margin-top: 5rem;
-  display: flex;
-  align-content: space-between;
-  flex-wrap: wrap;
-  height: 160px;
-}
-
-.apuracao-geral .titulo-apuracao {
-  font-size: 1.8rem;
-  font-weight: 800;
-  margin: 0;
-}
-
-.apuracao-geral .subtitulo-apuracao {
-  font-size: 1rem;
-  color: #909090;
-  font-weight: 700;
-  margin: 0;
-}
-
-.apuracao-geral .secoes-rel {
-  color: #2a9d8f;
-  margin: 0;
-  font-size: 2rem;
-}
-
-.apuracao-geral .secoes-abs {
-  color: #909090;
-  font-size: 1rem;
-  margin: 0;
-}
-</style>
