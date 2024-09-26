@@ -9,10 +9,10 @@
       </h2>
     </div>
     <div class="text-right">
-      <h1 class="m-0 text-[#2a9d8f]" :style="{ fontSize: `calc(2rem * ${size})` }">
+      <h1 class="m-0 text-[#2a9d8f] font-bold" :style="{ fontSize: `calc(2rem * ${size})` }">
         {{ rightTitle }}
       </h1>
-      <h2 class="m-0 text-[#909090]" :style="{ fontSize: `calc(1rem * ${size})` }">
+      <h2 class="m-0 text-[#909090] font-bold" :style="{ fontSize: `calc(1rem * ${size})` }">
         {{ rightSubtitle }}
       </h2>
     </div>

@@ -24,7 +24,7 @@
       :votes="sectionStore.votesByCandidateAndZone(challengers[1].number, zone)"
       :totalVotes="sectionStore.validVotesByZone(zone)" />
 
-    <div class="flex flex-wrap mt-4">
+    <div class="flex justify-between flex-wrap mt-4 gap-4">
       <compact-candidate v-for="candidato in otherCandidates" :key="candidato.number" :name="candidato.name"
         :profilePicture="candidato.profilePicture" :color="candidato.color"
         :votes="sectionStore.votesByCandidateAndZone(candidato.number, zone)"

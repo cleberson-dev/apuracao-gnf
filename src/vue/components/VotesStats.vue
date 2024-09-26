@@ -1,17 +1,13 @@
 <template>
   <section class="flex-grow-[3] min-h-full bg-white shadow-lg px-10 py-16" v-if="candidates.length > 0">
     <h1 class="text-3xl font-extrabold w-full mt-0">Apuração Paralela de Gov. Nunes Freire - MA
-      <small :style="{ margin: 0, fontWeight: 400, fontSize: '0.9rem', opacity: 0.6, display: 'block' }"
-        v-if="formattedLatestUpdate">Última
-        Atualização: {{ formattedLatestUpdate }}</small>
+      <small class="m-0 font-normal text-sm opacity-60 block" v-if="formattedLatestUpdate">
+        Última Atualização: {{ formattedLatestUpdate }}
+      </small>
     </h1>
-    <section-header leftTitle="Geral" :leftSubtitle="sectionStore.votosApurados + ' votos apurados'" :rightTitle="formatarPercentual(sectionStore.closedSections.length / sectionStore.allSections.length) + '%'
-      " :rightSubtitle="'Seções totalizadas (' +
-        sectionStore.closedSections.length +
-        '/' +
-        sectionStore.allSections.length +
-        ')'
-        " />
+    <section-header leftTitle="Geral" :leftSubtitle="`${sectionStore.votosApurados} votos apurados`" :rightTitle="formatarPercentual(sectionStore.closedSections.length / sectionStore.allSections.length) + '%'
+      "
+      :rightSubtitle="`Seções totalizadas (${sectionStore.closedSections.length}/${sectionStore.allSections.length})`" />
 
     <candidate featured :name="challengers[0].name" :profilePicture="challengers[0].profilePicture"
       :color="challengers[0].color" :votes="sectionStore.votesByCandidate(challengers[0].number)"
@@ -29,7 +25,7 @@
         :profilePicture="candidate.profilePicture" :color="candidate.color"
         :votes="sectionStore.votesByCandidate(candidate.number)" :totalVotes="sectionStore.validVotes" />
 
-      <candidate key="null" name="Brancos, nulos e abstenções" color="red" :votes="sectionStore.nullVotes"
+      <candidate name="Brancos, nulos e abstenções" color="red" :votes="sectionStore.nullVotes"
         :totalVotes="sectionStore.votosApurados" />
     </div>
   </section>
