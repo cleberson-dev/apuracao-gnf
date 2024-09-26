@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { HomeIcon, PencilSquareIcon, CameraIcon } from '@heroicons/vue/24/outline'
+import { HomeIcon, PencilSquareIcon, CameraIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { UtilService } from "../services/util.service";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const items = [
   { href: '/', label: 'Início', icon: HomeIcon },
   { href: '/cadastrar', label: 'Cadastrar', icon: PencilSquareIcon },
   { onClick: onPrint, label: 'Screenshot', icon: CameraIcon },
+  { label: "Limpar", icon: TrashIcon, onClick: cleanVotes }
 ]
 
 async function onPrint() {
@@ -15,6 +19,10 @@ async function onPrint() {
   link.download = data.name;
   link.href = data.path;
   link.click();
+}
+
+async function cleanVotes() {
+  router.push("/limpar");
 }
 </script>
 
@@ -26,12 +34,12 @@ async function onPrint() {
     <nav class="text-white text-[0.8rem] decoration-none font-bold lowercase">
       <li v-for="item in items" class="p-4 hover:bg-[rgba(0,0,0,.2)] list-none transition-colors cursor-pointer">
         <router-link v-if="!!item.href" :to="item.href" class="flex flex-col justify-center items-center">
-          <item.icon class="size-7 mb-2" />
+          <component :is="item.icon" class="size-7 mb-2" />
           {{ item.label }}
         </router-link>
         <button v-if="!!item.onClick" @click.prevent="item.onClick"
           class="w-full flex flex-col justify-center items-center">
-          <item.icon class="size-7 mb-2" />
+          <component :is="item.icon" class="size-7 mb-2" />
           {{ item.label }}
         </button>
       </li>
