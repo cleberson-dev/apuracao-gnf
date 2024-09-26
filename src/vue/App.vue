@@ -18,7 +18,6 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { Notivue, Notification } from 'notivue'
 
 import MyHeader from "./components/MyHeader.vue";
-import { wsc } from "./main";
 
 import { useSectionStore } from './store/section.store';
 import { useMainStore } from './store/main.store';
@@ -31,27 +30,16 @@ const isCollapsed = ref(false);
 const toggleCollapse = (e: KeyboardEvent) => {
   if (e.ctrlKey && e.key === 'm') {
     isCollapsed.value = !isCollapsed.value;
-    console.log('AHA');
   }
 }
 
 onMounted(() => {
   sectionsStore.fetchSections();
   sectionsStore.fetchVotes();
+
   mainStore.initializeTime();
 
   window.addEventListener("keyup", toggleCollapse);
-
-  wsc.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-    switch (message.type) {
-      case "UPDATED_SECTION":
-        sectionsStore.updateSection(message.payload);
-        break;
-      default:
-        console.log(message);
-    }
-  };
 });
 
 onUnmounted(() => {

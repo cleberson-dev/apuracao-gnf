@@ -9,4 +9,9 @@ export class UtilService {
 
     return data;
   }
+
+  static playAlert() {
+    const alert = new Audio("update-alert.mp3");
+    alert.play();
+  }
 }
