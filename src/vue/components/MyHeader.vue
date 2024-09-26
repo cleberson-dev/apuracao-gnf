@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HomeIcon, PencilSquareIcon, CameraIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { HomeIcon, PencilSquareIcon, CameraIcon, TrashIcon, CircleStackIcon } from '@heroicons/vue/24/outline'
 import { UtilService } from "../services/util.service";
 import { useRouter } from 'vue-router';
 
@@ -9,7 +9,8 @@ const items = [
   { href: '/', label: 'Início', icon: HomeIcon },
   { href: '/cadastrar', label: 'Cadastrar', icon: PencilSquareIcon },
   { onClick: onPrint, label: 'Screenshot', icon: CameraIcon },
-  { label: "Limpar", icon: TrashIcon, onClick: cleanVotes }
+  { label: "Limpar", icon: TrashIcon, onClick: cleanVotes },
+  { label: "Database", icon: CircleStackIcon, href: '/database' },
 ]
 
 async function onPrint() {

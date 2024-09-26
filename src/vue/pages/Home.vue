@@ -36,6 +36,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  wsc.removeListener("message", updateRealTimeVotes);
+  wsc.onmessage = () => { };
 });
 </script>

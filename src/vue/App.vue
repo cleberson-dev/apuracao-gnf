@@ -2,7 +2,7 @@
   <div class="flex h-[100svh]">
     <my-header v-if="!isCollapsed" />
 
-    <main class="h-full overflow-y-auto">
+    <main class="h-full overflow-y-auto flex-grow">
       <router-view />
     </main>
 

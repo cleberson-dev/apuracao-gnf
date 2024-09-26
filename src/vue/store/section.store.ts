@@ -161,5 +161,15 @@ export const useSectionStore = defineStore("sections", {
 
       section.votes = payload.votes;
     },
+    addSection(payload: Section & { closed: boolean }) {
+      const candidates = CandidateService.getAll();
+      this.sections.push({
+        ...payload,
+        votes: Object.fromEntries([
+          ...candidates.map((candidate) => [candidate.number, 0]),
+          ["outros", 0],
+        ]),
+      });
+    },
   },
 });
