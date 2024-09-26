@@ -1,18 +1,19 @@
+import { eq } from "drizzle-orm";
 import db from "../db/db";
-import { closedSections, votes } from "../db/schema";
+import { sections, votes } from "../db/schema";
 
 export type SectionVotes = Record<number | "outros", number>;
 
 export async function cleanAllVotes(): Promise<void> {
   await db.delete(votes);
-  await db.delete(closedSections);
+  await db.update(sections).set({ closed: 0 }).all();
 }
 
 export async function getVotesBySection(
-  sectionNumber: number
+  sectionId: number
 ): Promise<SectionVotes> {
   const results = await db.query.votes.findMany({
-    where: (votes, { eq }) => eq(votes.sectionNumber, sectionNumber),
+    where: (votes, { eq }) => eq(votes.sectionId, sectionId),
   });
 
   const sectionVotes: SectionVotes = { outros: 0 };
@@ -23,11 +24,11 @@ export async function getVotesBySection(
   return sectionVotes;
 }
 
-export async function vote(sectionNumber: number, sectionVotes: SectionVotes) {
+export async function vote(sectionId: number, sectionVotes: SectionVotes) {
   for (const candidate in sectionVotes) {
     const candidateNumber = candidate === "outros" ? 0 : +candidate;
     const payload = {
-      sectionNumber,
+      sectionId,
       candidateNumber,
       amount: sectionVotes[candidate],
     };
@@ -35,26 +36,19 @@ export async function vote(sectionNumber: number, sectionVotes: SectionVotes) {
       .insert(votes)
       .values(payload)
       .onConflictDoUpdate({
-        target: [votes.candidateNumber, votes.sectionNumber],
+        target: [votes.candidateNumber, votes.sectionId],
         set: { amount: sectionVotes[candidate] },
       });
   }
   // TODO: Marcar seção como totalizada
   await db
-    .insert(closedSections)
-    .values({ sectionNumber, closed: 1 })
-    .onConflictDoNothing();
-}
-
-export async function getAllClosedSections(): Promise<
-  typeof closedSections.$inferSelect[]
-> {
-  const result = await db.select().from(closedSections);
-  return result;
+    .update(sections)
+    .set({ closed: 1 })
+    .where(eq(sections.id, sectionId));
 }
 
 type AllVotes = {
-  sectionNumber: number;
+  sectionId: number;
   votes: Record<number | "outros", number>;
 }[];
 
@@ -63,14 +57,14 @@ export async function getAllVotes(): Promise<AllVotes> {
 
   const allVotes: Record<number, Record<number | "outros", number>> = {};
   results.forEach((vote) => {
-    if (!allVotes[vote.sectionNumber]) {
-      allVotes[vote.sectionNumber] = { outros: 0 };
+    if (!allVotes[vote.sectionId]) {
+      allVotes[vote.sectionId] = { outros: 0 };
     }
-    allVotes[vote.sectionNumber][vote.candidateNumber] = vote.amount;
+    allVotes[vote.sectionId][vote.candidateNumber] = vote.amount;
   });
 
-  return Object.entries(allVotes).map(([sectionNumber, votes]) => ({
-    sectionNumber: +sectionNumber,
+  return Object.entries(allVotes).map(([sectionId, votes]) => ({
+    sectionId: +sectionId,
     votes,
   }));
 }

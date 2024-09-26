@@ -1,20 +1,31 @@
-import { integer, primaryKey, sqliteTable } from "drizzle-orm/sqlite-core";
+import {
+  integer,
+  primaryKey,
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
+
+export const sections = sqliteTable("secoes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  number: integer("numero").notNull().unique(),
+  local: text("local").notNull(),
+  voters: integer("numero_eleitores").notNull(),
+  zone: text("zona", { enum: ["rural", "urbana"] }).notNull(),
+  closed: integer("totalizada").default(0),
+});
 
 export const votes = sqliteTable(
   "votos",
   {
-    sectionNumber: integer("numero_secao").notNull(),
+    sectionId: integer("id_secao")
+      .notNull()
+      .references(() => sections.id),
     candidateNumber: integer("numero_candidato").notNull(),
     amount: integer("quantidade").notNull(),
   },
   (table) => {
     return {
-      pk: primaryKey({ columns: [table.sectionNumber, table.candidateNumber] }),
+      pk: primaryKey({ columns: [table.sectionId, table.candidateNumber] }),
     };
   }
 );
-
-export const closedSections = sqliteTable("secoes_totalizadas", {
-  sectionNumber: integer("numero_secao").primaryKey(),
-  closed: integer("totalizada").notNull(),
-});

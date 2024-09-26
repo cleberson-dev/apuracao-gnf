@@ -1,14 +1,66 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "bf9a9e6d-e4d9-41fb-b358-12459ca6e8e2",
+  "id": "926610d0-ff09-4ee1-829f-32126fbd41f2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
+    "secoes": {
+      "name": "secoes",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "numero": {
+          "name": "numero",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "local": {
+          "name": "local",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "numero_eleitores": {
+          "name": "numero_eleitores",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "zona": {
+          "name": "zona",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "totalizada": {
+          "name": "totalizada",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "votos": {
       "name": "votos",
       "columns": {
-        "numero_secao": {
-          "name": "numero_secao",
+        "id_secao": {
+          "name": "id_secao",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -30,14 +82,28 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "votos_id_secao_secoes_id_fk": {
+          "name": "votos_id_secao_secoes_id_fk",
+          "tableFrom": "votos",
+          "tableTo": "secoes",
+          "columnsFrom": [
+            "id_secao"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {
-        "votos_numero_secao_numero_candidato_pk": {
+        "votos_id_secao_numero_candidato_pk": {
           "columns": [
-            "numero_secao",
+            "id_secao",
             "numero_candidato"
           ],
-          "name": "votos_numero_secao_numero_candidato_pk"
+          "name": "votos_id_secao_numero_candidato_pk"
         }
       },
       "uniqueConstraints": {}
