@@ -27,12 +27,12 @@ async function cleanVotes() {
 </script>
 
 <template>
-  <header class="bg-[#2a9d8f] h-[100vh] w-20 fixed">
+  <header class="bg-[#2a9d8f] h-full text-white">
     <div class="w-full flex justify-center items-center py-5">
       <img alt="Logo" src="../assets/img/logo.png" class="w-9" />
     </div>
-    <nav class="text-white text-[0.8rem] decoration-none font-bold lowercase">
-      <li v-for="item in items" class="p-4 hover:bg-[rgba(0,0,0,.2)] list-none transition-colors cursor-pointer">
+    <nav class="text-[0.8rem] decoration-none font-bold lowercase">
+      <li v-for="item in items" class="py-4 px-1 hover:bg-[rgba(0,0,0,.2)] list-none transition-colors cursor-pointer">
         <router-link v-if="!!item.href" :to="item.href" class="flex flex-col justify-center items-center">
           <component :is="item.icon" class="size-7 mb-2" />
           {{ item.label }}

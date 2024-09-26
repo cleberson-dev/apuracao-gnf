@@ -1,9 +1,12 @@
 <template>
-  <my-header />
+  <div class="flex h-[100svh]">
+    <my-header v-if="!isCollapsed" />
 
-  <main class="h-full ml-20">
-    <router-view />
-  </main>
+    <main class="h-full overflow-y-auto">
+      <router-view />
+    </main>
+
+  </div>
 
   <Notivue v-slot="item">
     <Notification :item="item" />
@@ -11,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { Notivue, Notification } from 'notivue'
 
 import MyHeader from "./components/MyHeader.vue";
@@ -23,10 +26,21 @@ import { useMainStore } from './store/main.store';
 const sectionsStore = useSectionStore();
 const mainStore = useMainStore();
 
+const isCollapsed = ref(false);
+
+const toggleCollapse = (e: KeyboardEvent) => {
+  if (e.ctrlKey && e.key === 'm') {
+    isCollapsed.value = !isCollapsed.value;
+    console.log('AHA');
+  }
+}
+
 onMounted(() => {
   sectionsStore.fetchSections();
   sectionsStore.fetchVotes();
   mainStore.initializeTime();
+
+  window.addEventListener("keyup", toggleCollapse);
 
   wsc.onmessage = (event) => {
     const message = JSON.parse(event.data);
@@ -38,5 +52,9 @@ onMounted(() => {
         console.log(message);
     }
   };
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keyup", toggleCollapse);
 });
 </script>
