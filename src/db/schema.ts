@@ -19,7 +19,7 @@ export const votes = sqliteTable(
   {
     sectionId: integer("id_secao")
       .notNull()
-      .references(() => sections.id),
+      .references(() => sections.id, { onDelete: "cascade" }),
     candidateNumber: integer("numero_candidato").notNull(),
     amount: integer("quantidade").notNull(),
   },

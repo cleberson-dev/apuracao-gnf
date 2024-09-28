@@ -5,7 +5,7 @@ import { onMounted, reactive, Ref, ref } from 'vue';
 import { push } from 'notivue';
 import SectionService, { Zone } from '../services/section.service';
 import CandidateService from '../services/candidate.service';
-import { TrashIcon, PencilIcon } from '@heroicons/vue/24/outline';
+import { TrashIcon } from '@heroicons/vue/24/outline';
 
 const isModalOpen = ref(false);
 const sectionForm = reactive({
@@ -15,6 +15,7 @@ const sectionForm = reactive({
   zone: 'urbana',
   voters: 1,
   closed: false,
+  votes: <Record<number | "outros", number> | undefined>{ outros: 0 },
 })
 
 const sectionStore = useSectionStore();
@@ -24,7 +25,7 @@ const getSectionItems = () => sectionStore.sections.map((s): Item => ({
   name: s.local,
   zone: s.zone,
   voters: s.voters,
-  votes: Object.values(s.votes).reduce((acc, val) => acc + val, 0),
+  votes: s.votes,
   closed: s.closed ? 'Sim ✅' : 'Não ❌',
 }));
 onMounted(() => {
@@ -55,6 +56,7 @@ const onRowClick = (row: any) => {
   sectionForm.voters = section.voters;
   sectionForm.zone = section.zone;
   sectionForm.closed = section.closed;
+  sectionForm.votes = section.votes;
 
   isModalOpen.value = true;
 }
@@ -63,6 +65,8 @@ const onNewSectionClick = () => {
   isModalOpen.value = true;
 
   delete sectionForm.id;
+  delete sectionForm.votes;
+
   sectionForm.number = 0;
   sectionForm.name = '';
   sectionForm.voters = 1;
@@ -119,25 +123,34 @@ async function removeSection(sectionId: number) {
   push.success(`Seção #${sectionId} foi removida com sucesso!`);
 }
 
+const candidates = CandidateService.getAll();
+
 </script>
 
 <template>
   <div class="p-10 w-[calc(100vw-6.3rem)] flex flex-col">
     <h1 class="font-bold text-2xl">Banco de Dados</h1>
-    <p class="relative bottom-1"><small>{{ sectionStore.sections.length }} seções, {{ numberOfCandidates }}
-        candidatos e {{ sectionStore.votosApurados }} votos
-        registrados</small></p>
+    <p class="relative bottom-1">
+      <small>
+        {{ sectionStore.sections.length }} seções, {{ numberOfCandidates }} candidatos e {{ sectionStore.votosApurados
+        }} votos registrados
+      </small>
+    </p>
     <div class="flex self-end gap-4 text-sm">
       <button @click.prevent="onNewSectionClick" class="bg-green-500 text-white p-2 rounded mb-4">
         + Nova Seção
       </button>
       <button @click.prevent="removeAllSections" class="bg-red-500 text-white p-2 rounded mb-4 flex items-center gap-1">
-        <TrashIcon class="size-4" /> Remover Seções
+        <TrashIcon class="size-4" />
+        Remover Seções
       </button>
 
     </div>
 
     <EasyDataTable :headers="headers" :items="items" style="width: 100%;" @click-row="onRowClick">
+      <template #item-votes="item">
+        {{ (Object.values(item.votes) as number[]).reduce((acc, val) => acc + val, 0) }}
+      </template>
       <template #item-actions="item">
         <button @click.stop="removeSection(item.id)">
           <TrashIcon class="text-red-500 size-4" />
@@ -149,8 +162,12 @@ async function removeSection(sectionId: number) {
   <div v-if="isModalOpen"
     class="bg-black/50 w-screen h-screen fixed top-0 left-0 z-50 flex items-center justify-center">
     <div class="w-2/5 bg-white rounded flex flex-col p-4 text-sm">
-      <button @click.prevent="isModalOpen = false" class="self-end mb-4">X</button>
-      <form class="flex flex-col gap-4" @submit.prevent="upsertSection">
+      <div class="flex justify-between">
+        <h1 class="font-bold text-2xl">{{ sectionForm.id ? 'Atualizar seção' : 'Criar seção' }}</h1>
+        <button class="rounded-full hover:bg-red-500/20 flex items-center justify-center size-8 transition-colors"
+          @click.prevent="isModalOpen = false">X</button>
+      </div>
+      <form class="flex flex-col gap-4 mt-10" @submit.prevent="upsertSection">
         <div class="flex flex-col">
           <label>Número</label>
           <input type="number" :class="classes.input" required min="0" v-model="sectionForm.number" />
@@ -171,11 +188,23 @@ async function removeSection(sectionId: number) {
           <label>Nº de Eleitores</label>
           <input type="number" :class="classes.input" min="1" required v-model="sectionForm.voters" />
         </div>
-        <div v-if="sectionForm.id" class="flex flex-col">
+        <div v-if="sectionForm.id">
           <label>Totalizada</label>
-          <input type="checkbox" v-model="sectionForm.closed" />
+          <input type="checkbox" class="ml-2" v-model="sectionForm.closed" />
         </div>
-        <button class="p-2 text-sm bg-green-400 rounded hover:brightness-90" type="submit">{{ sectionForm.id ?
+        <hr class="my-2" />
+        <div v-if="sectionForm.id">
+          <label class="font-semibold text-lg block mb-4">Votos</label>
+          <ul class="flex flex-col gap-2">
+            <li v-for="candidate in candidates" class="grid grid-cols-[auto_1fr_auto] items-center select-none">
+              <span class="inline-block rounded-full size-4 mr-1" :style="{ backgroundColor: candidate.color }"></span>
+              <span>{{ candidate.name }} ({{ candidate.number }})</span>
+              <input type="number" class="bg-slate-200 w-10 p-2 rounded font-semibold ml-2" min="0"
+                v-model="sectionForm.votes![candidate.number]" />
+            </li>
+          </ul>
+        </div>
+        <button class="p-2 text-sm bg-green-400 rounded hover:brightness-90 mt-4" type="submit">{{ sectionForm.id ?
           'Atualizar' :
           'Criar' }}</button>
       </form>

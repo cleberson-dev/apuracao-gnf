@@ -12,5 +12,7 @@ CREATE TABLE `votos` (
 	`numero_candidato` integer NOT NULL,
 	`quantidade` integer NOT NULL,
 	PRIMARY KEY(`id_secao`, `numero_candidato`),
-	FOREIGN KEY (`id_secao`) REFERENCES `secoes`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`id_secao`) REFERENCES `secoes`(`id`) ON UPDATE no action ON DELETE cascade
 );
+--> statement-breakpoint
+CREATE UNIQUE INDEX `secoes_numero_unique` ON `secoes` (`numero`);

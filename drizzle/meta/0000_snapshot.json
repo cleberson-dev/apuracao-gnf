@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "926610d0-ff09-4ee1-829f-32126fbd41f2",
+  "id": "8292e371-5ae2-4874-acb8-bc881ac31750",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "secoes": {
@@ -51,7 +51,15 @@
           "default": 0
         }
       },
-      "indexes": {},
+      "indexes": {
+        "secoes_numero_unique": {
+          "name": "secoes_numero_unique",
+          "columns": [
+            "numero"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
@@ -93,7 +101,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
