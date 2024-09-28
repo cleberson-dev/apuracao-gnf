@@ -47,56 +47,66 @@ export const getSectionDataFromXLSX = async (path: string) => {
   return data;
 };
 
-export const getSectionDataFromCSV = async (path: string) => {
+export const getSectionDataFromCSV = (
+  path: string,
+  saveAsJSON?: boolean
+): Promise<Section[]> => {
   const headers: Record<string, number> = {};
   const sections: Section[] = [];
 
-  const file = await readFile(path);
-  const records = parse(file, {
-    delimiter: ";",
-    bom: true,
-    relax_quotes: true,
-    encoding: "latin1",
+  return new Promise((resolve) => {
+    readFile(path).then((file) => {
+      const records = parse(file, {
+        delimiter: ";",
+        bom: true,
+        relax_quotes: true,
+        encoding: "latin1",
+      });
+
+      records.on("error", (err) => {
+        console.error(err);
+      });
+
+      records.on("close", async () => {
+        if (saveAsJSON) {
+          const outputFilename =
+            path.split(".").slice(0, -1).join(".") + ".json";
+          await writeFile(outputFilename, JSON.stringify(sections));
+          console.log(`Read complete, saved as ${outputFilename}`);
+        }
+        resolve(sections);
+      });
+
+      records.on("data", (section: string[]) => {
+        if (Object.keys(headers).length === 0) {
+          section.forEach((col, idx) => (headers[col] = idx));
+          return;
+        }
+
+        if (section[headers["CD_MUNICIPIO"]] === CD_MUNICIPIO) {
+          const newSection: typeof sections[number] = {
+            voters:
+              +section[headers["QT_ELEITOR_ELEICAO_MUNICIPAL"]] ||
+              +section[headers["QT_ELEITOR_SECAO"]],
+            number: +section[headers["NR_SECAO"]],
+            local: section[headers["NM_LOCAL_VOTACAO"]],
+          };
+
+          const NM_BAIRRO = section[headers["NM_BAIRRO"]];
+          if (NM_BAIRRO.includes("ZONA URBANA")) {
+            newSection.zone = "urbana";
+          }
+          if (NM_BAIRRO.includes("ZONA RURAL")) {
+            newSection.zone = "rural";
+          }
+
+          sections.push(newSection);
+        }
+      });
+      records.read();
+      console.log(`Reading ${path}...`);
+    });
   });
-
-  records.on("error", (err) => {
-    console.error(err);
-  });
-
-  records.on("close", async () => {
-    const outputFilename = path.split(".").slice(0, -1).join(".") + ".json";
-    await writeFile(outputFilename, JSON.stringify(sections));
-    console.log(`Read complete, saved as ${outputFilename}`);
-  });
-
-  records.on("data", (section: string[]) => {
-    if (Object.keys(headers).length === 0) {
-      section.forEach((col, idx) => (headers[col] = idx));
-      return;
-    }
-
-    if (section[headers["CD_MUNICIPIO"]] === CD_MUNICIPIO) {
-      const newSection: typeof sections[number] = {
-        voters:
-          +section[headers["QT_ELEITOR_ELEICAO_MUNICIPAL"]] ||
-          +section[headers["QT_ELEITOR_SECAO"]],
-        number: +section[headers["NR_SECAO"]],
-        local: section[headers["NM_LOCAL_VOTACAO"]],
-      };
-
-      const NM_BAIRRO = section[headers["NM_BAIRRO"]];
-      if (NM_BAIRRO.includes("ZONA URBANA")) {
-        newSection.zone = "urbana";
-      }
-      if (NM_BAIRRO.includes("ZONA RURAL")) {
-        newSection.zone = "rural";
-      }
-
-      sections.push(newSection);
-    }
-  });
-  records.read();
-  console.log("Reading file...");
 };
 
 export const getCandidateDataFromCSV = async (path: string) => {
@@ -144,5 +154,3 @@ export const getCandidateDataFromCSV = async (path: string) => {
   records.read();
   console.log(`Reading ${path}...`);
 };
-
-getSectionDataFromCSV("locais.csv");

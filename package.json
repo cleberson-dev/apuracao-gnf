@@ -10,7 +10,7 @@
     "postuninstall": "electron-builder install-app-deps",
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
     "init": "knex init",
-    "seed": "knex seed:run",
+    "seed:sections": "bun run src/db/seeds/section.seed.ts",
     "migrate": "knex migrate:latest",
     "dev:server": "nodemon src/index.ts",
     "start": "npm run build && node dist/index.js",
