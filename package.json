@@ -40,6 +40,7 @@
     "vue": "^3.3.0",
     "vue-router": "^4.4.5",
     "vue3-easy-data-table": "^1.5.47",
+    "vue3-spinners": "^1.2.2",
     "ws": "^7.4.0",
     "xlsx": "^0.16.8"
   },

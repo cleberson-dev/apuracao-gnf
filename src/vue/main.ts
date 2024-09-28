@@ -14,6 +14,7 @@ import "notivue/notification.css";
 import "notivue/animations.css";
 import Vue3EasyDataTable from "vue3-easy-data-table";
 import "vue3-easy-data-table/dist/style.css";
+import { VueSpinnersPlugin } from "vue3-spinners";
 
 export const wsc = new WebSocket("ws://localhost:5050");
 
@@ -34,4 +35,5 @@ createApp(App)
   .use(pinia)
   .use(router)
   .use(notivue)
+  .use(VueSpinnersPlugin)
   .mount("#app");
