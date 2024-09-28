@@ -20,8 +20,8 @@ export default class SectionService {
     return data;
   }
 
-  static async create(payload: Omit<Section, "id" | "closed">) {
-    const { data } = await api.post<Section>("/secoes", {...payload, local: payload.local.toUpperCase()} satisfies Omit<Section, "id" | "closed">);
+  static async create(payload: Omit<Section, "id" | "closed" | "votes">) {
+    const { data } = await api.post<Section>("/secoes", {...payload, local: payload.local.toUpperCase()} satisfies Omit<Section, "id" | "closed" | "votes">);
     return data;
   }
 

@@ -85,10 +85,10 @@ export const getSectionDataFromCSV = async (path: string) => {
 
       const NM_BAIRRO = section[headers["NM_BAIRRO"]];
       if (NM_BAIRRO.includes("ZONA URBANA")) {
-        newSection.zone = "URBANA";
+        newSection.zone = "urbana";
       }
       if (NM_BAIRRO.includes("ZONA RURAL")) {
-        newSection.zone = "RURAL";
+        newSection.zone = "rural";
       }
 
       sections.push(newSection);
@@ -143,3 +143,5 @@ export const getCandidateDataFromCSV = async (path: string) => {
   records.read();
   console.log(`Reading ${path}...`);
 };
+
+getSectionDataFromCSV("locais.csv");

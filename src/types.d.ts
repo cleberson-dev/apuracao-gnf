@@ -10,7 +10,7 @@ type Section = {
   number: number;
   voters: number;
   local: string;
-  zone?: "URBANA" | "RURAL";
+  zone?: "urbana" | "rural";
 };
 
 type Vote = {

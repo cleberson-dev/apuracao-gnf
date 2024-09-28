@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import type { Header, Item } from 'vue3-easy-data-table';
-import { useSectionStore } from '../store/section.store';
 import { onMounted, reactive, Ref, ref } from 'vue';
 import { push } from 'notivue';
+import type { Header, Item } from 'vue3-easy-data-table';
+import { TrashIcon } from '@heroicons/vue/24/outline';
+
 import SectionService, { Zone } from '../services/section.service';
 import CandidateService from '../services/candidate.service';
-import { TrashIcon } from '@heroicons/vue/24/outline';
+
+import { useSectionStore } from '../store/section.store';
 
 const isModalOpen = ref(false);
 const sectionForm = reactive({
@@ -125,6 +127,7 @@ async function removeSection(sectionId: number) {
 
 const candidates = CandidateService.getAll();
 
+const nf = Intl.NumberFormat("pt-BR");
 </script>
 
 <template>
@@ -132,8 +135,16 @@ const candidates = CandidateService.getAll();
     <h1 class="font-bold text-2xl">Banco de Dados</h1>
     <p class="relative bottom-1">
       <small>
-        {{ sectionStore.sections.length }} seções, {{ numberOfCandidates }} candidatos e {{ sectionStore.votosApurados
-        }} votos registrados
+        {{ numberOfCandidates }} candidatos, {{
+          nf.format(sectionStore.votosApurados)
+        }} votos registrados.
+        <br />
+        {{ nf.format(sectionStore.totalElectors) }} eleitores, {{ nf.format(sectionStore.totalElectorsByZone("urbana"))
+        }} na zona urbana e {{
+          nf.format(sectionStore.totalElectorsByZone("rural")) }} na zona rural
+        <br />
+        {{ sectionStore.sections.length }} seções, {{ sectionStore.sectionsByZone("urbana").length }} urbanas e {{
+          sectionStore.sectionsByZone("rural").length }} rurais.
       </small>
     </p>
     <div class="flex self-end gap-4 text-sm">
