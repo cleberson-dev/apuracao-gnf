@@ -121,26 +121,23 @@ export const useSectionStore = defineStore("sections", {
     },
     async fetchSections() {
       const sections = await SectionService.fetchAll();
-      const candidates = await CandidateService.getAll();
+      const candidates = CandidateService.getAll();
 
-      this.sections = sections.map((s) => ({
-        ...s,
-        votes: Object.fromEntries([
-          ...candidates.map((candidate) => [candidate.number, 0]),
-          ["outros", 0],
-        ]),
-      }));
-      this.isLoading = false;
-    },
-    async fetchVotes() {
-      const votes = await VoteService.getAllVotes();
-      votes.forEach((vote) => {
-        const section = this.sections.find((s) => s.number === vote.sectionId);
-        if (!section) return;
-
-        section.votes = vote.votes;
-        section.closed = true;
+      this.sections = sections.map((s) => {
+        const votes = Object.fromEntries([
+          ...candidates.map((candidate) => [
+            candidate.number,
+            s.votes[candidate.number] ?? 0,
+          ]),
+          ["outros", s.votes["outros"] ?? 0],
+        ]);
+        return {
+          ...s,
+          votes,
+        };
       });
+
+      this.isLoading = false;
     },
     async cleanVotes() {
       try {

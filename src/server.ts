@@ -29,7 +29,8 @@ app.get("/limpar-votos", async (_, res) => {
 // Seções - All Sections
 app.get("/secoes", async (_, res) => {
   const sections = await db.query.sections.findMany();
-  return res.status(200).send(sections.map(section => ({...section, closed: !!section.closed})));
+  const votes = await db.query.votes.findMany();
+  return res.status(200).send(sections.map(section => ({...section, closed: !!section.closed, votes: Object.fromEntries(votes.filter(v => v.sectionId === section.id).map(vote => [vote.candidateNumber === 0 ? "outros" : vote.candidateNumber, vote.amount]))})));
 });
 
 app.post("/secoes", async (req, res) => {

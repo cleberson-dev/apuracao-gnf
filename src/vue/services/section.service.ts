@@ -9,6 +9,7 @@ export type Section = {
   voters: number;
   zone: Zone;
   closed: boolean;
+  votes: Record<number | "outros", number>;
 };
 
 const api = axios.create({ baseURL: "http://localhost:5000" });

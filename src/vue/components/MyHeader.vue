@@ -9,7 +9,7 @@ const items = [
   { href: '/', label: 'Início', icon: HomeIcon },
   { href: '/cadastrar', label: 'Cadastrar', icon: PencilSquareIcon },
   { onClick: onPrint, label: 'Screenshot', icon: CameraIcon },
-  { label: "Limpar", icon: TrashIcon, onClick: cleanVotes },
+  { label: "Limpar Votos", icon: TrashIcon, onClick: cleanVotes },
   { label: "Database", icon: CircleStackIcon, href: '/database' },
 ]
 

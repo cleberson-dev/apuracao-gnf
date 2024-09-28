@@ -35,7 +35,6 @@ const toggleCollapse = (e: KeyboardEvent) => {
 
 onMounted(() => {
   sectionsStore.fetchSections();
-  sectionsStore.fetchVotes();
 
   mainStore.initializeTime();
 
