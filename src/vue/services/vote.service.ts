@@ -5,9 +5,8 @@ const client = axios.create({
 });
 
 export class VoteService {
-  static vote(section: number, votes: Record<number | "outros", number>) {
-    console.log(votes);
-    return client.post(`/votos/${section}`, votes);
+  static vote(sectionId: number, votes: Record<number | "outros", number>) {
+    return client.post(`/votos/${sectionId}`, votes);
   }
 
   static cleanVotes() {
@@ -17,7 +16,7 @@ export class VoteService {
   static async getAllVotes() {
     const { data } = await client.get<
       {
-        sectionNumber: number;
+        sectionId: number;
         votes: Record<number | "outros", number>;
       }[]
     >("/votos");

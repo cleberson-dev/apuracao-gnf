@@ -62,11 +62,16 @@ app.patch("/secoes/:id", async (req, res) => {
   } satisfies Partial<Omit<typeof sections.$inferInsert, "id">>;
   try {
     const [result] = await db.update(sections).set(updatedSection).where(eq(sections.id, +id)).returning();
-    return res.status(200).send(result);
+    return res.status(200).send({...result, closed: !!result.closed });
   } catch (e) {
     console.error('Something went wrong', e);
     return res.status(400).send({ message: (e as Error).message });
   }
+});
+
+app.delete("/secoes", async (_, res) => {
+  await db.delete(sections).all();
+  return res.status(200).send();
 });
 
 app.get("*", (_, res) => {

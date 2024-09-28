@@ -9,7 +9,7 @@ export type StateSection = Section & {
 };
 
 export const useSectionStore = defineStore("sections", {
-  state: () => ({ sections: <StateSection[]>[] }),
+  state: () => ({ sections: <StateSection[]>[], isLoading: true }),
   getters: {
     closedSections: (state) => state.sections.filter((s) => !!s.closed),
     closedSectionsByZone: (state) => (zone: string) =>
@@ -107,15 +107,15 @@ export const useSectionStore = defineStore("sections", {
   },
   actions: {
     async registerVotes({
-      sectionNumber,
+      sectionId,
       votes,
     }: {
-      sectionNumber: number;
+      sectionId: number;
       votes: Record<number | "outros", number>;
     }) {
-      await VoteService.vote(sectionNumber, votes);
+      await VoteService.vote(sectionId, votes);
 
-      const section = this.sections.find((s) => s.number === sectionNumber)!;
+      const section = this.sections.find((s) => s.id === sectionId)!;
       section.votes = votes;
       section.closed = true;
     },
@@ -125,19 +125,17 @@ export const useSectionStore = defineStore("sections", {
 
       this.sections = sections.map((s) => ({
         ...s,
-        closed: false,
         votes: Object.fromEntries([
           ...candidates.map((candidate) => [candidate.number, 0]),
           ["outros", 0],
         ]),
       }));
+      this.isLoading = false;
     },
     async fetchVotes() {
       const votes = await VoteService.getAllVotes();
       votes.forEach((vote) => {
-        const section = this.sections.find(
-          (s) => s.number === vote.sectionNumber
-        );
+        const section = this.sections.find((s) => s.number === vote.sectionId);
         if (!section) return;
 
         section.votes = vote.votes;
@@ -161,7 +159,7 @@ export const useSectionStore = defineStore("sections", {
 
       section.votes = payload.votes;
     },
-    addSection(payload: Section & { closed: boolean }) {
+    addSection(payload: Section) {
       const candidates = CandidateService.getAll();
       this.sections.push({
         ...payload,
@@ -170,6 +168,20 @@ export const useSectionStore = defineStore("sections", {
           ["outros", 0],
         ]),
       });
+    },
+    patchSection(sectionId: number, payload: Omit<Section, "id">) {
+      const section = this.sections.find(
+        (section) => section.id === sectionId
+      )!;
+
+      section.number = payload.number;
+      section.local = payload.local;
+      section.closed = payload.closed;
+      section.voters = payload.voters;
+      section.zone = payload.zone;
+    },
+    removeAllSections() {
+      this.sections = [];
     },
   },
 });

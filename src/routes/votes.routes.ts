@@ -12,22 +12,22 @@ routes.get("/", async (_, res) => {
 });
 
 // Get Votes by Section
-routes.get("/:sectionNumber", async (req, res) => {
-  const { sectionNumber } = req.params;
-  const sectionVotes = await VoteRepository.getVotesBySection(+sectionNumber);
+routes.get("/:sectionId", async (req, res) => {
+  const { sectionId } = req.params;
+  const sectionVotes = await VoteRepository.getVotesBySection(+sectionId);
   return res.status(200).send(sectionVotes);
 });
 
 // Insert/Update Votes by Section
-routes.post("/:sectionNumber", async (req, res) => {
-  const { sectionNumber } = req.params;
+routes.post("/:sectionId", async (req, res) => {
+  const { sectionId } = req.params;
   const sectionVotes = req.body as SectionVotes;
 
-  await VoteRepository.vote(+sectionNumber, sectionVotes);
+  await VoteRepository.vote(+sectionId, sectionVotes);
   wss.broadcast({
     type: "UPDATED_SECTION",
     payload: {
-      section: sectionNumber,
+      section: sectionId,
       votes: sectionVotes,
     },
   });

@@ -4,9 +4,9 @@
     <div>
       <h1 class="text-4xl font-black">Cadastrar votos</h1>
       <label class="block text-base font-bold text-[#909090]">Selecione a seção</label>
-      <select class="bg-[#e4e4e4] rounded-md border-none p-3 w-[40vw] mt-1" :value="formSection"
-        @input="formSection = +($event.target as HTMLSelectElement).value" @change="onSelectChange">
-        <option v-for="section in sectionStore.allSections" :key="section.number" :value="section.number" :style="{
+      <select class="bg-[#e4e4e4] rounded-md border-none p-3 w-[40vw] mt-1" :value="formSectionId"
+        @input="formSectionId = +($event.target as HTMLSelectElement).value" @change="onSelectChange">
+        <option v-for="section in sectionStore.allSections" :key="section.id" :value="section.id" :style="{
           backgroundColor: section.closed ? '#ffdb57' : undefined,
           color: section.closed ? 'gray' : undefined,
         }">
@@ -27,12 +27,12 @@
       </div>
     </div>
     <p>
-      {{ votesEntered }} votos inseridos de {{ currentFormSection.voters }}
+      {{ votesEntered }} votos inseridos de {{ currentFormSection?.voters }}
       <br />
       {{ votesLeft > 0 ? votesLeft : 0 }} nulos
     </p>
     <div class="flex justify-between w-full">
-      <custom-button :disabled="isInvalid" @click="registrar" type="button">
+      <custom-button :disabled="isInvalid" @click="registerVote" type="button">
         Cadastrar
       </custom-button>
       <custom-button variant="danger" @click="onClose">Sair</custom-button>
@@ -58,32 +58,34 @@ const mainStore = useMainStore();
 const router = useRouter();
 const candidates = CandidateService.getAll();
 
-const initialSection = sectionStore.sections[0];
-const formSection = ref(initialSection.number);
-const formVotes: Record<number | "outros", number> = reactive({ ...initialSection.votes });
+const initialSection = ref(sectionStore.sections[0]);
+const formSectionId = ref<number | undefined>(initialSection.value?.id);
+let formVotes: Record<number | "outros", number> = reactive({ outros: 0 });
+
+sectionStore.$subscribe(state => {
+  initialSection.value = sectionStore.sections[0];
+  formVotes = reactive(initialSection.value?.votes ? Object.fromEntries([...candidates.map(candidate => [candidate.number, initialSection.value.votes[candidate.number]]), ["outros", 0]]) : { outros: 0 });
+  console.log({ formVotes, initialSection: initialSection.value });
+})
 
 const votesEntered = computed(() => {
-  let votes = 0;
-  for (const numCandidato in formVotes) {
-    votes += Number(formVotes[numCandidato]);
-  }
-  return votes;
+  return Object.values(formVotes).reduce((acc, val) => acc + +val, 0);
 });
 const areNegatives = computed(() => {
   return Object.entries(formVotes).some(([, value]) => value < 0);
 });
 const currentFormSection = computed<StateSection>(() => {
-  return sectionStore.sections.find((section: StateSection) => section.number === formSection.value)!;
+  return sectionStore.sections.find((section: StateSection) => section.id === formSectionId.value)!;
 });
 const votesLeft = computed(() => {
-  return currentFormSection.value.voters - votesEntered.value;
+  return currentFormSection.value?.voters ?? 0 - votesEntered.value;
 });
 const isInvalid = computed(() => {
   return votesEntered.value < 0 || areNegatives.value || votesLeft.value < 0;
 });
 
 function onSelectChange() {
-  Object.entries(currentFormSection.value.votes).forEach(([candidateNumber, votes]) => {
+  Object.entries(currentFormSection.value?.votes).forEach(([candidateNumber, votes]) => {
     formVotes[Number.isNaN(+candidateNumber) ? "outros" : +candidateNumber] = votes;
   })
 };
@@ -92,16 +94,15 @@ function onClose() {
   router.push("/");
 };
 
-async function registrar(e: any) {
+async function registerVote(e: any) {
   e.preventDefault();
 
   if (votesEntered.value < 0 || areNegatives.value) return push.error("Inválido!");
-  if (votesEntered.value > currentFormSection.value.voters) {
+  if (votesEntered.value > currentFormSection.value?.voters) {
     return push.error("Votos inseridos excederam a quantidade máxima");
   }
-
   await sectionStore.registerVotes({
-    sectionNumber: formSection.value,
+    sectionId: formSectionId.value!,
     votes: { ...formVotes },
   });
   mainStore.updateTime();

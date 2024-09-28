@@ -14,7 +14,7 @@ type Section = {
 };
 
 type Vote = {
-  sectionNumber: number;
+  sectionId: number;
   candidateNumber: number;
   amount: number;
 };
