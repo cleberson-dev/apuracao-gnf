@@ -1,23 +1,27 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import { onMounted, reactive, Ref, ref } from 'vue';
 import { push } from 'notivue';
 import type { Header, Item } from 'vue3-easy-data-table';
-import { TrashIcon } from '@heroicons/vue/24/outline';
+import { TrashIcon } from '@heroicons/vue/24/solid';
 
 import SectionService, { Zone } from '../services/section.service';
 import CandidateService from '../services/candidate.service';
 
-import { useSectionStore } from '../store/section.store';
+import { StateSection, useSectionStore } from '../store/section.store';
+import useModal from '../composables/useModal';
+import ConfirmationDialog from '../components/ConfirmationDialog.vue';
+
+const modal = useModal();
 
 const isModalOpen = ref(false);
 const sectionForm = reactive({
-  id: <number | undefined>undefined,
+  id: undefined as number | undefined,
   number: 0,
   name: '',
   zone: 'urbana',
   voters: 1,
   closed: false,
-  votes: <Record<number | "outros", number> | undefined>{ outros: 0 },
+  votes: { outros: 0 } as Record<number | "outros", number> | undefined,
 })
 
 const sectionStore = useSectionStore();
@@ -113,16 +117,20 @@ const classes = {
   input: "border border-solid border-borderColor focus:outline-primary placeholder:text-black p-2 text-sm rounded uppercase"
 }
 
+function openConfirmationDialog(confirmFn: () => void) {
+  modal.addModal(<ConfirmationDialog onConfirm={confirmFn} />);
+}
+
 async function removeAllSections() {
   await SectionService.removeAll();
   sectionStore.removeAllSections();
   push.success("Todas as seções foram removidas!");
 }
 
-async function removeSection(sectionId: number) {
-  await SectionService.removeSection(sectionId);
-  sectionStore.removeSection(sectionId);
-  push.success(`Seção #${sectionId} foi removida com sucesso!`);
+async function removeSection(section: StateSection) {
+  await SectionService.removeSection(section.id);
+  sectionStore.removeSection(section.id);
+  push.success(`Seção #${section.number} foi removida com sucesso!`);
 }
 
 const candidates = CandidateService.getAll();
@@ -153,9 +161,10 @@ const searchText = ref<string>('');
       <button @click.prevent="onNewSectionClick" class="bg-green-500 text-white p-2 rounded mb-4">
         + Nova Seção
       </button>
-      <button @click.prevent="removeAllSections" class="bg-red-500 text-white p-2 rounded mb-4 flex items-center gap-1">
-        <TrashIcon class="size-4" />
-        Remover Seções
+      <button :disabled="sectionStore.sections.length === 0" @click.prevent="openConfirmationDialog(removeAllSections)"
+        class="bg-red-500 text-white p-2 rounded mb-4 flex items-center gap-1 disabled:opacity-50">
+        <TrashIcon class="size-3" />
+        Remover todas as seções
       </button>
 
     </div>
@@ -171,7 +180,7 @@ const searchText = ref<string>('');
         {{ (Object.values(item.votes) as number[]).reduce((acc, val) => acc + val, 0) }}
       </template>
       <template #item-actions="item">
-        <button @click.stop="removeSection(item.id)">
+        <button @click.stop="openConfirmationDialog(() => removeSection(item))">
           <TrashIcon class="text-red-500 size-4" />
         </button>
       </template>

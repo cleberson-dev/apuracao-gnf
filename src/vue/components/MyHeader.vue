@@ -1,9 +1,12 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import { HomeIcon, PencilSquareIcon, CameraIcon, TrashIcon, CircleStackIcon } from '@heroicons/vue/24/outline'
 import { UtilService } from "../services/util.service";
 import { useRouter } from 'vue-router';
+import useModal from '../composables/useModal';
+import ConfirmationDialog from './ConfirmationDialog.vue';
 
 const router = useRouter();
+const modal = useModal();
 
 const items = [
   { href: '/', label: 'Início', icon: HomeIcon },
@@ -23,7 +26,13 @@ async function onPrint() {
 }
 
 async function cleanVotes() {
-  router.push("/limpar");
+  modal.addModal(
+    <ConfirmationDialog
+      onConfirm={() => {
+        router.push("/limpar");
+      }}
+    />
+  );
 }
 </script>
 

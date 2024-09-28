@@ -155,6 +155,7 @@ export const useSectionStore = defineStore("sections", {
       if (!section) return;
 
       section.votes = payload.votes;
+      section.closed = true;
     },
     addSection(payload: Section) {
       const candidates = CandidateService.getAll();

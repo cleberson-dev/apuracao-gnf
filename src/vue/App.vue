@@ -11,6 +11,8 @@
   <Notivue v-slot="item">
     <Notification :item="item" />
   </Notivue>
+
+  <ModalContainer />
 </template>
 
 <script setup lang="ts">
@@ -21,6 +23,7 @@ import MyHeader from "./components/MyHeader.vue";
 
 import { useSectionStore } from './store/section.store';
 import { useMainStore } from './store/main.store';
+import ModalContainer from './components/ModalContainer.vue';
 
 const sectionsStore = useSectionStore();
 const mainStore = useMainStore();

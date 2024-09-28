@@ -47,10 +47,12 @@ const sectionStore = useSectionStore();
 const candidates = CandidateService.getAll();
 const sortedCandidates = computed(() => sortCandidates(candidates, sectionStore.sections));
 const challengers = computed(() => {
-  return sortedCandidates.value.slice(0, 2);
+  const sortedCandidates = sortCandidates(candidates, sectionStore.sections);
+  return sortedCandidates.slice(0, 2);
 });
 const otherCandidates = computed(() => {
-  return sortedCandidates.value.slice(2);
+  const sortedCandidates = sortCandidates(candidates, sectionStore.sections);
+  return sortedCandidates.slice(2);
 });
 
 const formattedLatestUpdate = computed(() => mainStore.latestUpdate ? new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "medium" }).format(mainStore.latestUpdate) : undefined)
