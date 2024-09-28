@@ -58,7 +58,7 @@ const onRowClick = (row: any) => {
   sectionForm.voters = section.voters;
   sectionForm.zone = section.zone;
   sectionForm.closed = section.closed;
-  sectionForm.votes = section.votes;
+  sectionForm.votes = { ...section.votes };
 
   isModalOpen.value = true;
 }
@@ -110,7 +110,7 @@ const upsertSection = async () => {
 }
 
 const classes = {
-  input: "bg-slate-200 placeholder:text-black p-2 text-sm rounded uppercase"
+  input: "border border-solid border-borderColor focus:outline-primary placeholder:text-black p-2 text-sm rounded uppercase"
 }
 
 async function removeAllSections() {
@@ -218,8 +218,9 @@ const searchText = ref<string>('');
             <li v-for="candidate in candidates" class="grid grid-cols-[auto_1fr_auto] items-center select-none">
               <span class="inline-block rounded-full size-4 mr-1" :style="{ backgroundColor: candidate.color }"></span>
               <span>{{ candidate.name }} ({{ candidate.number }})</span>
-              <input type="number" class="bg-slate-200 w-10 p-2 rounded font-semibold ml-2" min="0"
-                v-model="sectionForm.votes![candidate.number]" />
+              <input type="number"
+                class="border border-solid border-borderColor outline-primary w-16 p-2 rounded font-semibold ml-2"
+                min="0" v-model="sectionForm.votes![candidate.number]" />
             </li>
           </ul>
         </div>
