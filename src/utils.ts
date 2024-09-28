@@ -56,6 +56,7 @@ export const getSectionDataFromCSV = async (path: string) => {
     delimiter: ";",
     bom: true,
     relax_quotes: true,
+    encoding: "latin1",
   });
 
   records.on("error", (err) => {
