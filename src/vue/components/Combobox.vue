@@ -1,9 +1,9 @@
 <template>
-  <div class="relative" @blur="onBlur">
+  <div class="relative" @blur="onBlur" ref="container-ref">
     <div
       class="border border-solid border-borderColor p-2 cursor-pointer rounded flex items-center justify-between select-none">
-      <input type="text" class="outline-none flex-grow" @focus="isExpanded = true" v-model="searchText"
-        @keydown="onKeyDown" ref="input-ref" />
+      <input type="text" placeholder="Selecione sua seção" class="outline-none flex-grow" @focus="isExpanded = true"
+        v-model="searchText" @keydown="onKeyDown" ref="input-ref" />
       <button @click="isExpanded = !isExpanded" type="button">
         <component :is="isExpanded ? ChevronUpIcon : ChevronDownIcon" class="size-4" />
       </button>
@@ -31,7 +31,7 @@ type Item = {
 
 const props = defineProps<{
   items: Item[];
-  value: any;
+  value?: any;
 }>();
 
 const emit = defineEmits<{ (e: "change", value: any): void }>()
@@ -39,15 +39,15 @@ const emit = defineEmits<{ (e: "change", value: any): void }>()
 const isExpanded = ref(false);
 const searchText = ref('');
 
-const selected = computed(() => filteredItems.value.find(v => v.value === props.value));
+const filteredItems = computed(() => {
+  return props.items.filter(item => item.label.toLowerCase().includes(searchText.value?.toLowerCase()));
+});
+
+const selected = computed(() => props.value ? filteredItems.value.find(item => item.value === props.value) : undefined);
 const hovered = ref<Item | null>(null);
 
 const containerRef = useTemplateRef<HTMLDivElement>('container-ref');
 const inputRef = useTemplateRef<HTMLInputElement>('input-ref');
-
-const filteredItems = computed(() => {
-  return props.items.filter(item => item.label.toLowerCase().includes(searchText.value?.toLowerCase()));
-});
 
 const onBlur = () => {
   isExpanded.value = false;
@@ -64,6 +64,20 @@ const clickOutside = (e: MouseEvent) => {
   const isInside = containerRef.value!.contains((e.target as Element));
   if (isInside) return;
   isExpanded.value = false;
+
+  if (!searchText.value) {
+    emit("change", undefined);
+    return;
+  }
+
+  const exactMatch = filteredItems.value.find(v => v.label.toLowerCase() === searchText.value.toLowerCase());
+  if (exactMatch) {
+    emit("change", exactMatch.value);
+    return;
+  } else {
+    searchText.value = '';
+    emit("change", undefined);
+  }
 }
 
 onMounted(() => {

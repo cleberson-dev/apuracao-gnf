@@ -16,9 +16,8 @@ const mainStore = useMainStore();
 const router = useRouter();
 const candidates = CandidateService.getAll();
 
-const initialSection = sectionStore.sections[0];
-const formSectionId = ref<number | undefined>(initialSection!.id);
-const formVotes: Record<number | "outros", number> = reactive({ ...initialSection!.votes });
+const formSectionId = ref<number | undefined>(undefined);
+const formVotes: Record<number | "outros", number> = reactive(Object.fromEntries([...candidates.map(candidate => [candidate.number, 0]), ["outros", 0]]));
 
 const currentFormSection = computed<StateSection>(() => {
   return sectionStore.sections.find((section: StateSection) => section.id === formSectionId.value)!;
@@ -35,18 +34,28 @@ const areNegatives = computed(() => {
 
 const votesLeft = computed(() => {
   const votesEntered = Object.values(formVotes).reduce((acc, val) => acc + +val, 0);
+  if (!formSectionId.value) return 0;
+  console.log({ formSectionId });
+
   const numberOfVoters = sectionStore.sections.find((section: StateSection) => section.id === formSectionId.value)!.voters;
 
   return numberOfVoters - votesEntered;
 });
 
 const isInvalid = computed(() => {
-  return votesEntered.value < 0 || areNegatives.value || votesLeft.value < 0;
+  return votesEntered.value < 0 || areNegatives.value || votesLeft.value < 0 || formSectionId.value === undefined;
 });
 
 function onSelectChange(newId: number) {
   formSectionId.value = newId;
-  const section = sectionStore.sections.find(s => s.id === newId)!;
+  const section = sectionStore.sections.find(s => s.id === newId);
+  if (!section) {
+    candidates.forEach(candidate => {
+      formVotes[candidate.number] = 0;
+      formVotes.outros = 0;
+    });
+    return;
+  }
   Object.entries(section.votes).forEach(([candidateNumber, votes]) => {
     formVotes[Number.isNaN(+candidateNumber) ? "outros" : +candidateNumber] = votes;
   });
@@ -93,16 +102,16 @@ async function registerVote(e: any) {
         <h4 class="mt-0 mb-1 font-extrabold">{{ candidate.name }}</h4>
         <circular-picture :src="candidate.profilePicture" :size="4" :color="candidate.color" />
         <input
-          class="border border-solid border-borderColor outline-none text-3xl w-20 text-center px-3 py-2 mt-3 rounded focus:outline-1 focus:outline-gray"
+          class="border border-solid border-borderColor outline-none text-3xl w-20 text-center px-3 py-2 mt-3 rounded focus:outline-1 focus:outline-gray disabled:opacity-50 disabled:cursor-not-allowed"
           min="0" :max="Number(formVotes[candidate.number]) + Number(votesLeft)" type="number"
-          v-model="formVotes[candidate.number]" />
+          v-model="formVotes[candidate.number]" :disabled="!formSectionId" />
         <span>votos</span>
       </div>
     </div>
-    <p>
-      {{ votesEntered }} votos inseridos de {{ currentFormSection.voters }}
+    <p :class="{ 'invisible': !currentFormSection?.voters }">
+      {{ votesEntered }} votos inseridos de {{ currentFormSection?.voters }}
       <br />
-      {{ votesLeft > 0 ? votesLeft : 0 }} nulos
+      {{ votesLeft || 0 }} nulos
     </p>
     <div class="flex justify-between w-full">
       <custom-button :disabled="isInvalid" @click="registerVote" type="button">
