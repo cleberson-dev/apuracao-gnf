@@ -151,7 +151,7 @@ export const useSectionStore = defineStore("sections", {
       section: string;
       votes: Record<number | "outros", number>;
     }) {
-      const section = this.sections.find((s) => s.number === +payload.section);
+      const section = this.sections.find((s) => s.id === +payload.section);
       if (!section) return;
 
       section.votes = payload.votes;
