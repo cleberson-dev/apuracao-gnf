@@ -69,7 +69,7 @@ async function registerVote(e: any) {
 <template>
   <form class="h-[100vh] box-border px-20 py-10 flex flex-col justify-between items-start">
     <div>
-      <h1 class="text-4xl font-black">Cadastrar votos</h1>
+      <h1 class="text-4xl font-black mb-5">Cadastrar votos</h1>
       <label class="block text-base font-bold text-[#909090]">Selecione a seção</label>
       <select class="bg-[#e4e4e4] rounded-md border-none p-3 w-[40vw] mt-1" :value="formSectionId"
         @input="formSectionId = +($event.target as HTMLSelectElement).value" @change="onSelectChange">
@@ -87,7 +87,7 @@ async function registerVote(e: any) {
         <h4 class="mt-0 mb-1 font-extrabold">{{ candidate.name }}</h4>
         <circular-picture :src="candidate.profilePicture" :size="4" :color="candidate.color" />
         <input
-          class="bg-[#e4e4e4] border-none outline-none text-3xl w-20 text-center px-3 py-2 mt-3 rounded focus:outline-1 focus:outline-gray"
+          class="border border-solid border-borderColor outline-none text-3xl w-20 text-center px-3 py-2 mt-3 rounded focus:outline-1 focus:outline-gray"
           min="0" :max="Number(formVotes[candidate.number]) + Number(votesLeft)" type="number"
           v-model="formVotes[candidate.number]" />
         <span>votos</span>
