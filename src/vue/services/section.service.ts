@@ -20,7 +20,7 @@ export default class SectionService {
   }
 
   static async create(payload: Omit<Section, "id" | "closed">) {
-    const { data } = await api.post<Section>("/secoes", payload);
+    const { data } = await api.post<Section>("/secoes", {...payload, local: payload.local.toUpperCase()} satisfies Omit<Section, "id" | "closed">);
     return data;
   }
 
@@ -34,6 +34,11 @@ export default class SectionService {
 
   static async removeAll() {
     await api.delete("/secoes");
+    return true;
+  }
+
+  static async removeSection(sectionId: number) {
+    await api.delete(`/secoes/${sectionId}`);
     return true;
   }
 }

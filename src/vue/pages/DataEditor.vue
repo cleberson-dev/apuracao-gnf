@@ -5,7 +5,7 @@ import { onMounted, reactive, Ref, ref } from 'vue';
 import { push } from 'notivue';
 import SectionService, { Zone } from '../services/section.service';
 import CandidateService from '../services/candidate.service';
-import { TrashIcon } from '@heroicons/vue/24/outline';
+import { TrashIcon, PencilIcon } from '@heroicons/vue/24/outline';
 
 const isModalOpen = ref(false);
 const sectionForm = reactive({
@@ -42,6 +42,7 @@ const headers: Header[] = [
   { text: "Nº de Eleitores 👨‍👩‍👧‍👦", value: "voters", sortable: true, },
   { text: "Votos", value: "votes", },
   { text: "Totalizada", value: "closed", sortable: true, },
+  { text: "Ações", value: 'actions', },
 ];
 
 const items: Ref<Item[]> = ref(getSectionItems());
@@ -98,18 +99,24 @@ const upsertSection = async () => {
   });
 
   sectionStore.addSection(newSection);
-  push.success("Seção criada!");
+  push.success(`Seção #${newSection.number} foi criada com sucesso!`);
   isModalOpen.value = false;
 }
 
 const classes = {
-  input: "bg-slate-200 placeholder:text-black p-2 text-sm rounded"
+  input: "bg-slate-200 placeholder:text-black p-2 text-sm rounded uppercase"
 }
 
 async function removeAllSections() {
   await SectionService.removeAll();
   sectionStore.removeAllSections();
-  push.success("Todas as seções foram removidas");
+  push.success("Todas as seções foram removidas!");
+}
+
+async function removeSection(sectionId: number) {
+  await SectionService.removeSection(sectionId);
+  sectionStore.removeSection(sectionId);
+  push.success(`Seção #${sectionId} foi removida com sucesso!`);
 }
 
 </script>
@@ -129,7 +136,14 @@ async function removeAllSections() {
       </button>
 
     </div>
-    <EasyDataTable :headers="headers" :items="items" style="width: 100%;" @click-row="onRowClick" />
+
+    <EasyDataTable :headers="headers" :items="items" style="width: 100%;" @click-row="onRowClick">
+      <template #item-actions="item">
+        <button @click.stop="removeSection(item.id)">
+          <TrashIcon class="text-red-500 size-4" />
+        </button>
+      </template>
+    </EasyDataTable>
   </div>
 
   <div v-if="isModalOpen"

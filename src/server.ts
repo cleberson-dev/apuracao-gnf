@@ -74,6 +74,17 @@ app.delete("/secoes", async (_, res) => {
   return res.status(200).send();
 });
 
+app.delete("/secoes/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.delete(sections).where(eq(sections.id, +id));
+    return res.status(200).send();
+  } catch (e) {
+    console.error('Something went wrong', e);
+    return res.status(400).send({ message: (e as Error).message });
+  }
+});
+
 app.get("*", (_, res) => {
   res.sendFile(ASSETS_DIR + "/index.html");
 });

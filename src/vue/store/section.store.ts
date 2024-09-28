@@ -183,5 +183,8 @@ export const useSectionStore = defineStore("sections", {
     removeAllSections() {
       this.sections = [];
     },
+    removeSection(sectionId: number) {
+      this.sections = this.sections.filter((s) => s.id !== sectionId);
+    },
   },
 });
