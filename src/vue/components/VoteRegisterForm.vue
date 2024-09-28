@@ -24,14 +24,21 @@ const currentFormSection = computed<StateSection>(() => {
 });
 
 const votesEntered = computed(() => {
-  return Object.values(formVotes).reduce((acc, val) => acc + +val, 0);
+  const sum = Object.values(formVotes).reduce((acc, val) => acc + +val, 0);
+  return sum;
 });
+
 const areNegatives = computed(() => {
   return Object.entries(formVotes).some(([, value]) => value < 0);
 });
+
 const votesLeft = computed(() => {
-  return currentFormSection.value.voters ?? 0 - votesEntered.value;
+  const votesEntered = Object.values(formVotes).reduce((acc, val) => acc + +val, 0);
+  const numberOfVoters = sectionStore.sections.find((section: StateSection) => section.id === formSectionId.value)!.voters;
+
+  return numberOfVoters - votesEntered;
 });
+
 const isInvalid = computed(() => {
   return votesEntered.value < 0 || areNegatives.value || votesLeft.value < 0;
 });
