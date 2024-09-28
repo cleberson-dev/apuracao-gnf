@@ -28,7 +28,7 @@ async function cleanVotes() {
 </script>
 
 <template>
-  <header class="bg-[#2a9d8f] h-full text-white">
+  <header class="bg-primary h-full text-white">
     <div class="w-full flex justify-center items-center py-5">
       <img alt="Logo" src="../assets/img/logo.png" class="w-9" />
     </div>

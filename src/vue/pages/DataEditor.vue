@@ -162,7 +162,7 @@ const searchText = ref<string>('');
 
     <label class="text-xs mb-1">Pesquisar</label>
     <input type="text"
-      class="border border-solid border-[#e5e7eb] rounded mb-2 focus:outline-emerald-200 text-sm p-1 px-2 uppercase"
+      class="border border-solid border-borderColor rounded mb-2 focus:outline-primary text-sm p-1 px-2 uppercase"
       v-model="searchText" />
 
     <EasyDataTable :headers="headers" :items="items" style="width: 100%;" @click-row="onRowClick" search-field="name"
