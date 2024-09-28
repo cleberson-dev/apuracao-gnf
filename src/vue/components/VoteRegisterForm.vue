@@ -3,6 +3,7 @@ import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { push } from "notivue";
 
+import Combobox from "./Combobox.vue";
 import CircularPicture from "../components/CircularPicture.vue";
 import CustomButton from "../components/CustomButton.vue";
 import CandidateService from "../services/candidate.service";
@@ -43,10 +44,12 @@ const isInvalid = computed(() => {
   return votesEntered.value < 0 || areNegatives.value || votesLeft.value < 0;
 });
 
-function onSelectChange() {
-  Object.entries(currentFormSection.value.votes).forEach(([candidateNumber, votes]) => {
+function onSelectChange(newId: number) {
+  formSectionId.value = newId;
+  const section = sectionStore.sections.find(s => s.id === newId)!;
+  Object.entries(section.votes).forEach(([candidateNumber, votes]) => {
     formVotes[Number.isNaN(+candidateNumber) ? "outros" : +candidateNumber] = votes;
-  })
+  });
 };
 
 async function registerVote(e: any) {
@@ -71,15 +74,18 @@ async function registerVote(e: any) {
     <div>
       <h1 class="text-4xl font-black mb-5">Cadastrar votos</h1>
       <label class="block text-base font-bold text-[#909090]">Selecione a seção</label>
-      <select class="bg-[#e4e4e4] rounded-md border-none p-3 w-[40vw] mt-1" :value="formSectionId"
-        @input="formSectionId = +($event.target as HTMLSelectElement).value" @change="onSelectChange">
+      <Combobox
+        :items="sectionStore.allSections.map(s => ({ label: `${s.number} - ${s.local}`, value: s.id, marked: s.closed }))"
+        :value="formSectionId" @change="onSelectChange($event)" class="w-[40vw]" />
+      <!-- <select class="bg-[#e4e4e4] rounded-md border-none p-3 w-[40vw] mt-1" :value="formSectionId"
+        @input="formSectionId = +($event.target as HTMLSelectElement).value" @change="onSelectChange()">
         <option v-for="section in sectionStore.allSections" :key="section.id" :value="section.id" :style="{
           backgroundColor: section.closed ? '#ffdb57' : undefined,
           color: section.closed ? 'gray' : undefined,
         }">
           {{ section.number }} - {{ section.local }}
         </option>
-      </select>
+      </select> -->
     </div>
 
     <div class="flex justify-between w-full">
