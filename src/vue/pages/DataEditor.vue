@@ -1,39 +1,24 @@
 <script setup lang="tsx">
-import { onMounted, reactive, Ref, ref } from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 import { push } from 'notivue';
 import type { Header, Item } from 'vue3-easy-data-table';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 
-import SectionService, { Zone } from '../services/section.service';
+import SectionService from '../services/section.service';
 import CandidateService from '../services/candidate.service';
 
 import { StateSection, useSectionStore } from '../store/section.store';
 import useModal from '../composables/useModal';
 import ConfirmationDialog from '../components/ConfirmationDialog.vue';
+import SectionForm from '../components/SectionForm.vue';
 
 const modal = useModal();
 
 const isModalOpen = ref(false);
-const sectionForm = reactive({
-  id: undefined as number | undefined,
-  number: 0,
-  name: '',
-  zone: 'urbana',
-  voters: 1,
-  closed: false,
-  votes: { outros: 0 } as Record<number | "outros", number> | undefined,
-})
 
 const sectionStore = useSectionStore();
-const getSectionItems = () => sectionStore.sections.sort((a, b) => a.number - b.number).map((s): Item => ({
-  id: s.id,
-  number: s.number,
-  name: s.local,
-  zone: s.zone,
-  voters: s.voters,
-  votes: s.votes,
-  closed: s.closed ? 'Sim ✅' : 'Não ❌',
-}));
+const selectedSection = ref<StateSection | undefined>();
+const getSectionItems = () => sectionStore.sections.sort((a, b) => a.number - b.number);
 onMounted(() => {
   sectionStore.$subscribe(() => {
     items.value = getSectionItems();
@@ -44,77 +29,24 @@ const numberOfCandidates = CandidateService.getAll().length;
 
 const headers: Header[] = [
   { text: "Seção # 🔢", value: "number", sortable: true, },
-  { text: "Local 🏫", value: "name", sortable: true, },
+  { text: "Local 🏫", value: "local", sortable: true, },
   { text: "Zona 🏙️🏘️", value: "zone", sortable: true, },
   { text: "Nº de Eleitores 👨‍👩‍👧‍👦", value: "voters", sortable: true, },
-  { text: "Votos", value: "votes", },
+  { text: "Votos", value: "votes" },
   { text: "Totalizada", value: "closed", sortable: true, },
-  { text: "Ações", value: 'actions', },
+  { text: "Ações", value: 'actions' },
 ];
 
 const items: Ref<Item[]> = ref(getSectionItems());
 
-const onRowClick = (row: any) => {
-  const section = sectionStore.sections.find(s => s.id === row.id)!;
-  sectionForm.id = section.id;
-  sectionForm.number = section.number;
-  sectionForm.name = section.local;
-  sectionForm.voters = section.voters;
-  sectionForm.zone = section.zone;
-  sectionForm.closed = section.closed;
-  sectionForm.votes = { ...section.votes };
-
+const onRowClick = (section: StateSection) => {
+  selectedSection.value = section;
   isModalOpen.value = true;
 }
 
 const onNewSectionClick = () => {
+  selectedSection.value = undefined;
   isModalOpen.value = true;
-
-  delete sectionForm.id;
-  delete sectionForm.votes;
-
-  sectionForm.number = 0;
-  sectionForm.name = '';
-  sectionForm.voters = 1;
-  sectionForm.zone = 'urbana';
-  sectionForm.closed = false;
-}
-
-const upsertSection = async () => {
-  const values = { ...sectionForm };
-
-  if (!!sectionForm.id) {
-    const updatedSection = await SectionService.update(sectionForm.id, {
-      number: sectionForm.number,
-      closed: sectionForm.closed,
-      local: sectionForm.name,
-      voters: sectionForm.voters,
-      zone: sectionForm.zone as Zone,
-    });
-    sectionStore.patchSection(sectionForm.id, updatedSection);
-    push.success("Seção atualizada!");
-    isModalOpen.value = false;
-    return;
-  }
-
-  if (sectionStore.sections.some(s => s.number === values.number)) {
-    push.error("Já existe uma seção com esse numero");
-    return;
-  }
-  const newSection = await SectionService.create({
-    number: values.number,
-    local: values.name,
-    voters: values.voters,
-    zone: values.zone as Zone,
-  });
-
-  sectionStore.addSection(newSection);
-  push.success(`Seção #${newSection.number} foi criada com sucesso!`);
-  isModalOpen.value = false;
-}
-
-const classes = {
-  input: "border border-solid border-borderColor focus:outline-primary placeholder:text-black p-2 text-sm rounded uppercase"
 }
 
 function openConfirmationDialog(confirmFn: () => void) {
@@ -132,8 +64,6 @@ async function removeSection(section: StateSection) {
   sectionStore.removeSection(section.id);
   push.success(`Seção #${section.number} foi removida com sucesso!`);
 }
-
-const candidates = CandidateService.getAll();
 
 const nf = Intl.NumberFormat("pt-BR");
 
@@ -184,59 +114,22 @@ const searchText = ref<string>('');
           <TrashIcon class="text-red-500 size-4" />
         </button>
       </template>
+      <template #item-closed="section">
+        {{ section.closed ? 'Sim ✅' : 'Não ❌' }}
+      </template>
     </EasyDataTable>
   </div>
 
   <div v-if="isModalOpen"
-    class="bg-black/50 w-screen h-screen fixed top-0 left-0 z-50 flex items-center justify-center">
-    <div class="w-2/5 bg-white rounded flex flex-col p-4 text-sm">
+    class="backdrop-blur w-screen h-screen fixed top-0 left-0 z-50 flex items-center justify-center">
+    <div class="w-2/5 max-h-[90vh] overflow-auto bg-white rounded flex flex-col p-4 text-sm shadow">
       <div class="flex justify-between">
-        <h1 class="font-bold text-2xl">{{ sectionForm.id ? 'Atualizar seção' : 'Criar seção' }}</h1>
+        <h1 class="font-bold text-2xl">{{ selectedSection ? 'Atualizar seção' : 'Criar seção' }}</h1>
         <button class="rounded-full hover:bg-red-500/20 flex items-center justify-center size-8 transition-colors"
           @click.prevent="isModalOpen = false">X</button>
       </div>
-      <form class="flex flex-col gap-4 mt-10" @submit.prevent="upsertSection">
-        <div class="flex flex-col">
-          <label>Número</label>
-          <input type="number" :class="classes.input" required min="0" v-model="sectionForm.number" />
-        </div>
-        <div class="flex flex-col">
-          <label>Local</label>
-          <input type="text" :class="classes.input" required v-model="sectionForm.name" />
-        </div>
-        <div class="flex flex-col">
-          <label>Zona</label>
-          <select :class="classes.input" required v-model="sectionForm.zone">
-            <option></option>
-            <option value="rural">Rural</option>
-            <option value="urbana">Urbana</option>
-          </select>
-        </div>
-        <div class="flex flex-col">
-          <label>Nº de Eleitores</label>
-          <input type="number" :class="classes.input" min="1" required v-model="sectionForm.voters" />
-        </div>
-        <div v-if="sectionForm.id">
-          <label>Totalizada</label>
-          <input type="checkbox" class="ml-2" v-model="sectionForm.closed" />
-        </div>
-        <hr class="my-2" />
-        <div v-if="sectionForm.id">
-          <label class="font-semibold text-lg block mb-4">Votos</label>
-          <ul class="flex flex-col gap-2">
-            <li v-for="candidate in candidates" class="grid grid-cols-[auto_1fr_auto] items-center select-none">
-              <span class="inline-block rounded-full size-4 mr-1" :style="{ backgroundColor: candidate.color }"></span>
-              <span>{{ candidate.name }} ({{ candidate.number }})</span>
-              <input type="number"
-                class="border border-solid border-borderColor outline-primary w-16 p-2 rounded font-semibold ml-2"
-                min="0" v-model="sectionForm.votes![candidate.number]" />
-            </li>
-          </ul>
-        </div>
-        <button class="p-2 text-sm bg-green-400 rounded hover:brightness-90 mt-4" type="submit">{{ sectionForm.id ?
-          'Atualizar' :
-          'Criar' }}</button>
-      </form>
+
+      <SectionForm :section="selectedSection" @success="isModalOpen = false" />
     </div>
   </div>
 </template>

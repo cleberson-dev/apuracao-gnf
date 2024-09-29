@@ -23,6 +23,7 @@
   "main": "src/vue/background.js",
   "type": "module",
   "dependencies": {
+    "@formkit/vue": "^1.6.7",
     "@heroicons/vue": "^2.1.5",
     "@libsql/client": "^0.14.0",
     "axios": "^0.21.0",

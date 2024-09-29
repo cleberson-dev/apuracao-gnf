@@ -38,7 +38,6 @@ const votesLeft = computed(() => {
   console.log({ formSectionId });
 
   const numberOfVoters = sectionStore.sections.find((section: StateSection) => section.id === formSectionId.value)!.voters;
-
   return numberOfVoters - votesEntered;
 });
 
