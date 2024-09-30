@@ -1,4 +1,4 @@
-import { Candidate } from "../types";
+import type { Candidate } from "../types";
 
 export const sortCandidates = (candidates: Candidate[], sections: any[]) => {
   return candidates.sort((a, b) => {

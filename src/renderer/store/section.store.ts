@@ -1,22 +1,29 @@
 import { defineStore } from "pinia";
 import type { Section, Zone } from "../../types";
 import CandidateService from "../services/candidate.service";
-import initialSections from '../data/secoes.json';
+import initialSections from "../data/secoes.json";
 
 const candidates = CandidateService.getAll();
 
-const getCleanVotes = () => Object.fromEntries([...candidates.map(candidate => [candidate.number, 0]), ["outros", 0]])
-
-export const useSectionStore = defineStore("sections", {
-  state: () => ({ sections: initialSections.map((item, idx) => ({
+const getCleanVotes = () =>
+  Object.fromEntries([
+    ...candidates.map((candidate) => [candidate.number, 0]),
+    ["outros", 0],
+  ]);
+const initSections = (): Section[] => {
+  return initialSections.map((item, idx) => ({
     id: idx + 1,
     number: item.number,
     local: item.local,
     voters: item.voters,
     closed: false as boolean,
-    zone: item.zone as Zone ?? 'urbana',
+    zone: (item.zone as Zone) ?? "urbana",
     votes: getCleanVotes(),
-  })) satisfies Section[] }),
+  }));
+};
+
+export const useSectionStore = defineStore("sections", {
+  state: () => ({ sections: initSections() }),
   getters: {
     closedSections: (state) => state.sections.filter((s) => !!s.closed),
     closedSectionsByZone: (state) => (zone: string) =>
@@ -126,7 +133,11 @@ export const useSectionStore = defineStore("sections", {
     },
     async cleanVotes() {
       try {
-        this.sections = this.sections.map(s => ({...s, closed: false, votes: getCleanVotes()}))
+        this.sections = this.sections.map((s) => ({
+          ...s,
+          closed: false,
+          votes: getCleanVotes(),
+        }));
       } catch (err) {
         console.error(err);
       }
@@ -165,6 +176,9 @@ export const useSectionStore = defineStore("sections", {
     },
     removeSection(sectionId: number) {
       this.sections = this.sections.filter((s) => s.id !== sectionId);
+    },
+    reset() {
+      this.sections = initSections();
     },
   },
   persist: {

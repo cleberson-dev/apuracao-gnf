@@ -2,35 +2,30 @@
   {
     "numero": 22,
     "nome": "FERNANDO PL",
-    "codigo": "100002207926",
     "partido": "PARTIDO LIBERAL",
     "cor": "#2E3790"
   },
   {
     "numero": 30,
     "nome": "ZÉ RAMOS",
-    "codigo": "100002211467",
     "partido": "PARTIDO NOVO",
     "cor": "#F16E1E"
   },
   {
     "numero": 40,
     "nome": "STEFANO BRANDÃO",
-    "codigo": "100002022611",
     "partido": "PARTIDO SOCIALISTA BRASILEIRO",
     "cor": "#FFB400"
   },
   {
     "numero": 55,
     "nome": "IRMÃO CARLOS",
-    "codigo": "100002213883",
     "partido": "PARTIDO SOCIAL DEMOCRÁTICO",
     "cor": "#036BAD"
   },
   {
     "numero": 44,
     "nome": "MARCEL CURIÓ",
-    "codigo": "100002341975",
     "partido": "UNIÃO BRASIL",
     "cor": "#008100"
   }

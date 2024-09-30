@@ -1,0 +1,19 @@
+{
+  "appId": "com.clebersondev.apuracaognf",
+  "productName": "Apuração GNF",
+  "files": ["out"],
+  "extends": null,
+  "win": {
+    "executableName": "apuracao"
+  },
+  "nsis": {
+    "artifactName": "${name}-${version}-setup.${ext}",
+    "shortcutName": "${productName}",
+    "uninstallDisplayName": "${productName}",
+    "createDesktopShortcut": "always"
+  },
+  "npmRebuild": false,
+  "directories": {
+    "buildResources": "buildResources"
+  }
+}

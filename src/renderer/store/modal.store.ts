@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Component } from "vue";
+import type { Component } from "vue";
 import { v4 as uuid } from "uuid";
 
 export const useModalStore = defineStore("modal", {

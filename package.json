@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "dev:desktop": "electron-vite dev",
+    "dev:desktop": "electron-vite dev --watch",
     "format": "prettier --write .",
     "build": "vite build",
     "build:electron": "electron-vite build",
-    "build:desktop:win": "bun run electron:build && electron-builder --win --config"
+    "build:desktop:win": "cross-env NODE_ENV=production bun run build:electron && electron-builder --win --config electron-builder.json --dir --config.asar=false",
+    "postinstall": "electron-builder install-app-deps"
   },
   "main": "./out/main/index.js",
   "type": "module",
@@ -34,9 +35,11 @@
     "@vitejs/plugin-vue": "^5.1.4",
     "@vitejs/plugin-vue-jsx": "^4.0.1",
     "@vue/compiler-sfc": "^3.5.0",
+    "@vue/tsconfig": "^0.5.1",
     "autoprefixer": "^10.4.20",
     "bun-types": "^1.1.29",
     "concurrently": "^5.3.0",
+    "cross-env": "^7.0.3",
     "electron": "^32.1.2",
     "electron-builder": "^25.0.5",
     "electron-devtools-installer": "^3.2.0",

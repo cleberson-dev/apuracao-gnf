@@ -7,7 +7,8 @@ import Combobox from "./Combobox.vue";
 import CircularPicture from "../components/CircularPicture.vue";
 import CustomButton from "../components/CustomButton.vue";
 import CandidateService from "../services/candidate.service";
-import { StateSection, useSectionStore } from "../store/section.store";
+import { useSectionStore } from "../store/section.store";
+import type { Section } from "../../types";
 import { useMainStore } from "../store/main.store";
 
 const sectionStore = useSectionStore();
@@ -19,8 +20,8 @@ const candidates = CandidateService.getAll();
 const formSectionId = ref<number | undefined>(undefined);
 const formVotes: Record<number | "outros", number> = reactive(Object.fromEntries([...candidates.map(candidate => [candidate.number, 0]), ["outros", 0]]));
 
-const currentFormSection = computed<StateSection>(() => {
-  return sectionStore.sections.find((section: StateSection) => section.id === formSectionId.value)!;
+const currentFormSection = computed<Section>(() => {
+  return sectionStore.sections.find((section: Section) => section.id === formSectionId.value)!;
 });
 
 const votesEntered = computed(() => {
@@ -37,7 +38,7 @@ const votesLeft = computed(() => {
   if (!formSectionId.value) return 0;
   console.log({ formSectionId });
 
-  const numberOfVoters = sectionStore.sections.find((section: StateSection) => section.id === formSectionId.value)!.voters;
+  const numberOfVoters = sectionStore.sections.find((section: Section) => section.id === formSectionId.value)!.voters;
   return numberOfVoters - votesEntered;
 });
 
@@ -56,7 +57,7 @@ function onSelectChange(newId: number) {
     return;
   }
   Object.entries(section.votes).forEach(([candidateNumber, votes]) => {
-    formVotes[Number.isNaN(+candidateNumber) ? "outros" : +candidateNumber] = votes;
+    formVotes[Number.isNaN(+candidateNumber) ? "outros" : +candidateNumber] = votes as number;
   });
 };
 

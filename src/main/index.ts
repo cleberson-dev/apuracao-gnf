@@ -1,7 +1,5 @@
 import { app, protocol, BrowserWindow } from "electron";
-import path from "node:path";
-
-const isDevelopment = process.env.NODE_ENV !== "production";
+import { fileURLToPath } from "url";
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -22,11 +20,15 @@ async function createWindow() {
     },
   });
 
-  if (isDevelopment) {
-    win.loadURL("http://localhost:5173");
+  if ((import.meta as any).env.DEV) {
+    win.loadURL(process.env["ELECTRON_RENDERER_URL"]!);
   } else {
-    win.loadFile("index.html");
+    win.loadFile(
+      fileURLToPath(new URL("../renderer/index.html", import.meta.url))
+    );
   }
+
+  return win;
 }
 
 // Quit when all windows are closed.
@@ -47,12 +49,10 @@ app.on("activate", () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", () => {
-  createWindow();
-});
+app.on("ready", createWindow);
 
 // Exit cleanly on request from parent process in development mode.
-if (isDevelopment) {
+if ((import.meta as any).env.DEV) {
   if (process.platform === "win32") {
     process.on("message", (data) => {
       if (data === "graceful-exit") {

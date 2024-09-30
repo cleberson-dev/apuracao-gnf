@@ -1,5 +1,9 @@
 import { createApp } from "vue";
-import { createRouter, createWebHistory } from "vue-router";
+import {
+  createRouter,
+  createWebHashHistory,
+  createWebHistory,
+} from "vue-router";
 import { createNotivue } from "notivue";
 import { createPinia } from "pinia";
 import Vue3EasyDataTable from "vue3-easy-data-table";
@@ -22,13 +26,13 @@ import "vue3-easy-data-table/dist/style.css";
 export const wsc = new WebSocket("ws://localhost:5050");
 
 const routes = [
-  { path: "/", component: HomePage },
-  { path: "/cadastrar", component: RegisterPage },
-  { path: "/limpar", component: ClearPage },
-  { path: "/database", component: DataEditorPage },
+  { path: "/", component: async () => HomePage },
+  { path: "/cadastrar", component: async () => RegisterPage },
+  { path: "/limpar", component: async () => ClearPage },
+  { path: "/database", component: async () => DataEditorPage },
 ];
 
-const router = createRouter({ routes, history: createWebHistory() });
+const router = createRouter({ routes, history: createWebHashHistory() });
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedState);
