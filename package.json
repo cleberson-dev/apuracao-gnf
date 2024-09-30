@@ -1,6 +1,6 @@
 {
   "name": "apuracao",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -8,7 +8,7 @@
     "format": "prettier --write .",
     "build": "vite build",
     "build:electron": "electron-vite build",
-    "build:desktop:win": "cross-env NODE_ENV=production bun run build:electron && electron-builder --win --config electron-builder.json --dir --config.asar=false",
+    "build:desktop:win": "cross-env NODE_ENV=production bun run build:electron && electron-builder --win --config electron-builder.json --config.asar=false",
     "postinstall": "electron-builder install-app-deps"
   },
   "main": "./out/main/index.js",
