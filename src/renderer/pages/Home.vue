@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-[100vh] bg-[#efefef] flex">
+  <div class="min-h-[100svh] bg-[#efefef] grid grid-cols-[7fr_3fr]">
     <votes-stats />
 
-    <div class="flex-grow px-10 py-8 w-2/5 flex flex-col justify-evenly">
+    <div class="flex-grow max-h-[100svh] px-10 py-8 flex flex-col gap-20 justify-center">
       <votes-stats-by-zone zone="urbana" />
       <votes-stats-by-zone zone="rural" />
     </div>

@@ -12,7 +12,7 @@
         {{ formattedPercentage }}%
       </p>
     </div>
-    <p class="font-bold m-0 text-sm" :style="{ color: color }">{{ votes }} votos</p>
+    <p class="font-bold m-0 text-sm" :style="{ color: color }">{{ formatNumbers(votes) }} votos</p>
   </div>
 
   <div v-else class="compact-candidate_mini flex">
@@ -21,7 +21,7 @@
       <p class="text-base font-bold m-0" :style="{ color: color }">
         {{ formattedPercentage }}%
       </p>
-      <p class="text-xs font-bold text-[#909090] m-0">{{ votes }} votos</p>
+      <p class="text-xs font-bold text-[#909090] m-0">{{ formatNumbers(votes) }} votos</p>
     </div>
   </div>
 </template>
@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import CircularPicture from "./CircularPicture.vue";
+import { formatNumbers } from '../utils';
 
 const props = defineProps({
   name: {

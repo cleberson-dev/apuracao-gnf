@@ -180,6 +180,20 @@ export const useSectionStore = defineStore("sections", {
     reset() {
       this.sections = initSections();
     },
+    simulate() {
+      const newSections = initSections().map((stateSection) => {
+        const section = { ...stateSection, closed: true };
+        let left = section.voters;
+        for (const candidateNumber in section.votes) {
+          const newVotes = Math.floor(Math.random() * left);
+          left -= newVotes;
+          section.votes[candidateNumber] = newVotes;
+        }
+        return section;
+      });
+      this.sections = newSections;
+      console.log(newSections);
+    },
   },
   persist: {
     storage: localStorage,

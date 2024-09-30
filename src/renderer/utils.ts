@@ -12,3 +12,6 @@ export const sortCandidates = (candidates: Candidate[], sections: any[]) => {
     return votesB - votesA;
   });
 };
+
+export const formatNumbers = (num: number) =>
+  Intl.NumberFormat("pt-BR").format(num);

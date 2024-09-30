@@ -4,9 +4,11 @@ import { UtilService } from "../services/util.service";
 import { useRouter } from 'vue-router';
 import useModal from '../composables/useModal';
 import ConfirmationDialog from './ConfirmationDialog.vue';
+import { useSectionStore } from '../store/section.store';
 
 const router = useRouter();
 const modal = useModal();
+const sectionStore = useSectionStore();
 
 const items = [
   { href: '/', label: 'Início', icon: HomeIcon },
@@ -14,7 +16,12 @@ const items = [
   { onClick: onPrint, label: 'Screenshot', icon: CameraIcon },
   { label: "Database", icon: CircleStackIcon, href: '/database' },
   { label: "Limpar Votos", icon: TrashIcon, onClick: cleanVotes },
+
 ]
+
+if ((import.meta as any).env.DEV) {
+  items.push({ label: "Simular", icon: TableCellsIcon, onClick: simulate });
+}
 
 async function onPrint() {
   const image = await UtilService.screenshot();
@@ -34,6 +41,10 @@ async function cleanVotes() {
     />
   );
 }
+
+async function simulate() {
+  sectionStore.simulate();
+}
 </script>
 
 <template>
@@ -41,7 +52,7 @@ async function cleanVotes() {
     <div class="w-full flex justify-center items-center py-5">
       <img alt="Logo" src="../assets/img/logo.png" class="w-9" />
     </div>
-    <nav class="text-[0.8rem] decoration-none font-bold lowercase">
+    <nav class="text-[0.8rem] decoration-none font-bold">
       <li v-for="item in items" class="py-4 px-1 hover:bg-[rgba(0,0,0,.2)] list-none transition-colors cursor-pointer">
         <router-link v-if="!!item.href" :to="item.href"
           class="flex flex-col justify-center items-center text-wrap text-center">

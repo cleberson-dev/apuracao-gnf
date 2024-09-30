@@ -1,7 +1,7 @@
 <template>
   <section class="votes-stats-by-zone" v-if="candidates.length > 0">
     <section-header :size="0.75" :leftTitle="zone"
-      :leftSubtitle="sectionStore.votosApuradosPorZona(zone) + ' votos apurados'" :rightTitle="formatarPercentual(
+      :leftSubtitle="formatNumbers(sectionStore.votosApuradosPorZona(zone)) + ' votos apurados'" :rightTitle="formatarPercentual(
         sectionStore.closedSectionsByZone(zone).length / sectionStore.sectionsByZone(zone).length
       ) + '%'
         " :rightSubtitle="'Seções totalizadas (' +
@@ -11,18 +11,13 @@
           ')'
           " />
 
-    <compact-candidate featured :key="challengers[0].number" :name="challengers[0].name"
-      :profilePicture="challengers[0].profilePicture" :color="challengers[0].color"
-      :votes="sectionStore.votesByCandidateAndZone(challengers[0].number, zone)"
+    <compact-candidate featured v-for="challenger of challengers" :key="challenger.number" :name="challenger.name"
+      :profilePicture="challenger.profilePicture" :color="challenger.color"
+      :votes="sectionStore.votesByCandidateAndZone(challenger.number, zone)"
       :totalVotes="sectionStore.validVotesByZone(zone)" />
 
-    <votes-diff :votesA="sectionStore.votesByCandidateAndZone(challengers[0].number, zone)"
-      :votesB="sectionStore.votesByCandidateAndZone(challengers[1].number, zone)" :size="0.8" />
-
-    <compact-candidate featured :key="challengers[1].number" :name="challengers[1].name"
-      :profilePicture="challengers[1].profilePicture" :color="challengers[1].color"
-      :votes="sectionStore.votesByCandidateAndZone(challengers[1].number, zone)"
-      :totalVotes="sectionStore.validVotesByZone(zone)" />
+    <!-- <votes-diff :votesA="sectionStore.votesByCandidateAndZone(challengers[0].number, zone)"
+      :votesB="sectionStore.votesByCandidateAndZone(challengers[1].number, zone)" :size="0.8" /> -->
 
     <div class="flex justify-between flex-wrap mt-4 gap-4">
       <compact-candidate v-for="candidato in otherCandidates" :key="candidato.number" :name="candidato.name"
@@ -40,10 +35,10 @@ import { computed } from "vue";
 
 import CompactCandidate from "./CompactCandidate.vue";
 import SectionHeader from "./SectionHeader.vue";
-import VotesDiff from "./VotesDiff.vue";
 import CandidateService from "../services/candidate.service";
 import { sortCandidates } from "../utils";
 import { useSectionStore } from "../store/section.store";
+import { formatNumbers } from '../utils'
 
 const sectionStore = useSectionStore();
 
@@ -56,13 +51,13 @@ defineProps({
 });
 
 const candidates = CandidateService.getAll();
-const sortedCandidates = computed(() => sortCandidates(candidates, sectionStore.sections));
 
 const challengers = computed(() => {
-  return sortedCandidates.value.slice(0, 2);
+  return [22, 40, 44].map(num => candidates.find(c => c.number === num)!);
 });
 const otherCandidates = computed(() => {
-  return sortedCandidates.value.slice(2);
+  const sortedCandidates = sortCandidates(candidates.filter(c => ![22, 40, 44].includes(c.number === "outros" ? 0 : c.number)), sectionStore.sections);
+  return sortedCandidates;
 });
 
 function formatarPercentual(decimal: number) {

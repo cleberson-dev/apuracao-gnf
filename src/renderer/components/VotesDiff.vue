@@ -2,7 +2,7 @@
   <p :class="['font-bold w-full text-right flex flex-col m-0 text-black', difference >= 0 ? 'text-green-700' : 'text-red-700']"
     :style="{ fontSize: `calc(1.25rem * ${size})` }">
     {{ difference >= 0 ? "+" : "-" }}
-    {{ Math.abs(difference) }}
+    {{ formatNumbers(Math.abs(difference)) }}
     <span class="uppercase font-medium text-black" :style="{ fontSize: `calc(0.75rem * ${size})` }">Diferença de
       votos</span>
   </p>
@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { formatNumbers } from '../utils';
 
 const props = defineProps({
   votesA: Number,
