@@ -1,15 +1,22 @@
 import { defineStore } from "pinia";
-import { VoteService } from "../services/vote.service";
-import SectionService, { Section } from "../services/section.service";
+import type { Section, Zone } from "../../types";
 import CandidateService from "../services/candidate.service";
+import initialSections from '../data/secoes.json';
 
-export type StateSection = Section & {
-  closed: boolean;
-  votes: Record<number | "outros", number>;
-};
+const candidates = CandidateService.getAll();
+
+const getCleanVotes = () => Object.fromEntries([...candidates.map(candidate => [candidate.number, 0]), ["outros", 0]])
 
 export const useSectionStore = defineStore("sections", {
-  state: () => ({ sections: <StateSection[]>[], isLoading: true }),
+  state: () => ({ sections: initialSections.map((item, idx) => ({
+    id: idx + 1,
+    number: item.number,
+    local: item.local,
+    voters: item.voters,
+    closed: false as boolean,
+    zone: item.zone as Zone ?? 'urbana',
+    votes: getCleanVotes(),
+  })) satisfies Section[] }),
   getters: {
     closedSections: (state) => state.sections.filter((s) => !!s.closed),
     closedSectionsByZone: (state) => (zone: string) =>
@@ -113,36 +120,13 @@ export const useSectionStore = defineStore("sections", {
       sectionId: number;
       votes: Record<number | "outros", number>;
     }) {
-      await VoteService.vote(sectionId, votes);
-
       const section = this.sections.find((s) => s.id === sectionId)!;
       section.votes = votes;
       section.closed = true;
     },
-    async fetchSections() {
-      const sections = await SectionService.fetchAll();
-      const candidates = CandidateService.getAll();
-
-      this.sections = sections.map((s) => {
-        const votes = Object.fromEntries([
-          ...candidates.map((candidate) => [
-            candidate.number,
-            s.votes[candidate.number] ?? 0,
-          ]),
-          ["outros", s.votes["outros"] ?? 0],
-        ]);
-        return {
-          ...s,
-          votes,
-        };
-      });
-
-      this.isLoading = false;
-    },
     async cleanVotes() {
       try {
-        await VoteService.cleanVotes();
-        await this.fetchSections();
+        this.sections = this.sections.map(s => ({...s, closed: false, votes: getCleanVotes()}))
       } catch (err) {
         console.error(err);
       }
@@ -157,17 +141,15 @@ export const useSectionStore = defineStore("sections", {
       section.votes = payload.votes;
       section.closed = true;
     },
-    addSection(payload: Section) {
-      const candidates = CandidateService.getAll();
+    createSection(payload: Omit<Section, "id" | "votes" | "closed">) {
       this.sections.push({
+        id: this.sections.at(-1)?.id ?? 1,
+        votes: getCleanVotes(),
+        closed: false,
         ...payload,
-        votes: Object.fromEntries([
-          ...candidates.map((candidate) => [candidate.number, 0]),
-          ["outros", 0],
-        ]),
       });
     },
-    patchSection(sectionId: number, payload: Omit<Section, "id">) {
+    patchSection(sectionId: number, payload: Omit<Section, "id" | "votes">) {
       const section = this.sections.find(
         (section) => section.id === sectionId
       )!;
@@ -184,5 +166,8 @@ export const useSectionStore = defineStore("sections", {
     removeSection(sectionId: number) {
       this.sections = this.sections.filter((s) => s.id !== sectionId);
     },
+  },
+  persist: {
+    storage: localStorage,
   },
 });

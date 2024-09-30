@@ -1,5 +1,5 @@
 import { Candidate } from "../../types";
-import candidates from "../../data/candidates.json";
+import candidates from "../data/candidates.json";
 
 export default class CandidateService {
   static getAll(): Candidate[] {

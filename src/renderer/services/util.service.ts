@@ -1,11 +1,9 @@
-import axios from "axios";
-
 export class UtilService {
   static async screenshot() {
-    const res = await axios.get<{ data: { name: string; path: string } }>(
-      "http://localhost:5000/print"
-    );
-    const { data } = res.data;
+    const res = await fetch("http://localhost:5000/print");
+    const { data } = (await res.json()) as {
+      data: { name: string; path: string };
+    };
 
     return data;
   }

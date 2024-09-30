@@ -1,24 +1,11 @@
 import { defineConfig } from "electron-vite";
-import { resolve } from "path";
 import vue from "@vitejs/plugin-vue";
+import vueJsx from "@vitejs/plugin-vue-jsx";
 
 export default defineConfig({
-  main: {
-    build: {
-      lib: {
-        entry: "src/vue/background.js",
-      },
-    },
-  },
+  main: {},
+  preload: {},
   renderer: {
-    root: ".",
-    plugins: [vue()],
-    build: {
-      rollupOptions: {
-        input: {
-          index: resolve(__dirname, "index.html"),
-        },
-      },
-    },
+    plugins: [vue(), vueJsx()],
   },
 });

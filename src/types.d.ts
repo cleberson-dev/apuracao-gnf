@@ -6,17 +6,16 @@ declare module "ws" {
   }
 }
 
-type Section = {
-  number: number;
-  voters: number;
-  local: string;
-  zone?: "urbana" | "rural";
-};
+type Zone = "urbana" | "rural";
 
-type Vote = {
-  sectionId: number;
-  candidateNumber: number;
-  amount: number;
+type Section = {
+  id: number;
+  number: number;
+  local: string;
+  voters: number;
+  zone: Zone;
+  closed: boolean;
+  votes: Record<number | "outros", number>;
 };
 
 type Candidate = {

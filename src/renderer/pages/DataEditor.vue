@@ -4,20 +4,20 @@ import { push } from 'notivue';
 import type { Header, Item } from 'vue3-easy-data-table';
 import { TrashIcon } from '@heroicons/vue/24/solid';
 
-import SectionService from '../services/section.service';
 import CandidateService from '../services/candidate.service';
 
-import { StateSection, useSectionStore } from '../store/section.store';
+import { useSectionStore } from '../store/section.store';
 import useModal from '../composables/useModal';
 import ConfirmationDialog from '../components/ConfirmationDialog.vue';
 import SectionForm from '../components/SectionForm.vue';
+import { Section } from '../../types';
 
 const modal = useModal();
 
 const isModalOpen = ref(false);
 
 const sectionStore = useSectionStore();
-const selectedSection = ref<StateSection | undefined>();
+const selectedSection = ref<Section | undefined>();
 const getSectionItems = () => sectionStore.sections.sort((a, b) => a.number - b.number);
 onMounted(() => {
   sectionStore.$subscribe(() => {
@@ -39,7 +39,7 @@ const headers: Header[] = [
 
 const items: Ref<Item[]> = ref(getSectionItems());
 
-const onRowClick = (section: StateSection) => {
+const onRowClick = (section: Section) => {
   selectedSection.value = section;
   isModalOpen.value = true;
 }
@@ -54,13 +54,11 @@ function openConfirmationDialog(confirmFn: () => void) {
 }
 
 async function removeAllSections() {
-  await SectionService.removeAll();
   sectionStore.removeAllSections();
   push.success("Todas as seções foram removidas!");
 }
 
-async function removeSection(section: StateSection) {
-  await SectionService.removeSection(section.id);
+async function removeSection(section: Section) {
   sectionStore.removeSection(section.id);
   push.success(`Seção #${section.number} foi removida com sucesso!`);
 }

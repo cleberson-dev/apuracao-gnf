@@ -1,10 +1,6 @@
-import { RepositorySection } from "../repositories/section.repository";
 import { Candidate } from "../types";
 
-export const sortCandidates = (
-  candidates: Candidate[],
-  sections: RepositorySection[]
-) => {
+export const sortCandidates = (candidates: Candidate[], sections: any[]) => {
   return candidates.sort((a, b) => {
     const votesA = sections
       .filter((s) => !!s.closed)

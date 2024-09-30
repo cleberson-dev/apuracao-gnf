@@ -1,6 +1,5 @@
-"use strict";
-
 import { app, protocol, BrowserWindow } from "electron";
+import path from "node:path";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -19,7 +18,7 @@ async function createWindow() {
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      nodeIntegration: !!process.env.ELECTRON_NODE_INTEGRATION,
     },
   });
 
@@ -48,7 +47,9 @@ app.on("activate", () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+app.on("ready", () => {
+  createWindow();
+});
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

@@ -21,11 +21,9 @@ import { Notivue, Notification } from 'notivue'
 
 import MyHeader from "./components/MyHeader.vue";
 
-import { useSectionStore } from './store/section.store';
 import { useMainStore } from './store/main.store';
 import ModalContainer from './components/ModalContainer.vue';
 
-const sectionsStore = useSectionStore();
 const mainStore = useMainStore();
 
 const isCollapsed = ref(false);
@@ -37,10 +35,7 @@ const toggleCollapse = (e: KeyboardEvent) => {
 }
 
 onMounted(() => {
-  sectionsStore.fetchSections();
-
   mainStore.initializeTime();
-
   window.addEventListener("keyup", toggleCollapse);
 });
 

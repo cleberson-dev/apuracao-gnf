@@ -5,6 +5,7 @@ import { createPinia } from "pinia";
 import Vue3EasyDataTable from "vue3-easy-data-table";
 import { VueSpinnersPlugin } from "vue3-spinners";
 import { defaultConfig, plugin } from "@formkit/vue";
+import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 
 import App from "./App.vue";
 import HomePage from "./pages/Home.vue";
@@ -30,6 +31,7 @@ const routes = [
 const router = createRouter({ routes, history: createWebHistory() });
 
 const pinia = createPinia();
+pinia.use(piniaPluginPersistedState);
 const notivue = createNotivue();
 
 createApp(App)
