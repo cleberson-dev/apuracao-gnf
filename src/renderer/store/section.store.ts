@@ -143,10 +143,10 @@ export const useSectionStore = defineStore("sections", {
       }
     },
     updateSection(payload: {
-      section: string;
+      sectionId: number;
       votes: Record<number | "outros", number>;
     }) {
-      const section = this.sections.find((s) => s.id === +payload.section);
+      const section = this.sections.find((s) => s.id === payload.sectionId);
       if (!section) return;
 
       section.votes = payload.votes;

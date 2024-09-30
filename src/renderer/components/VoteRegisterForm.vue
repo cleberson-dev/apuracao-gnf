@@ -36,7 +36,6 @@ const areNegatives = computed(() => {
 const votesLeft = computed(() => {
   const votesEntered = Object.values(formVotes).reduce((acc, val) => acc + +val, 0);
   if (!formSectionId.value) return 0;
-  console.log({ formSectionId });
 
   const numberOfVoters = sectionStore.sections.find((section: Section) => section.id === formSectionId.value)!.voters;
   return numberOfVoters - votesEntered;
@@ -72,6 +71,7 @@ async function registerVote(e: any) {
     sectionId: formSectionId.value!,
     votes: { ...formVotes },
   });
+  (window as any).electronAPI.registerVotes(formSectionId.value!, { ...formVotes });
   mainStore.updateTime();
 
   push.success("Votos computados com sucesso!");

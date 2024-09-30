@@ -17,6 +17,8 @@ const emit = defineEmits(["success"]);
 const votes = getNode('votes');
 console.log({ votes });
 
+const ENABLE_VOTES = false;
+
 const classes = {
   input: "border border-solid border-borderColor focus:outline-primary placeholder:text-black p-2 text-sm rounded uppercase w-full"
 }
@@ -26,7 +28,7 @@ const onSubmit = async (fields: any) => {
     sectionStore.patchSection(props.section.id, {
       number: fields.number,
       closed: fields.closed,
-      local: fields.local,
+      local: fields.local.toUpperCase(),
       voters: fields.voters,
       zone: fields.zone as Zone,
     });
@@ -96,7 +98,8 @@ const votesWithVoters = (node: any) => {
           :data-message-type="message.type">{{ message.value }}</li>
       </ul>
       <ul class="flex flex-col gap-2">
-        <li v-for="candidate in candidates" class="grid grid-cols-[auto_1fr_auto] items-center select-none relative">
+        <li v-if="ENABLE_VOTES" v-for="candidate in candidates"
+          class="grid grid-cols-[auto_1fr_auto] items-center select-none relative">
           <span class="inline-block rounded-full size-4 mr-1" :style="{ backgroundColor: candidate.color }"></span>
           <span>{{ candidate.name }} ({{ candidate.number }})</span>
           <FormKit type="number"

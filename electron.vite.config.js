@@ -4,7 +4,13 @@ import vueJsx from "@vitejs/plugin-vue-jsx";
 
 export default defineConfig({
   main: {},
-  preload: {},
+  preload: {
+    build: {
+      lib: {
+        formats: ["cjs"],
+      },
+    },
+  },
   renderer: {
     plugins: [vue(), vueJsx()],
   },

@@ -9,7 +9,7 @@
       </button>
     </div>
     <ul ref="list-ref"
-      class="max-h-64 bg-white border border-solid border-borderColor rounded absolute top-full w-full left-0 overflow-auto"
+      class="z-10 max-h-64 bg-white border border-solid border-borderColor rounded absolute top-full w-full left-0 overflow-auto"
       :class="{ invisible: !isExpanded }">
       <li v-if="filteredItems.length === 0" class="p-2 text-center">No results</li>
       <li v-for="item in filteredItems" class="p-2 hover:bg-black/10 cursor-pointer focus:bg-black/10"
@@ -55,7 +55,6 @@ const onBlur = () => {
 }
 
 const onSelect = (item: Item) => {
-  console.log({ item, selected });
   if (item.value !== selected.value?.value) {
     searchText.value = item.label;
     emit("change", item.value);

@@ -1,8 +1,9 @@
 <script setup lang="tsx">
-import { onMounted, Ref, ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import type { Ref } from 'vue';
 import { push } from 'notivue';
 import type { Header, Item } from 'vue3-easy-data-table';
-import { TrashIcon } from '@heroicons/vue/24/solid';
+import { PlusIcon, TableCellsIcon, TrashIcon } from '@heroicons/vue/24/solid';
 
 import CandidateService from '../services/candidate.service';
 
@@ -10,7 +11,7 @@ import { useSectionStore } from '../store/section.store';
 import useModal from '../composables/useModal';
 import ConfirmationDialog from '../components/ConfirmationDialog.vue';
 import SectionForm from '../components/SectionForm.vue';
-import { Section } from '../../types';
+import type { Section } from '../../types';
 
 const modal = useModal();
 
@@ -63,13 +64,18 @@ async function removeSection(section: Section) {
   push.success(`Seção #${section.number} foi removida com sucesso!`);
 }
 
+function resetSections() {
+  sectionStore.reset();
+  push.success("Seções restauradas!");
+}
+
 const nf = Intl.NumberFormat("pt-BR");
 
 const searchText = ref<string>('');
 </script>
 
 <template>
-  <div class="p-10 w-[calc(100vw-6.3rem)] flex flex-col">
+  <div class="p-10 w-[calc(100vw-8rem)] flex flex-col">
     <h1 class="font-bold text-2xl">Banco de Dados</h1>
     <p class="relative bottom-1">
       <small>
@@ -86,15 +92,20 @@ const searchText = ref<string>('');
       </small>
     </p>
     <div class="flex self-end gap-4 text-sm">
-      <button @click.prevent="onNewSectionClick" class="bg-green-500 text-white p-2 rounded mb-4">
-        + Nova Seção
+      <button @click.prevent="onNewSectionClick"
+        class="bg-green-500 text-white p-2 rounded mb-4 flex items-center gap-1">
+        <PlusIcon class="size-3" /> Criar
       </button>
       <button :disabled="sectionStore.sections.length === 0" @click.prevent="openConfirmationDialog(removeAllSections)"
         class="bg-red-500 text-white p-2 rounded mb-4 flex items-center gap-1 disabled:opacity-50">
         <TrashIcon class="size-3" />
         Remover todas as seções
       </button>
-
+      <button :disabled="sectionStore.sections.length === 0" @click.prevent="openConfirmationDialog(resetSections)"
+        class="bg-orange-500 text-white p-2 rounded mb-4 flex items-center gap-1 disabled:opacity-50">
+        <TableCellsIcon class="size-3" />
+        Restaurar seções
+      </button>
     </div>
 
     <label class="text-xs mb-1">Pesquisar</label>
@@ -102,7 +113,7 @@ const searchText = ref<string>('');
       class="border border-solid border-borderColor rounded mb-2 focus:outline-primary text-sm p-1 px-2 uppercase"
       v-model="searchText" />
 
-    <EasyDataTable :headers="headers" :items="items" style="width: 100%;" @click-row="onRowClick" search-field="name"
+    <EasyDataTable :headers="headers" :items="items" style="width: 100%;" @click-row="onRowClick" search-field="local"
       :search-value="searchText">
       <template #item-votes="item">
         {{ (Object.values(item.votes) as number[]).reduce((acc, val) => acc + val, 0) }}

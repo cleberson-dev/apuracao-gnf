@@ -23,8 +23,6 @@ import "notivue/notification.css";
 import "notivue/animations.css";
 import "vue3-easy-data-table/dist/style.css";
 
-export const wsc = new WebSocket("ws://localhost:5050");
-
 const routes = [
   { path: "/", component: async () => HomePage },
   { path: "/cadastrar", component: async () => RegisterPage },

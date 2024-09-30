@@ -17,7 +17,6 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
 import { Notivue, Notification } from 'notivue'
 
 import MyHeader from "./components/MyHeader.vue";
@@ -26,18 +25,16 @@ import { useMainStore } from './store/main.store';
 import ModalContainer from './components/ModalContainer.vue';
 
 const mainStore = useMainStore();
-const router = useRouter();
 
 const isCollapsed = ref(false);
 
 const toggleCollapse = (e: KeyboardEvent) => {
-  if (e.ctrlKey && e.key === 'm') {
+  if (e.ctrlKey && e.key.toLowerCase() === 'n') {
     isCollapsed.value = !isCollapsed.value;
   }
 }
 
 onMounted(() => {
-  router.push("/");
   mainStore.initializeTime();
   window.addEventListener("keyup", toggleCollapse);
 });

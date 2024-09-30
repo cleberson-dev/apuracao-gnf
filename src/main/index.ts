@@ -1,4 +1,4 @@
-import { app, protocol, BrowserWindow } from "electron";
+import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import { fileURLToPath } from "url";
 
 // Scheme must be registered before the app is ready
@@ -11,12 +11,15 @@ async function createWindow() {
   const win = new BrowserWindow({
     width: 1366,
     height: 768,
-    fullscreen: true,
+    fullscreen: false,
     show: true,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: !!process.env.ELECTRON_NODE_INTEGRATION,
+      contextIsolation: true,
+      nodeIntegration: true,
+      nodeIntegrationInSubFrames: true,
+      preload: fileURLToPath(new URL("../preload/index.cjs", import.meta.url)),
     },
   });
 
@@ -49,7 +52,39 @@ app.on("activate", () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+app.on("ready", async () => {
+  const win = await createWindow();
+  win.webContents.setWindowOpenHandler((details) => {
+    return {
+      action: "allow",
+      createWindow: (opts) => {
+        const win = new BrowserWindow(opts);
+        win.loadURL(details.url);
+        win.setSize(1366, 768);
+        return win.webContents;
+      },
+      overrideBrowserWindowOptions: {
+        webPreferences: {
+          preload: fileURLToPath(
+            new URL("../preload/index.cjs", import.meta.url)
+          ),
+          nativeWindowOpen: true,
+        },
+      },
+    };
+  });
+  ipcMain.on(
+    "register-votes",
+    (_, sectionId: number, votes: Record<number | "outros", number>) => {
+      win.webContents.send("votes-registered", sectionId, votes);
+      win
+        .getChildWindows()
+        .forEach((win) =>
+          win.webContents.send("votes-registered", sectionId, votes)
+        );
+    }
+  );
+});
 
 // Exit cleanly on request from parent process in development mode.
 if ((import.meta as any).env.DEV) {
