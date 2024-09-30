@@ -54,15 +54,18 @@ const onBlur = () => {
   searchText.value = selected.value?.label ?? '';
 }
 
-const onSelect = (item: any) => {
-  searchText.value = item.label;
-  emit("change", item.value);
+const onSelect = (item: Item) => {
+  console.log({ item, selected });
+  if (item.value !== selected.value?.value) {
+    searchText.value = item.label;
+    emit("change", item.value);
+  }
   isExpanded.value = false;
 }
 
 const clickOutside = (e: MouseEvent) => {
   const isInside = containerRef.value!.contains((e.target as Element));
-  if (isInside) return;
+  if (isInside || !isExpanded.value) return;
   isExpanded.value = false;
 
   if (!searchText.value) {
@@ -72,6 +75,7 @@ const clickOutside = (e: MouseEvent) => {
 
   const exactMatch = filteredItems.value.find(v => v.label.toLowerCase() === searchText.value.toLowerCase());
   if (exactMatch) {
+    if (exactMatch.value === selected.value?.value) return;
     emit("change", exactMatch.value);
     return;
   } else {
