@@ -1,11 +1,15 @@
-export class UtilService {
-  static async screenshot() {
-    const res = await fetch("http://localhost:5000/print");
-    const { data } = (await res.json()) as {
-      data: { name: string; path: string };
-    };
+import html2canvas from "html2canvas";
 
-    return data;
+export class UtilService {
+  static async screenshot(): Promise<string> {
+    const canvas = await html2canvas(document.querySelector("main")!, {
+      windowWidth: 1366,
+      windowHeight: 768,
+    });
+    // const ctx = canvas.getContext("2d");
+    const image = canvas.toDataURL("image/png");
+
+    return image;
   }
 
   static playAlert() {

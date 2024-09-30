@@ -17,11 +17,11 @@ const items = [
 ]
 
 async function onPrint() {
-  const data = await UtilService.screenshot();
+  const image = await UtilService.screenshot();
 
   const link = document.createElement("a");
-  link.download = data.name;
-  link.href = data.path;
+  link.download = `resultados_${Date.now()}.png`;
+  link.href = image;
   link.click();
 }
 
