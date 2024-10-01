@@ -13,6 +13,7 @@ import ConfirmationDialog from '../components/ConfirmationDialog.vue';
 import SectionForm from '../components/SectionForm.vue';
 import type { Section } from '../../types';
 import EraserIcon from '../icons/Eraser.icon.vue';
+import { IS_DEV } from '../utils';
 
 const modal = useModal();
 
@@ -102,7 +103,8 @@ const searchText = ref<string>('');
         <TrashIcon class="size-3" />
         Remover todas as seções
       </button>
-      <button :disabled="sectionStore.sections.length === 0" @click.prevent="openConfirmationDialog(resetSections)"
+      <button v-if="IS_DEV" :disabled="sectionStore.sections.length === 0"
+        @click.prevent="openConfirmationDialog(resetSections)"
         class="bg-orange-500 text-white p-2 rounded mb-4 flex items-center gap-1 disabled:opacity-50">
         <TableCellsIcon class="size-3" />
         Restaurar seções
@@ -132,6 +134,11 @@ const searchText = ref<string>('');
             <EraserIcon class="text-green-500 size-4 hover:text-green-700 transition-colors" />
           </button>
         </div>
+      </template>
+      <template #item-zone="section">
+        <span class="uppercase">
+          {{ section.zone }}
+        </span>
       </template>
       <template #item-closed="section">
         {{ section.closed ? 'Sim ✅' : 'Não ❌' }}
