@@ -74,6 +74,11 @@ function resetSections() {
 const nf = Intl.NumberFormat("pt-BR");
 
 const searchText = ref<string>('');
+
+const sectionRowClassName = (item: Item) => {
+  if (item.closed) return 'closed-section-row';
+  return '';
+}
 </script>
 
 <template>
@@ -116,8 +121,8 @@ const searchText = ref<string>('');
       class="border border-solid border-borderColor rounded mb-2 focus:outline-primary text-sm p-1 px-2 uppercase"
       v-model="searchText" />
 
-    <EasyDataTable :headers="headers" :items="items" style="width: 100%;" search-field="local"
-      :search-value="searchText">
+    <EasyDataTable :headers="headers" :items="items" :search-value="searchText" search-field="local"
+      :style="{ width: '100%' }" :body-row-class-name="sectionRowClassName">
       <template #item-votes="item">
         {{ (Object.values(item.votes) as number[]).reduce((acc, val) => acc + val, 0) }}
       </template>
@@ -159,3 +164,13 @@ const searchText = ref<string>('');
     </div>
   </div>
 </template>
+
+<style>
+.vue3-easy-data-table__main .vue3-easy-data-table__body tr.closed-section-row td {
+  @apply bg-green-100;
+}
+
+.vue3-easy-data-table__main .vue3-easy-data-table__body tr.closed-section-row:hover td {
+  @apply bg-green-200;
+}
+</style>

@@ -13,7 +13,7 @@
       :class="{ invisible: !isExpanded }">
       <li v-if="filteredItems.length === 0" class="p-2 text-center">No results</li>
       <li v-for="item in filteredItems" class="p-2 hover:bg-black/10 cursor-pointer focus:bg-black/10"
-        :class="{ 'bg-black/10': item.value === hovered?.value, 'bg-red-500 hover:bg-red-600 text-gray-600': item.marked }"
+        :class="{ 'bg-black/10': item.value === hovered?.value, 'bg-green-100 hover:bg-green-200': item.marked }"
         @click.stop="onSelect(item)">{{
           item.label }}</li>
     </ul>
