@@ -12,15 +12,18 @@ export class AutoUpdater {
     });
     electronUpdaterAutoUpdater.on("update-available", () => {
       this._sendStatusToWindow("Update available.");
+      this._win.webContents.send("update-available");
     });
     electronUpdaterAutoUpdater.on("update-not-available", () => {
       this._sendStatusToWindow("Update not available.");
     });
     electronUpdaterAutoUpdater.on("error", (err) => {
       this._sendStatusToWindow("Error in auto-updater. " + err);
+      this._win.webContents.send("update-error");
     });
     electronUpdaterAutoUpdater.on("update-downloaded", () => {
       this._sendStatusToWindow("Update downloaded");
+      this._win.webContents.send("update-downloaded");
     });
   }
 
@@ -30,7 +33,11 @@ export class AutoUpdater {
   }
 
   checkForUpdates() {
-    electronUpdaterAutoUpdater.checkForUpdates();
+    electronUpdaterAutoUpdater.checkForUpdatesAndNotify();
+  }
+
+  install() {
+    electronUpdaterAutoUpdater.quitAndInstall();
   }
 }
 
@@ -122,6 +129,10 @@ app.on("ready", () => {
         );
     }
   );
+
+  ipcMain.on("update-and-restart", () => {
+    autoUpdater.install();
+  });
 });
 
 // Exit cleanly on request from parent process in development mode.

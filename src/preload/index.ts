@@ -23,4 +23,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.on("message", cb),
   offMessage: (cb: (ev: any, text: string) => void) =>
     ipcRenderer.off("message", cb),
+  onUpdateDownloaded: (cb: () => void) =>
+    ipcRenderer.on("update-downloaded", cb),
+  onUpdateAvailable: (cb: () => void) => ipcRenderer.on("update-available", cb),
+  onUpdateError: (cb: () => void) => ipcRenderer.on("update-error", cb),
+  updateAndRestartApp: () => ipcRenderer.send("update-and-restart"),
 });

@@ -1,9 +1,5 @@
 import { createApp } from "vue";
-import {
-  createRouter,
-  createWebHashHistory,
-  createWebHistory,
-} from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import { createNotivue } from "notivue";
 import { createPinia } from "pinia";
 import Vue3EasyDataTable from "vue3-easy-data-table";
