@@ -6,12 +6,20 @@ import useModal from '../composables/useModal';
 import ConfirmationDialog from './ConfirmationDialog.vue';
 import { useSectionStore } from '../store/section.store';
 import { IS_DEV } from '../utils';
+import type { FunctionalComponent } from 'vue';
+
+type Item = {
+  label: string;
+  icon: FunctionalComponent;
+  href?: string;
+  onClick?: () => void;
+}
 
 const router = useRouter();
 const modal = useModal();
 const sectionStore = useSectionStore();
 
-const items = [
+const items: Item[] = [
   { href: '/', label: 'Início', icon: HomeIcon },
   { href: '/cadastrar', label: 'Cadastrar', icon: PencilSquareIcon },
   { onClick: onPrint, label: 'Screenshot', icon: CameraIcon },
@@ -31,7 +39,7 @@ async function onPrint() {
   link.click();
 }
 
-async function cleanVotes() {
+function cleanVotes() {
   modal.addModal(
     <ConfirmationDialog
       onConfirm={() => {
@@ -41,7 +49,7 @@ async function cleanVotes() {
   );
 }
 
-async function simulate() {
+function simulate() {
   sectionStore.simulate();
 }
 </script>

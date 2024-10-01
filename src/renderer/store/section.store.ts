@@ -198,7 +198,6 @@ export const useSectionStore = defineStore("sections", {
         return section;
       });
       this.sections = newSections;
-      console.log(newSections);
     },
   },
   persist: {

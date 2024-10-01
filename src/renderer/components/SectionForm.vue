@@ -43,7 +43,7 @@ const onSubmit = async (fields: any) => {
     voters: fields.voters,
     zone: fields.zone as Zone,
   });
-  push.success(`Seção #${fields.local} foi criada com sucesso!`);
+  push.success(`Seção '${fields.local}' foi criada com sucesso!`);
   emit('success');
 }
 

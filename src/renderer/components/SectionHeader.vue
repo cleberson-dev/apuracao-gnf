@@ -1,7 +1,7 @@
 <template>
   <header class="flex justify-between items-start mb-4 capitalize dark:text-white/80">
     <div>
-      <h1 class="font-bold m-0" :style="{ fontSize: `calc(1.8rem * ${size})` }">
+      <h1 class="font-bold m-0" :style="{ fontSize: `calc(1.8rem * ${size})`, color: leftTitleColor ?? '' }">
         {{ leftTitle }}
       </h1>
       <h2 class="text-[#909090] font-bold m-0" :style="{ fontSize: `calc(1rem * ${size})` }">
@@ -22,6 +22,7 @@
 <script setup lang="ts">
 defineProps({
   leftTitle: String,
+  leftTitleColor: String,
   leftSubtitle: String,
   rightTitle: String,
   rightSubtitle: String,

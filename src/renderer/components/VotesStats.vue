@@ -1,13 +1,14 @@
 <template>
   <section class="flex-grow-[3] min-h-full shadow-lg px-10 py-16 dark:text-white/80" v-if="candidates.length > 0">
-    <h1 class="text-3xl font-extrabold w-full mt-0 mb-4">Apuração Paralela de Gov. Nunes Freire - MA
+    <h1 class="text-3xl font-extrabold w-full mt-0 mb-4" :style="{ color: '#2E3790' }">Apuração paralela Gov. Nunes
+      Freire - MA
       <small class="m-0 font-normal text-sm opacity-60 block" v-if="formattedLatestUpdate">
         Última Atualização: {{ formattedLatestUpdate }}
       </small>
     </h1>
-    <section-header leftTitle="Geral" :leftSubtitle="`${formatNumbers(sectionStore.votosApurados)} votos apurados`"
-      :rightTitle="formatarPercentual(sectionStore.closedSections.length / sectionStore.allSections.length) + '%'
-        "
+    <section-header leftTitle="VOTAÇÃO GERAL"
+      :leftSubtitle="`${formatNumbers(sectionStore.votosApurados)} votos apurados`" :rightTitle="formatarPercentual(sectionStore.closedSections.length / sectionStore.allSections.length) + '%'
+        " leftTitleColor="#2E3790"
       :rightSubtitle="`Seções totalizadas (${sectionStore.closedSections.length}/${sectionStore.allSections.length})`" />
 
     <candidate featured principal :name="challengers[0].name" :profilePicture="challengers[0].profilePicture"
