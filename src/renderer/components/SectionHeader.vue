@@ -1,5 +1,5 @@
 <template>
-  <header class="flex justify-between items-start mb-4 capitalize">
+  <header class="flex justify-between items-start mb-4 capitalize dark:text-white/80">
     <div>
       <h1 class="font-bold m-0" :style="{ fontSize: `calc(1.8rem * ${size})` }">
         {{ leftTitle }}

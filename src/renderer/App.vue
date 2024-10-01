@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-[100svh]">
+  <div class="flex h-[100svh]" :class="{ 'dark': themeStore.mode === 'dark' }">
     <my-header v-if="!isCollapsed" />
 
     <main class="h-full overflow-y-auto flex-grow">
@@ -7,6 +7,11 @@
     </main>
 
     <div class="absolute bottom-1 right-1 font-mono">{{ appVersion }}</div>
+    <button
+      class="text-black/50 absolute top-4 right-8 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors"
+      type="button" v-if="isDev" @click="themeStore.toggleMode()">
+      <component :is="themeStore.mode === 'light' ? SunIcon : MoonIcon" class="size-8" />
+    </button>
   </div>
 
   <Notivue v-slot="item">
@@ -19,17 +24,22 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
 import { Notivue, Notification } from 'notivue';
+import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid';
 
 import { useMainStore } from './store/main.store';
 
 import MyHeader from "./components/MyHeader.vue";
 import ModalContainer from './components/ModalContainer.vue';
+import { useThemeStore } from './store/theme.store';
 
 const appVersion = ref<string | undefined>();
 
 const mainStore = useMainStore();
+const themeStore = useThemeStore();
 
 const isCollapsed = ref(false);
+
+const isDev = !!(import.meta as any).env.DEV;
 
 const toggleCollapse = (e: KeyboardEvent) => {
   if (e.ctrlKey && e.key.toLowerCase() === 'n') {

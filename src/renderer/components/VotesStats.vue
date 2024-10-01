@@ -1,5 +1,5 @@
 <template>
-  <section class="flex-grow-[3] min-h-full bg-white shadow-lg px-10 py-16" v-if="candidates.length > 0">
+  <section class="flex-grow-[3] min-h-full shadow-lg px-10 py-16 dark:text-white/80" v-if="candidates.length > 0">
     <h1 class="text-3xl font-extrabold w-full mt-0 mb-4">Apuração Paralela de Gov. Nunes Freire - MA
       <small class="m-0 font-normal text-sm opacity-60 block" v-if="formattedLatestUpdate">
         Última Atualização: {{ formattedLatestUpdate }}
