@@ -19,4 +19,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
       votes: Record<number | "outros", number>
     ) => void
   ) => ipcRenderer.off("votes-registered", cb),
+  onMessage: (cb: (ev: any, text: string) => void) =>
+    ipcRenderer.on("message", cb),
+  offMessage: (cb: (ev: any, text: string) => void) =>
+    ipcRenderer.off("message", cb),
 });

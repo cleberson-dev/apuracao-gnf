@@ -15,5 +15,6 @@
   "npmRebuild": false,
   "directories": {
     "buildResources": "buildResources"
-  }
+  },
+  "publish": [{ "provider": "github" }]
 }

@@ -1,12 +1,45 @@
 import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import { fileURLToPath } from "url";
 
+import { autoUpdater as electronUpdaterAutoUpdater } from "electron-updater";
+import logger from "electron-log";
+
+export class AutoUpdater {
+  constructor(private _win: BrowserWindow) {
+    electronUpdaterAutoUpdater.logger = logger;
+    electronUpdaterAutoUpdater.on("checking-for-update", () => {
+      this._sendStatusToWindow("Checking for update...");
+    });
+    electronUpdaterAutoUpdater.on("update-available", () => {
+      this._sendStatusToWindow("Update available.");
+    });
+    electronUpdaterAutoUpdater.on("update-not-available", () => {
+      this._sendStatusToWindow("Update not available.");
+    });
+    electronUpdaterAutoUpdater.on("error", (err) => {
+      this._sendStatusToWindow("Error in auto-updater. " + err);
+    });
+    electronUpdaterAutoUpdater.on("update-downloaded", () => {
+      this._sendStatusToWindow("Update downloaded");
+    });
+  }
+
+  private _sendStatusToWindow(text: string) {
+    logger.info(text);
+    this._win.webContents.send("message", text);
+  }
+
+  checkForUpdates() {
+    electronUpdaterAutoUpdater.checkForUpdates();
+  }
+}
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
 
-async function createWindow() {
+function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 1366,
@@ -14,14 +47,14 @@ async function createWindow() {
     fullscreen: false,
     show: true,
     webPreferences: {
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       contextIsolation: true,
       nodeIntegration: true,
       nodeIntegrationInSubFrames: true,
       preload: fileURLToPath(new URL("../preload/index.cjs", import.meta.url)),
     },
   });
+
+  const autoUpdater = new AutoUpdater(win);
 
   if ((import.meta as any).env.DEV) {
     win.loadURL(process.env["ELECTRON_RENDERER_URL"]!);
@@ -31,7 +64,8 @@ async function createWindow() {
     );
   }
 
-  return win;
+  return [win, autoUpdater] as const;
+  // return win;
 }
 
 // Quit when all windows are closed.
@@ -52,8 +86,12 @@ app.on("activate", () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", async () => {
-  const win = await createWindow();
+app.on("ready", () => {
+  const [win, autoUpdater] = createWindow();
+  // const win = createWindow();
+
+  autoUpdater.checkForUpdates();
+
   win.webContents.setWindowOpenHandler((details) => {
     return {
       action: "allow",

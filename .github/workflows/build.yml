@@ -1,18 +1,24 @@
 name: Build/Release
+
 on: push
+
 jobs:
   release:
     runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
         os: [windows-latest]
+
     steps:
       - name: Checkout Git Repository
         uses: actions/checkout@v1
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
         with:
-          bun-version: latest
+          node-version: 21.7.0
+
       - name: Build/Release Electron App
         uses: samuelmeuli/action-electron-builder@v1
         with:

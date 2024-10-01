@@ -7,9 +7,10 @@
     "dev:desktop": "electron-vite dev --watch",
     "format": "prettier --write .",
     "build": "vite build",
-    "build:electron": "electron-vite build",
-    "build:desktop:win": "cross-env NODE_ENV=production bun run build:electron && electron-builder --win --config electron-builder.json --config.asar=false",
-    "postinstall": "electron-builder install-app-deps"
+    "build:electron": "cross-env NODE_ENV=production electron-vite build",
+    "build:desktop:win": "bun run build:electron && electron-builder --win --config electron-builder.json --config.asar=false",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps"
   },
   "main": "./out/main/index.js",
   "type": "module",
@@ -31,6 +32,7 @@
     "xlsx": "^0.16.8"
   },
   "devDependencies": {
+    "@types/electron": "^1.6.10",
     "@types/node": "^22.5.5",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-vue": "^5.1.4",
@@ -44,7 +46,9 @@
     "electron": "^32.1.2",
     "electron-builder": "^25.0.5",
     "electron-devtools-installer": "^3.2.0",
+    "electron-log": "^5.2.0",
     "electron-rebuild": "^3.2.9",
+    "electron-updater": "^6.3.4",
     "electron-vite": "^2.3.0",
     "eslint": "^9.11.1",
     "eslint-plugin-vue": "^9.28.0",
