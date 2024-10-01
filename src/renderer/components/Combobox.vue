@@ -11,7 +11,7 @@
     <ul ref="list-ref"
       class="z-10 max-h-64 bg-white dark:bg-[#212529] border border-solid border-borderColor rounded absolute top-full w-full left-0 overflow-auto"
       :class="{ invisible: !isExpanded }">
-      <li v-if="filteredItems.length === 0" class="p-2 text-center">No results</li>
+      <li v-if="filteredItems.length === 0" class="p-2 text-center">Seção não encontrada</li>
       <li v-for="item in filteredItems" class="p-2 hover:bg-black/10 cursor-pointer focus:bg-black/10"
         :class="{ 'bg-black/10': item.value === hovered?.value, 'bg-green-100 hover:bg-green-200': item.marked }"
         @click.stop="onSelect(item)">{{
@@ -20,7 +20,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, useTemplateRef, ref } from 'vue';
+import { computed, onMounted, onUnmounted, useTemplateRef, ref, watch } from 'vue';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/24/solid';
 
 type Item = {
@@ -83,14 +83,6 @@ const clickOutside = (e: MouseEvent) => {
   }
 }
 
-onMounted(() => {
-  window.addEventListener("click", clickOutside)
-});
-
-onUnmounted(() => {
-  window.removeEventListener("click", clickOutside);
-});
-
 const onKeyDown = (e: KeyboardEvent) => {
   isExpanded.value = true;
 
@@ -122,4 +114,18 @@ const onKeyDown = (e: KeyboardEvent) => {
     return;
   }
 }
+
+onMounted(() => {
+  window.addEventListener("click", clickOutside)
+});
+
+onUnmounted(() => {
+  window.removeEventListener("click", clickOutside);
+});
+
+watch(() => props.value, (newValue) => {
+  if (newValue === undefined) {
+    searchText.value = '';
+  }
+});
 </script>

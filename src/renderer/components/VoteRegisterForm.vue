@@ -79,15 +79,21 @@ async function registerVote(e: any) {
   (window as any).electronAPI.registerVotes(formSectionId.value!, { ...formVotes });
   mainStore.updateTime();
 
+  formSectionId.value = undefined;
+  cleanFormVotes();
   push.success("Votos computados com sucesso!");
 };
 
-function cleanSection() {
-  modalStore.addModal(<ConfirmationDialog onConfirm={() => sectionStore.cleanVotesBySection(formSectionId.value!)} />);
+function cleanFormVotes() {
   candidates.forEach(candidate => {
     formVotes[candidate.number] = 0;
     formVotes["outros"] = 0;
   });
+}
+
+function cleanSection() {
+  modalStore.addModal(<ConfirmationDialog onConfirm={() => sectionStore.cleanVotesBySection(formSectionId.value!)} />);
+  cleanFormVotes();
 }
 
 </script>
@@ -100,15 +106,6 @@ function cleanSection() {
       <Combobox
         :items="sectionStore.allSections.map(s => ({ label: `${s.number} - ${s.local}`, value: s.id, marked: s.closed }))"
         :value="formSectionId" @change="onSelectChange($event)" class="w-[40vw]" />
-      <!-- <select class="bg-[#e4e4e4] rounded-md border-none p-3 w-[40vw] mt-1" :value="formSectionId"
-        @input="formSectionId = +($event.target as HTMLSelectElement).value" @change="onSelectChange()">
-        <option v-for="section in sectionStore.allSections" :key="section.id" :value="section.id" :style="{
-          backgroundColor: section.closed ? '#ffdb57' : undefined,
-          color: section.closed ? 'gray' : undefined,
-        }">
-          {{ section.number }} - {{ section.local }}
-        </option>
-      </select> -->
     </div>
 
     <div class="flex justify-between w-full">
