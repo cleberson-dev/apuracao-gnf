@@ -13,7 +13,7 @@ export class UtilService {
   }
 
   static playAlert() {
-    const alert = new Audio("update-alert.mp3");
+    const alert = new Audio("urna.mp3");
     alert.play();
   }
 }
