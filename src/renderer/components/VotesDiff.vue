@@ -1,5 +1,5 @@
 <template>
-  <p :class="['font-bold w-full text-right flex flex-col m-0 text-black', difference >= 0 ? 'text-green-700' : 'text-red-700']"
+  <p :class="['font-bold w-full text-right flex flex-col text-black', difference >= 0 ? 'text-green-700' : 'text-red-700']"
     :style="{ fontSize: `calc(1.25rem * ${size})` }">
     {{ difference >= 0 ? "+" : "-" }}
     {{ formatNumbers(Math.abs(difference)) }}

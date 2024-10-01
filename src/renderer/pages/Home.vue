@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-[100svh] bg-white dark:bg-[#343a40]  grid grid-cols-[7fr_3fr]">
+  <div class="h-full bg-white dark:bg-[#343a40] grid grid-cols-[7fr_3fr] overflow-hidden">
     <votes-stats />
 
-    <div class="flex-grow min-h-[100svh] bg-[#efefef] dark:bg-[#212529] px-10 py-8 flex flex-col gap-20 justify-center">
+    <div class="flex-grow h-[100svh] bg-[#efefef] dark:bg-[#212529] px-10 py-4 flex flex-col gap-10 justify-center">
       <votes-stats-by-zone zone="urbana" />
       <votes-stats-by-zone zone="rural" />
     </div>

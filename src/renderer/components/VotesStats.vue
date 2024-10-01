@@ -1,6 +1,7 @@
 <template>
-  <section class="flex-grow-[3] min-h-full shadow-lg px-10 py-16 dark:text-white/80" v-if="candidates.length > 0">
-    <h1 class="text-3xl font-extrabold w-full mt-0 mb-4" :style="{ color: '#2E3790' }">Apuração paralela Gov. Nunes
+  <section class="flex-grow-[3] h-[100svh] shadow-lg px-10 py-4 dark:text-white/80 flex flex-col justify-center"
+    v-if="candidates.length > 0">
+    <h1 class="text-lg font-extrabold w-full" :style="{ color: '#2E3790' }">Apuração paralela Gov. Nunes
       Freire - MA
       <small class="m-0 font-normal text-sm opacity-60 block" v-if="formattedLatestUpdate">
         Última Atualização: {{ formattedLatestUpdate }}
@@ -29,7 +30,7 @@
       :color="challengers[2].color" :votes="sectionStore.votesByCandidate(challengers[2].number)"
       :totalVotes="sectionStore.validVotes" :size="3.5" />
 
-    <div class="mt-20 flex justify-between flex-wrap h-[160px]">
+    <div class="mt-12 flex justify-between flex-wrap">
       <candidate v-for="candidate in otherCandidates" :key="candidate.number" :name="candidate.name"
         :profilePicture="candidate.profilePicture" :color="candidate.color"
         :votes="sectionStore.votesByCandidate(candidate.number)" :totalVotes="sectionStore.validVotes" />

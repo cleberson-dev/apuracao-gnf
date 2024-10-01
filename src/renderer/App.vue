@@ -27,7 +27,9 @@
         <XMarkIcon class="opacity-65 flex size-5" />
       </button>
       <div class="flex justify-end text-white text-sm">
-        <button class="bg-primary rounded px-2 py-1 hover:brightness-90">Atualizar e Reiniciar</button>
+        <button class="bg-primary rounded px-2 py-1 hover:brightness-90" @click="updateAndRestart">
+          Atualizar e Reiniciar
+        </button>
       </div>
     </div>
     <Notification v-else :item="item" />
@@ -55,6 +57,10 @@ const themeStore = useThemeStore();
 const isCollapsed = ref(false);
 
 const isDev = !!(import.meta as any).env.DEV;
+
+const updateAndRestart = () => {
+  (window as any).electronAPI.updateAndRestartApp();
+}
 
 const toggleCollapse = (e: KeyboardEvent) => {
   if (e.ctrlKey && e.key.toLowerCase() === 'n') {
@@ -100,10 +106,6 @@ onMounted(() => {
   });
 
   appVersion.value = (window as any).electronAPI.appVersion;
-
-  const onUpdateAndRestart = () => {
-    (window as any).electronAPI.updateAndRestartApp();
-  }
 });
 
 onUnmounted(() => {

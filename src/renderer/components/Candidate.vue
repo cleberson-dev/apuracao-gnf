@@ -1,22 +1,21 @@
 <template>
-  <div v-if="featured" :class="['flex items-center relative', gray ? 'gray' : '']" :title="name">
+  <div v-if="featured" :class="['flex items-center relative gap-1', gray ? 'gray' : '']" :title="name">
     <div class="relative flex flex-col">
       <circular-picture :src="profilePicture ?? '/empty-profile-picture.png'" :size="size" :color="color" />
-      <!-- <p class="absolute -bottom-7 text-nowrap">{{ name }}</p> -->
     </div>
-    <div class="flex flex-grow z-10 ml-1">
+    <div class="flex flex-grow z-10">
       <div class="relative flex-grow flex">
-        <p class="text-nowrap absolute font-bold" :class="principal ? 'text-2xl -top-8' : 'text-sm -top-5'">{{
-          name
-          }}</p>
+        <p class="text-nowrap absolute font-bold" :class="principal ? 'text-2xl -top-8' : 'text-sm -top-5'">
+          {{ name }}
+        </p>
         <div class="h-16 max-w-full rounded-md" :style="{
           backgroundColor: color,
           width: `calc(100% * ${percentage})`,
           content: '',
         }"></div>
         <div class="flex flex-col items-end relative">
-          <p :style="{ color: color }" class="m-0 text-4xl font-bold ml-2 translate-y-2">{{ formatNumbers(votes) }}</p>
-          <p v-if="votes > 0" :style="{ color: color }" class="m-0 text-2xl font-bold absolute -bottom-8">
+          <p :style="{ color }" class="text-4xl font-bold ml-2 translate-y-2">{{ formatNumbers(votes) }}</p>
+          <p v-if="votes > 0" :style="{ color }" class="text-2xl font-bold absolute -bottom-8">
             {{ formattedPercentage }}%
           </p>
         </div>
@@ -25,16 +24,16 @@
     </div>
   </div>
 
-  <div v-else class="flex mr-12 mb-8" :title="name">
+  <div v-else class="flex gap-3" :title="name">
     <figure class="size-11 bg-cover bg-center rounded-full border-4 border-solid m-0 bg-[#c4c4c4]"
       alt="Foto do candidato" :style="{
         borderColor: color,
         backgroundImage: `url(${profilePicture})`,
       }" />
-    <div class="flex flex-col h-100 ml-3">
-      <p class="font-bold text-sm m-0">{{ name }}</p>
-      <p class="text-[#909090] font-bold text-xs m-0">{{ formatNumbers(votes) }} votos</p>
-      <p class="font-bold text-sm justify-self-end m-0" :style="{ color: color }">
+    <div class="flex flex-col h-100">
+      <p class="font-bold text-sm">{{ name }}</p>
+      <p class="text-[#909090] font-bold text-xs">{{ formatNumbers(votes) }} votos</p>
+      <p class="font-bold text-sm justify-self-end" :style="{ color: color }">
         {{ formattedPercentage }}%
       </p>
     </div>
