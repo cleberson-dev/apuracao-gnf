@@ -142,6 +142,12 @@ export const useSectionStore = defineStore("sections", {
         console.error(err);
       }
     },
+    async cleanVotesBySection(id: number) {
+      const section = this.sections.find((s) => s.id === id);
+      if (!section) return console.error("Section not found");
+      section.closed = false;
+      section.votes = getCleanVotes();
+    },
     updateSection(payload: {
       sectionId: number;
       votes: Record<number | "outros", number>;

@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import { push } from 'notivue';
 import type { Header, Item } from 'vue3-easy-data-table';
-import { PlusIcon, TableCellsIcon, TrashIcon } from '@heroicons/vue/24/solid';
+import { PencilIcon, PlusIcon, TableCellsIcon, TrashIcon } from '@heroicons/vue/24/solid';
 
 import CandidateService from '../services/candidate.service';
 
@@ -12,6 +12,7 @@ import useModal from '../composables/useModal';
 import ConfirmationDialog from '../components/ConfirmationDialog.vue';
 import SectionForm from '../components/SectionForm.vue';
 import type { Section } from '../../types';
+import EraserIcon from '../icons/Eraser.icon.vue';
 
 const modal = useModal();
 
@@ -113,15 +114,24 @@ const searchText = ref<string>('');
       class="border border-solid border-borderColor rounded mb-2 focus:outline-primary text-sm p-1 px-2 uppercase"
       v-model="searchText" />
 
-    <EasyDataTable :headers="headers" :items="items" style="width: 100%;" @click-row="onRowClick" search-field="local"
+    <EasyDataTable :headers="headers" :items="items" style="width: 100%;" search-field="local"
       :search-value="searchText">
       <template #item-votes="item">
         {{ (Object.values(item.votes) as number[]).reduce((acc, val) => acc + val, 0) }}
       </template>
       <template #item-actions="item">
-        <button @click.stop="openConfirmationDialog(() => removeSection(item))">
-          <TrashIcon class="text-red-500 size-4" />
-        </button>
+        <div class="flex gap-1 items-center">
+          <button @click="onRowClick(item)" title="Editar">
+            <PencilIcon class="text-blue-500 size-4 hover:text-blue-700 transition-colors" />
+          </button>
+          <button @click="openConfirmationDialog(() => removeSection(item))" title="Remover seção">
+            <TrashIcon class="text-red-500 size-4 hover:text-red-700 transition-colors" />
+          </button>
+          <button @click="openConfirmationDialog(() => sectionStore.cleanVotesBySection(item.id))"
+            title="Limpar Votos da Seção">
+            <EraserIcon class="text-green-500 size-4 hover:text-green-700 transition-colors" />
+          </button>
+        </div>
       </template>
       <template #item-closed="section">
         {{ section.closed ? 'Sim ✅' : 'Não ❌' }}

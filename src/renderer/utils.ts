@@ -15,3 +15,5 @@ export const sortCandidates = (candidates: Candidate[], sections: any[]) => {
 
 export const formatNumbers = (num: number) =>
   Intl.NumberFormat("pt-BR").format(num);
+
+export const IS_DEV = !!(import.meta as any).env.DEV;

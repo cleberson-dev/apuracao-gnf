@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 import useModal from '../composables/useModal';
 import ConfirmationDialog from './ConfirmationDialog.vue';
 import { useSectionStore } from '../store/section.store';
+import { IS_DEV } from '../utils';
 
 const router = useRouter();
 const modal = useModal();
@@ -15,12 +16,10 @@ const items = [
   { href: '/cadastrar', label: 'Cadastrar', icon: PencilSquareIcon },
   { onClick: onPrint, label: 'Screenshot', icon: CameraIcon },
   { label: "Database", icon: CircleStackIcon, href: '/database' },
-  { label: "Limpar Votos", icon: TrashIcon, onClick: cleanVotes },
-
 ]
 
-if ((import.meta as any).env.DEV) {
-  items.push({ label: "Simular", icon: TableCellsIcon, onClick: simulate });
+if (IS_DEV) {
+  items.push({ label: "Limpar Votos", icon: TrashIcon, onClick: cleanVotes }, { label: "Simular", icon: TableCellsIcon, onClick: simulate });
 }
 
 async function onPrint() {
