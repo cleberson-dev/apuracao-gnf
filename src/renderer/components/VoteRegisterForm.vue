@@ -15,7 +15,7 @@ const sectionStore = useSectionStore();
 const mainStore = useMainStore();
 
 const router = useRouter();
-const candidates = CandidateService.getAll();
+const candidates = CandidateService.sortedCandidates();
 
 const formSectionId = ref<number | undefined>(undefined);
 const formVotes: Record<number | "outros", number> = reactive(Object.fromEntries([...candidates.map(candidate => [candidate.number, 0]), ["outros", 0]]));
@@ -102,7 +102,7 @@ async function registerVote(e: any) {
         <h4 class="mt-0 mb-1 font-extrabold">{{ candidate.name }}</h4>
         <circular-picture :src="candidate.profilePicture" :size="4" :color="candidate.color" />
         <input
-          class="border border-solid border-borderColor outline-none text-3xl w-20 text-center px-3 py-2 mt-3 rounded focus:outline-1 focus:outline-gray disabled:opacity-50 disabled:cursor-not-allowed"
+          class="bg-transparent border border-solid border-borderColor outline-none text-3xl w-20 text-center px-3 py-2 mt-3 rounded focus:outline-1 focus:outline-gray disabled:opacity-50 disabled:cursor-not-allowed"
           min="0" :max="Number(formVotes[candidate.number]) + Number(votesLeft)" type="number"
           v-model="formVotes[candidate.number]" :disabled="!formSectionId" />
         <span>votos</span>

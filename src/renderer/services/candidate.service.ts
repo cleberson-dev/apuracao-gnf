@@ -15,4 +15,26 @@ export default class CandidateService {
       color: candidate.cor,
     }));
   }
+
+  static sortedCandidates() {
+    const orderByNumber = [22, 40, 44];
+    const unsortedCandidates = CandidateService.getAll();
+    const getNumber = (num: Candidate["number"]): number =>
+      num === "outros" ? 0 : num;
+    unsortedCandidates.sort((a, b) => {
+      let [numA, numB] = [
+        orderByNumber.indexOf(getNumber(a.number)),
+        orderByNumber.indexOf(getNumber(b.number)),
+      ];
+      if (numA === -1) {
+        numA = Infinity;
+      }
+      if (numB === -1) {
+        numB = Infinity;
+      }
+
+      return numA - numB;
+    });
+    return unsortedCandidates;
+  }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-[100svh]" :class="{ 'dark': themeStore.mode === 'dark' }">
+  <div class="flex h-[100svh] dark:bg-[#212529] dark:text-white/90" :class="{ 'dark': themeStore.mode === 'dark' }">
     <my-header v-if="!isCollapsed" />
 
     <main class="h-full overflow-y-auto flex-grow">
@@ -8,9 +8,9 @@
 
     <div class="absolute bottom-1 right-1 font-mono">{{ appVersion }}</div>
     <button
-      class="text-black/50 absolute top-4 right-8 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors"
+      class="text-black/50 absolute top-4 right-8 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors dark:text-white/90 dark:hover:bg-white/10"
       type="button" v-if="isDev" @click="themeStore.toggleMode()">
-      <component :is="themeStore.mode === 'light' ? SunIcon : MoonIcon" class="size-8" />
+      <component :is="themeStore.mode === 'light' ? SunIcon : MoonIcon" class="size-8 " />
     </button>
   </div>
 

@@ -2,14 +2,14 @@
   <div class="relative" @blur="onBlur" ref="container-ref">
     <div
       class="border border-solid border-borderColor p-2 cursor-pointer rounded flex items-center justify-between select-none">
-      <input type="text" placeholder="Selecione sua seção" class="outline-none flex-grow" @focus="isExpanded = true"
-        v-model="searchText" @keydown="onKeyDown" ref="input-ref" />
+      <input type="text" placeholder="Selecione sua seção" class="outline-none flex-grow bg-transparent"
+        @focus="isExpanded = true" v-model="searchText" @keydown="onKeyDown" ref="input-ref" />
       <button @click="isExpanded = !isExpanded" type="button">
         <component :is="isExpanded ? ChevronUpIcon : ChevronDownIcon" class="size-4" />
       </button>
     </div>
     <ul ref="list-ref"
-      class="z-10 max-h-64 bg-white border border-solid border-borderColor rounded absolute top-full w-full left-0 overflow-auto"
+      class="z-10 max-h-64 bg-white dark:bg-[#212529] border border-solid border-borderColor rounded absolute top-full w-full left-0 overflow-auto"
       :class="{ invisible: !isExpanded }">
       <li v-if="filteredItems.length === 0" class="p-2 text-center">No results</li>
       <li v-for="item in filteredItems" class="p-2 hover:bg-black/10 cursor-pointer focus:bg-black/10"
