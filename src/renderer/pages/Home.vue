@@ -2,7 +2,7 @@
   <div class="min-h-[100svh] bg-white dark:bg-[#343a40]  grid grid-cols-[7fr_3fr]">
     <votes-stats />
 
-    <div class="flex-grow max-h-[100svh] bg-[#efefef] dark:bg-[#212529] px-10 py-8 flex flex-col gap-20 justify-center">
+    <div class="flex-grow min-h-[100svh] bg-[#efefef] dark:bg-[#212529] px-10 py-8 flex flex-col gap-20 justify-center">
       <votes-stats-by-zone zone="urbana" />
       <votes-stats-by-zone zone="rural" />
     </div>

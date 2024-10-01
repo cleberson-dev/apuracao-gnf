@@ -39,7 +39,7 @@ const onSubmit = async (fields: any) => {
 
   sectionStore.createSection({
     number: fields.number,
-    local: fields.local,
+    local: fields.local.toUpperCase(),
     voters: fields.voters,
     zone: fields.zone as Zone,
   });
