@@ -37,17 +37,13 @@ const onSubmit = async (fields: any) => {
     return;
   }
 
-  if (sectionStore.sections.some(s => s.number === fields.number)) {
-    push.error("Já existe uma seção com esse numero");
-    return;
-  }
   sectionStore.createSection({
     number: fields.number,
     local: fields.local,
     voters: fields.voters,
     zone: fields.zone as Zone,
   });
-  push.success(`Seção #${fields.number} foi criada com sucesso!`);
+  push.success(`Seção #${fields.local} foi criada com sucesso!`);
   emit('success');
 }
 
