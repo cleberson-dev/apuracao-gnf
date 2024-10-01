@@ -1,18 +1,23 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { push } from "notivue";
+import { reset } from '@formkit/core'
 
 import Combobox from "./Combobox.vue";
 import CircularPicture from "../components/CircularPicture.vue";
 import CustomButton from "../components/CustomButton.vue";
+import ConfirmationDialog from "./ConfirmationDialog.vue";
+
 import CandidateService from "../services/candidate.service";
 import { useSectionStore } from "../store/section.store";
 import type { Section } from "../../types";
 import { useMainStore } from "../store/main.store";
+import { useModalStore } from "../store/modal.store";
 
 const sectionStore = useSectionStore();
 const mainStore = useMainStore();
+const modalStore = useModalStore();
 
 const router = useRouter();
 const candidates = CandidateService.sortedCandidates();
@@ -76,6 +81,15 @@ async function registerVote(e: any) {
 
   push.success("Votos computados com sucesso!");
 };
+
+function cleanSection() {
+  modalStore.addModal(<ConfirmationDialog onConfirm={() => sectionStore.cleanVotesBySection(formSectionId.value!)} />);
+  candidates.forEach(candidate => {
+    formVotes[candidate.number] = 0;
+    formVotes["outros"] = 0;
+  });
+}
+
 </script>
 
 <template>
@@ -114,9 +128,17 @@ async function registerVote(e: any) {
       {{ votesLeft || 0 }} nulos
     </p>
     <div class="flex justify-between w-full">
-      <custom-button :disabled="isInvalid" @click="registerVote" type="button">
-        Cadastrar
-      </custom-button>
+      <div>
+        <custom-button :disabled="isInvalid" @click="registerVote" type="button">
+          Cadastrar
+        </custom-button>
+        <custom-button class="ml-2"
+          :disabled="!currentFormSection || Object.values(currentFormSection.votes).every(vote => vote === 0)"
+          @click="cleanSection" type="button" variant="warn">
+          Limpar Seção
+        </custom-button>
+
+      </div>
       <custom-button variant="danger" @click="router.push('/')">Sair</custom-button>
     </div>
   </form>

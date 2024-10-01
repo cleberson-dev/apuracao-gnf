@@ -37,7 +37,7 @@ const getBgColorByVariant = (variant: string): string => {
   return {
     primary: '#0066ff',
     danger: '#e63946',
-    warn: 'yellow',
+    warn: '#fb5607',
     dark: 'black',
     light: 'white',
   }[variant] ?? '';
