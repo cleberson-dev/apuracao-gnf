@@ -1,6 +1,6 @@
 <template>
   <section class="votes-stats-by-zone" v-if="candidates.length > 0">
-    <section-header :size="0.75" :leftTitle="zone"
+    <section-header class="mb-4" :size="0.75" :leftTitle="zone"
       :leftSubtitle="formatNumbers(sectionStore.votosApuradosPorZona(zone)) + ' votos apurados'" :rightTitle="formatarPercentual(
         sectionStore.closedSectionsByZone(zone).length / sectionStore.sectionsByZone(zone).length
       ) + '%'
@@ -15,9 +15,6 @@
       :profilePicture="challenger.profilePicture" :color="challenger.color"
       :votes="sectionStore.votesByCandidateAndZone(challenger.number, zone)"
       :totalVotes="sectionStore.validVotesByZone(zone)" />
-
-    <!-- <votes-diff :votesA="sectionStore.votesByCandidateAndZone(challengers[0].number, zone)"
-      :votesB="sectionStore.votesByCandidateAndZone(challengers[1].number, zone)" :size="0.8" /> -->
 
     <div class="flex justify-between flex-wrap mt-4 gap-4">
       <compact-candidate v-for="candidato in otherCandidates" :key="candidato.number" :name="candidato.name"
