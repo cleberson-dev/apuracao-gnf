@@ -53,6 +53,7 @@ function createWindow() {
     height: 768,
     fullscreen: false,
     show: true,
+    autoHideMenuBar: true,
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: true,
