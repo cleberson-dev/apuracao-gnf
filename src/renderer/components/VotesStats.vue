@@ -1,6 +1,6 @@
 <template>
   <section class="flex-grow-[3] h-[100svh] shadow-lg px-10 py-4 dark:text-white/80 flex flex-col justify-center"
-    v-if="candidates.length > 0">
+    v-if="candidates.length > 0" :class="{ 'pl-36': themeStore.spacing === 'center' }">
     <div class="flex items-start mb-2">
       <div class="flex-grow text-[#2E3790]">
         <h1 class="text-lg font-extrabold">
@@ -70,9 +70,11 @@ import { sortCandidates, formatNumbers } from "../utils";
 import CandidateService from "../services/candidate.service";
 import { useSectionStore } from "../store/section.store";
 import { useMainStore } from "../store/main.store";
+import { useThemeStore } from "../store/theme.store";
 
 const mainStore = useMainStore();
 const sectionStore = useSectionStore();
+const themeStore = useThemeStore();
 
 const candidates = CandidateService.getAll();
 const challengers = computed(() => {

@@ -7,11 +7,17 @@
     </main>
 
     <div class="absolute bottom-1 right-1 font-mono">{{ appVersion }}</div>
-    <button
-      class="text-black/50 absolute top-4 right-8 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors dark:text-white/90 dark:hover:bg-white/10"
-      type="button" v-if="isDev" @click="themeStore.toggleMode()">
-      <component :is="themeStore.mode === 'light' ? SunIcon : MoonIcon" class="size-8 " />
-    </button>
+    <div class="absolute top-4 right-8 flex gap-2">
+      <button
+        class="text-black/50 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors dark:text-white/90 dark:hover:bg-white/10"
+        type="button" v-if="isDev" @click="themeStore.toggleMode()">
+        <component :is="themeStore.mode === 'light' ? SunIcon : MoonIcon" class="size-8" />
+      </button>
+      <button @click="themeStore.spacing = themeStore.spacing === 'center' ? 'normal' : 'center'"
+        class="text-black/50 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors dark:text-white/90 dark:hover:bg-white/10">
+        <PhotoIcon class="size-8" />
+      </button>
+    </div>
   </div>
 
   <Notivue v-slot="item">
@@ -42,6 +48,7 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import { Notivue, Notification, push } from 'notivue';
 import { SunIcon, MoonIcon, XMarkIcon } from '@heroicons/vue/24/solid';
+import { PhotoIcon } from '@heroicons/vue/24/outline';
 
 import { useMainStore } from './store/main.store';
 
@@ -62,9 +69,14 @@ const updateAndRestart = () => {
   (window as any).electronAPI.updateAndRestartApp();
 }
 
-const toggleCollapse = (e: KeyboardEvent) => {
-  if (e.ctrlKey && e.key.toLowerCase() === 'n') {
+const addKeyShortcuts = (e: KeyboardEvent) => {
+  if (!e.ctrlKey) return;
+  if (e.key.toLowerCase() === 'n') {
     isCollapsed.value = !isCollapsed.value;
+  }
+
+  if (e.key.toLowerCase() === 'b') {
+    themeStore.spacing = themeStore.spacing === 'center' ? 'normal' : 'center';
   }
 }
 
@@ -74,7 +86,7 @@ const logElectronMessage = (_: any, text: any) => {
 
 onMounted(() => {
   mainStore.initializeTime();
-  window.addEventListener("keyup", toggleCollapse);
+  window.addEventListener("keyup", addKeyShortcuts);
   (window as any).electronAPI.onMessage(logElectronMessage);
 
 
@@ -109,7 +121,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener("keyup", toggleCollapse);
+  window.removeEventListener("keyup", addKeyShortcuts);
   (window as any).electronAPI.offMessage(logElectronMessage);
 });
 </script>
