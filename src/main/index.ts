@@ -1,4 +1,11 @@
-import { app, protocol, BrowserWindow, ipcMain } from "electron";
+import {
+  app,
+  protocol,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  MenuItemConstructorOptions,
+} from "electron";
 import { fileURLToPath } from "url";
 
 import { autoUpdater as electronUpdaterAutoUpdater } from "electron-updater";
@@ -53,7 +60,7 @@ function createWindow() {
     height: 768,
     fullscreen: false,
     show: true,
-    autoHideMenuBar: true,
+    autoHideMenuBar: false,
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: true,
@@ -61,6 +68,26 @@ function createWindow() {
       preload: fileURLToPath(new URL("../preload/index.cjs", import.meta.url)),
     },
   });
+
+  const appMenu = Menu.getApplicationMenu()!;
+  const newMenu = [...appMenu.items];
+  newMenu.splice(1, 0, {
+    label: "Seções",
+    submenu: [
+      {
+        label: "Remover todas",
+        click: () => {
+          win.webContents.send("remove-all-sections");
+        },
+      } as MenuItemConstructorOptions,
+      {
+        label: "Restaurar",
+        click: () => win.webContents.send("restore-sections"),
+      } as MenuItemConstructorOptions,
+    ],
+  });
+  const menu = Menu.buildFromTemplate(newMenu);
+  Menu.setApplicationMenu(menu);
 
   const autoUpdater = new AutoUpdater(win);
 

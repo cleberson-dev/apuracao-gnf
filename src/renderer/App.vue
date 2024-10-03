@@ -44,7 +44,7 @@
   <ModalContainer />
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import { onMounted, onUnmounted, ref } from 'vue';
 import { Notivue, Notification, push } from 'notivue';
 import { SunIcon, MoonIcon, XMarkIcon } from '@heroicons/vue/24/solid';
@@ -54,12 +54,16 @@ import { useMainStore } from './store/main.store';
 
 import MyHeader from "./components/MyHeader.vue";
 import ModalContainer from './components/ModalContainer.vue';
+import ConfirmationDialog from './components/ConfirmationDialog.vue';
 import { useThemeStore } from './store/theme.store';
+import useModal from './composables/useModal';
+import { useSectionStore } from './store/section.store';
 
 const appVersion = ref<string | undefined>();
 
 const mainStore = useMainStore();
 const themeStore = useThemeStore();
+const sectionStore = useSectionStore();
 
 const isCollapsed = ref(false);
 
@@ -82,6 +86,12 @@ const addKeyShortcuts = (e: KeyboardEvent) => {
 
 const logElectronMessage = (_: any, text: any) => {
   console.log('__ELECTRON__MAIN__MESSAGE', text);
+}
+
+const modal = useModal();
+
+function openConfirmationDialog(confirmFn: () => void) {
+  modal.addModal(<ConfirmationDialog onConfirm={confirmFn} />);
 }
 
 onMounted(() => {
@@ -115,6 +125,19 @@ onMounted(() => {
       title: "Atualização não concluída!",
       message: "Algo aconteceu enquanto atualizava a aplicação.",
     })
+  });
+
+  (window as any).electronAPI.onRemoveAllSections(() => {
+    openConfirmationDialog(() => {
+      sectionStore.removeAllSections();
+      push.info("Todas as seções foram removidas");
+    });
+  });
+  (window as any).electronAPI.onRestoreSections(() => {
+    openConfirmationDialog(() => {
+      sectionStore.reset();
+      push.info('Seções restauradas');
+    });
   });
 
   appVersion.value = (window as any).electronAPI.appVersion;

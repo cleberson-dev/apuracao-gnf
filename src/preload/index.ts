@@ -28,4 +28,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   onUpdateAvailable: (cb: () => void) => ipcRenderer.on("update-available", cb),
   onUpdateError: (cb: () => void) => ipcRenderer.on("update-error", cb),
   updateAndRestartApp: () => ipcRenderer.send("update-and-restart"),
+  onRestoreSections: (cb: () => void) => ipcRenderer.on("restore-sections", cb),
+  onRemoveAllSections: (cb: () => void) =>
+    ipcRenderer.on("remove-all-sections", cb),
 });
