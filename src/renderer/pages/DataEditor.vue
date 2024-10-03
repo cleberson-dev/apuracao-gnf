@@ -21,7 +21,7 @@ const isModalOpen = ref(false);
 
 const sectionStore = useSectionStore();
 const selectedSection = ref<Section | undefined>();
-const getSectionItems = () => sectionStore.sections.sort((a, b) => a.number - b.number);
+const getSectionItems = () => sectionStore.sections.sort((a, b) => a.number.localeCompare(b.number));
 onMounted(() => {
   sectionStore.$subscribe(() => {
     items.value = getSectionItems();
@@ -103,7 +103,8 @@ const sectionRowClassName = (item: Item) => {
         class="bg-green-500 text-white p-2 rounded mb-4 flex items-center gap-1">
         <PlusIcon class="size-3" /> Criar
       </button>
-      <button :disabled="sectionStore.sections.length === 0" @click.prevent="openConfirmationDialog(removeAllSections)"
+      <button v-if="IS_DEV" :disabled="sectionStore.sections.length === 0"
+        @click.prevent="openConfirmationDialog(removeAllSections)"
         class="bg-red-500 text-white p-2 rounded mb-4 flex items-center gap-1 disabled:opacity-50">
         <TrashIcon class="size-3" />
         Remover todas as seções
