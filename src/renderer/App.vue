@@ -7,17 +7,6 @@
     </main>
 
     <div class="absolute bottom-1 right-1 font-mono">{{ appVersion }}</div>
-    <div class="absolute top-4 right-8 flex gap-2">
-      <button
-        class="text-black/50 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors dark:text-white/90 dark:hover:bg-white/10"
-        type="button" v-if="isDev" @click="themeStore.toggleMode()">
-        <component :is="themeStore.mode === 'light' ? SunIcon : MoonIcon" class="size-8" />
-      </button>
-      <button @click="themeStore.spacing = themeStore.spacing === 'center' ? 'normal' : 'center'"
-        class="text-black/50 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors dark:text-white/90 dark:hover:bg-white/10">
-        <PhotoIcon class="size-8" />
-      </button>
-    </div>
   </div>
 
   <Notivue v-slot="item">
@@ -47,8 +36,7 @@
 <script setup lang="tsx">
 import { onMounted, onUnmounted, ref } from 'vue';
 import { Notivue, Notification, push } from 'notivue';
-import { SunIcon, MoonIcon, XMarkIcon } from '@heroicons/vue/24/solid';
-import { PhotoIcon } from '@heroicons/vue/24/outline';
+import { XMarkIcon } from '@heroicons/vue/24/solid';
 
 import { useMainStore } from './store/main.store';
 
@@ -66,8 +54,6 @@ const themeStore = useThemeStore();
 const sectionStore = useSectionStore();
 
 const isCollapsed = ref(false);
-
-const isDev = !!(import.meta as any).env.DEV;
 
 const updateAndRestart = () => {
   (window as any).electronAPI.updateAndRestartApp();

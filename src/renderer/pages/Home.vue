@@ -9,6 +9,18 @@
       <votes-stats-by-zone zone="rural" />
     </div>
   </div>
+
+  <div class="absolute top-4 right-8 flex gap-2">
+    <button
+      class="text-black/50 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors dark:text-white/90 dark:hover:bg-white/10"
+      type="button" v-if="isDev" @click="themeStore.toggleMode()">
+      <component :is="themeStore.mode === 'light' ? SunIcon : MoonIcon" class="size-8" />
+    </button>
+    <button @click="themeStore.spacing = themeStore.spacing === 'center' ? 'normal' : 'center'"
+      class="text-black/50 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors dark:text-white/90 dark:hover:bg-white/10">
+      <PhotoIcon class="size-8" />
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -18,6 +30,10 @@ import VotesStatsByZone from "../components/VotesStatsByZone.vue";
 import { useSectionStore } from "../store/section.store";
 import { UtilService } from "../services/util.service";
 import { useThemeStore } from "../store/theme.store";
+import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid';
+import { PhotoIcon } from '@heroicons/vue/24/outline';
+
+const isDev = !!(import.meta as any).env.DEV;
 
 const sectionStore = useSectionStore();
 const themeStore = useThemeStore();
