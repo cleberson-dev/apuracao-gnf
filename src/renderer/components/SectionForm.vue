@@ -69,7 +69,7 @@ const votesWithVoters = (node: any) => {
     }">
     <div class="grid grid-cols-3 gap-4">
       <FormKit :classes="{ input: classes.input, message: 'text-red-500', label: 'font-bold text-gray-500' }"
-        type="number" label="Nº Seção" name="number" :value="(section?.number ?? 0) + ''" validation="required|min:0" />
+        type="text" label="Nº Seção" name="number" :value="(section?.number ?? 0) + ''" validation="required" />
       <FormKit :classes="{ input: classes.input, message: 'text-red-500', label: 'font-bold text-gray-500' }"
         type="select" label="Zona" name="zone" :value="section?.zone" :options="['urbana', 'rural']"
         validation="required" />

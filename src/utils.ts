@@ -1,48 +1,55 @@
 import { readFile, writeFile } from "fs/promises";
 import { parse } from "csv-parse";
 import xlsx from "xlsx";
-import { Section } from "./types";
+import type { Section } from "./types";
 
 const CD_MUNICIPIO = "07668"; // GOVERNADOR NUNES FREIRE => 07668
 
 // path: Relative to Project Dir
-export const getSectionDataFromXLSX = async (path: string) => {
+export const getSectionDataFromXLSX = async (
+  path: string,
+  startRow: number,
+  endRow: number
+) => {
   const fileData = xlsx.readFile(path);
   const data: Section[] = [];
 
   Object.entries(fileData.Sheets[fileData.SheetNames[0]])
     .filter(([key]) => !["!margins", "!ref"].includes(key))
     .slice(0, -1)
-    .forEach(([key, value]) => {
+    .forEach(async ([key, value]) => {
       const [index] = key.match(/\d+/) as [string];
+      const [letter] = key.match(/[A-Z]+/) as [string];
 
-      if (+index === 1) return;
+      if (+index < startRow || +index > endRow) return;
 
       // It's 1-index and the first row is the header
-      const normalIndex = +index - 2;
+      const normalIndex = +index - 4;
       data[normalIndex] = data[normalIndex] ?? {};
 
       const val = value.v;
-      if (!data[normalIndex].local) {
-        data[normalIndex].local = val;
-        return;
-      }
 
-      if (!data[normalIndex].zone) {
-        data[normalIndex].zone = val;
-        return;
-      }
-
-      if (!data[normalIndex].number) {
-        data[normalIndex].number = val;
-        return;
-      }
-
-      if (!data[normalIndex].voters) {
-        data[normalIndex].voters = val;
-        return;
+      switch (letter.toUpperCase()) {
+        case "A":
+          data[normalIndex].number = `${val}`;
+        case "B":
+          data[normalIndex].local = val;
+        case "E":
+          data[normalIndex].zone = {
+            "ZONA URBANA": "urbana",
+            "ZONA RURAL": "rural",
+          }[val as "ZONA URBANA" | "ZONA RURAL"];
+        case "G":
+          data[normalIndex].voters = val;
       }
     });
+
+  await writeFile("NOVOS_LOCAIS.json", JSON.stringify(data));
+  console.info(
+    "Novas seções salvas com sucesso: ",
+    data.length,
+    " novas seções"
+  );
 
   return data;
 };

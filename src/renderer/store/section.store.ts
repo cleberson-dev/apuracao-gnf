@@ -28,7 +28,7 @@ export const useSectionStore = defineStore("sections", {
     closedSections: (state) => state.sections.filter((s) => !!s.closed),
     closedSectionsByZone: (state) => (zone: string) =>
       state.sections.filter((s) => s.zone === zone && !!s.closed),
-    section: (state) => (num: number) =>
+    section: (state) => (num: string) =>
       state.sections.find((s) => s.number === num),
     allSections: (state) =>
       state.sections.sort((a, b) => Number(a.number) - Number(b.number)),
