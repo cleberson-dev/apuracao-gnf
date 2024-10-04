@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
+import { Section } from "../types.js";
 
 contextBridge.exposeInMainWorld("electronAPI", {
   registerVotes: (
@@ -31,4 +32,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
   onRestoreSections: (cb: () => void) => ipcRenderer.on("restore-sections", cb),
   onRemoveAllSections: (cb: () => void) =>
     ipcRenderer.on("remove-all-sections", cb),
+
+  onSectionsUploadUploading: (cb: () => void) =>
+    ipcRenderer.on("sectionsUpload:uploading", cb),
+  onSectionsUploadSuccess: (cb: () => void) =>
+    ipcRenderer.on("sectionsUpload:success", cb),
+  importSections: (): Promise<Section[] | undefined> =>
+    ipcRenderer.invoke("import-sections"),
 });

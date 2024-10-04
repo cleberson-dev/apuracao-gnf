@@ -28,3 +28,4 @@ pnpm-debug.log*
 *.sqlite3
 *.csv
 *.xlsx
+IMPORTED_SECTIONS.json

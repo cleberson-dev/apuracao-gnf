@@ -5,11 +5,17 @@ import {
   ipcMain,
   Menu,
   MenuItemConstructorOptions,
+  dialog,
 } from "electron";
 import { fileURLToPath } from "url";
 
 import { autoUpdater as electronUpdaterAutoUpdater } from "electron-updater";
 import logger from "electron-log";
+import { readFile, writeFile } from "fs/promises";
+import { Section } from "../types.js";
+import { checkFileExists, getSectionDataFromXLSX } from "../utils.js";
+
+const IMPORTED_SECTIONS_PATH = "IMPORTED_SECTIONS.json";
 
 export class AutoUpdater {
   constructor(private _win: BrowserWindow) {
@@ -83,6 +89,36 @@ function createWindow() {
       {
         label: "Restaurar",
         click: () => win.webContents.send("restore-sections"),
+      } as MenuItemConstructorOptions,
+      {
+        label: "Importar de XLSX",
+        click: async () => {
+          const { canceled, filePaths } = await dialog.showOpenDialog({
+            filters: [
+              {
+                name: "Arquivos XLSX",
+                extensions: ["xlsx"],
+              },
+            ],
+          });
+          if (!canceled) {
+            win.webContents.send("sectionsUpload:uploading");
+            const sections = await getSectionDataFromXLSX(filePaths[0], 4, 70);
+
+            if (
+              !sections ||
+              sections.some((section) =>
+                Object.values(section).some((val) => !val && val !== 0)
+              )
+            ) {
+              win.webContents.send("sectionsUpload:failed");
+              return;
+            }
+
+            await writeFile(IMPORTED_SECTIONS_PATH, JSON.stringify(sections));
+            win.webContents.send("sectionsUpload:success");
+          }
+        },
       } as MenuItemConstructorOptions,
     ],
   });
@@ -161,6 +197,17 @@ app.on("ready", () => {
   ipcMain.on("update-and-restart", () => {
     autoUpdater.install();
   });
+
+  ipcMain.handle(
+    "import-sections",
+    async (): Promise<Section[] | undefined> => {
+      if (!(await checkFileExists(IMPORTED_SECTIONS_PATH))) return undefined;
+      const sections = await JSON.parse(
+        (await readFile(IMPORTED_SECTIONS_PATH)).toString()
+      );
+      return sections;
+    }
+  );
 });
 
 // Exit cleanly on request from parent process in development mode.

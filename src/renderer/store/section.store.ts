@@ -10,8 +10,8 @@ const getCleanVotes = () =>
     ...candidates.map((candidate) => [candidate.number, 0]),
     ["outros", 0],
   ]);
-const initSections = (): Section[] => {
-  return initialSections.map((item, idx) => ({
+const initSections = (newSections?: Section[]): Section[] => {
+  return (newSections ?? initialSections).map((item, idx) => ({
     id: idx + 1,
     number: item.number,
     local: item.local,
@@ -183,8 +183,8 @@ export const useSectionStore = defineStore("sections", {
     removeSection(sectionId: number) {
       this.sections = this.sections.filter((s) => s.id !== sectionId);
     },
-    reset() {
-      this.sections = initSections();
+    reset(newSections?: Section[]) {
+      this.sections = initSections(newSections);
     },
     simulate() {
       const newSections = initSections().map((stateSection) => {

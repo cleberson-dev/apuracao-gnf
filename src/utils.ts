@@ -1,7 +1,15 @@
-import { readFile, writeFile } from "fs/promises";
+import { access, readFile, writeFile, constants } from "fs/promises";
 import { parse } from "csv-parse";
 import xlsx from "xlsx";
 import type { Section } from "./types";
+
+export async function checkFileExists(filepath: string): Promise<boolean> {
+  try {
+    return !!access(filepath, constants.F_OK);
+  } catch {
+    return false;
+  }
+}
 
 const CD_MUNICIPIO = "07668"; // GOVERNADOR NUNES FREIRE => 07668
 
@@ -10,7 +18,9 @@ export const getSectionDataFromXLSX = async (
   path: string,
   startRow: number,
   endRow: number
-) => {
+): Promise<Section[] | undefined> => {
+  if (!(await checkFileExists(path))) return undefined;
+
   const fileData = xlsx.readFile(path);
   const data: Section[] = [];
 

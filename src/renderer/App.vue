@@ -46,6 +46,7 @@ import ConfirmationDialog from './components/ConfirmationDialog.vue';
 import { useThemeStore } from './store/theme.store';
 import useModal from './composables/useModal';
 import { useSectionStore } from './store/section.store';
+import { UtilService } from './services/util.service';
 
 const appVersion = ref<string | undefined>();
 
@@ -120,9 +121,25 @@ onMounted(() => {
     });
   });
   (window as any).electronAPI.onRestoreSections(() => {
-    openConfirmationDialog(() => {
-      sectionStore.reset();
+    openConfirmationDialog(async () => {
+      const importedSections = await UtilService.importSections();
+      sectionStore.reset(importedSections);
       push.info('Seções restauradas');
+    });
+  });
+
+  let sectionsUploadNotification: ReturnType<typeof push.promise>;
+  (window as any).electronAPI.onSectionsUploadUploading(() => {
+    sectionsUploadNotification = push.promise({
+      title: 'Importando Seções',
+      message: 'Aguarde enquanto estamos importando seu arquivo...',
+    });
+  });
+
+  (window as any).electronAPI.onSectionsUploadSuccess(() => {
+    sectionsUploadNotification.success({
+      title: 'Importação concluída',
+      message: 'Para usar, basta restaurar as seções',
     });
   });
 
