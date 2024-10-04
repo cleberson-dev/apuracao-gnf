@@ -1,12 +1,18 @@
 <template>
-  <figure :class="['rounded-full border-solid m-0 bg-cover bg-center bg-[#c4c4c4]', gray ? 'grayscale-[0.7]' : '']"
-    :alt="description" :style="{
+  <figure
+    :class="[
+      'rounded-full border-solid m-0 bg-cover bg-center bg-[#c4c4c4]',
+      gray ? 'grayscale-[0.7]' : '',
+    ]"
+    :alt="description"
+    :style="{
       borderColor: color,
       borderWidth: `calc(${borderWidth} * 1px)`,
       backgroundImage: `url(${src})`,
       width: `calc(2rem * ${size})`,
       height: `calc(2rem * ${size})`,
-    }" />
+    }"
+  />
 </template>
 
 <script setup lang="ts">
@@ -35,5 +41,5 @@ defineProps({
     type: Boolean,
     default: false,
   },
-})
+});
 </script>

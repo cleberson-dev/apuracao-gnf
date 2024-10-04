@@ -1,10 +1,17 @@
 <template>
-  <div class="h-full bg-white dark:bg-[#343a40] grid overflow-hidden"
-    :class="{ 'grid-cols-[6fr_4fr]': themeStore.spacing === 'center', 'grid-cols-[7fr_3fr]': themeStore.spacing === 'normal' }">
+  <div
+    class="h-full bg-white dark:bg-[#343a40] grid overflow-hidden"
+    :class="{
+      'grid-cols-[6fr_4fr]': themeStore.spacing === 'center',
+      'grid-cols-[7fr_3fr]': themeStore.spacing === 'normal',
+    }"
+  >
     <votes-stats />
 
-    <div class="flex-grow h-[100svh] bg-[#efefef] dark:bg-[#212529] px-10 py-4 flex flex-col gap-10 justify-center"
-      :class="{ 'pr-36': themeStore.spacing === 'center' }">
+    <div
+      class="flex-grow h-[100svh] bg-[#efefef] dark:bg-[#212529] px-10 py-4 flex flex-col gap-10 justify-center"
+      :class="{ 'pr-36': themeStore.spacing === 'center' }"
+    >
       <votes-stats-by-zone zone="urbana" />
       <votes-stats-by-zone zone="rural" />
     </div>
@@ -13,11 +20,16 @@
   <div class="absolute top-4 right-8 flex gap-2">
     <button
       class="text-black/50 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors dark:text-white/90 dark:hover:bg-white/10"
-      type="button" v-if="isDev" @click="themeStore.toggleMode()">
+      type="button"
+      v-if="isDev"
+      @click="themeStore.toggleMode()"
+    >
       <component :is="themeStore.mode === 'light' ? SunIcon : MoonIcon" class="size-8" />
     </button>
-    <button @click="themeStore.spacing = themeStore.spacing === 'center' ? 'normal' : 'center'"
-      class="text-black/50 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors dark:text-white/90 dark:hover:bg-white/10">
+    <button
+      @click="themeStore.spacing = themeStore.spacing === 'center' ? 'normal' : 'center'"
+      class="text-black/50 size-10 flex items-center justify-center hover:bg-black/10 rounded-full transition-colors dark:text-white/90 dark:hover:bg-white/10"
+    >
       <PhotoIcon class="size-8" />
     </button>
   </div>
@@ -30,8 +42,8 @@ import VotesStatsByZone from "../components/VotesStatsByZone.vue";
 import { useSectionStore } from "../store/section.store";
 import { UtilService } from "../services/util.service";
 import { useThemeStore } from "../store/theme.store";
-import { SunIcon, MoonIcon } from '@heroicons/vue/24/solid';
-import { PhotoIcon } from '@heroicons/vue/24/outline';
+import { SunIcon, MoonIcon } from "@heroicons/vue/24/solid";
+import { PhotoIcon } from "@heroicons/vue/24/outline";
 
 const isDev = !!(import.meta as any).env.DEV;
 
@@ -41,7 +53,7 @@ const themeStore = useThemeStore();
 const cb = (_ev: any, sectionId: number, votes: Record<number | "outros", number>) => {
   sectionStore.updateSection({ sectionId: sectionId, votes });
   UtilService.playAlert();
-}
+};
 
 onMounted(() => {
   (window as any).electronAPI.onVotesRegistered(cb);

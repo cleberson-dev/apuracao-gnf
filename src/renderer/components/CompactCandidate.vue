@@ -2,17 +2,22 @@
   <div v-if="featured">
     <div class="flex items-center justify-start">
       <div class="flex-grow">
-        <div class="h-5 rounded-md" :style="{
-          backgroundColor: color,
-          width: `calc(100% * ${percentage})`,
-        }" />
+        <div
+          class="h-5 rounded-md"
+          :style="{
+            backgroundColor: color,
+            width: `calc(100% * ${percentage})`,
+          }"
+        />
       </div>
       <circular-picture :src="profilePicture" :color="color" :size="1" />
       <p class="font-bold m-0 ml-1 text-lg" :style="{ color: color }">
         {{ formattedPercentage }}%
       </p>
     </div>
-    <p class="font-bold m-0 text-sm" :style="{ color: color }">{{ formatNumbers(votes) }} votos</p>
+    <p class="font-bold m-0 text-sm" :style="{ color: color }">
+      {{ formatNumbers(votes) }} votos
+    </p>
   </div>
 
   <div v-else class="compact-candidate_mini flex">
@@ -29,7 +34,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import CircularPicture from "./CircularPicture.vue";
-import { formatNumbers } from '../utils';
+import { formatNumbers } from "../utils";
 
 const props = defineProps({
   name: {
@@ -58,8 +63,8 @@ const props = defineProps({
 
 const percentage = computed(() => props.totalVotes && props.votes / props.totalVotes);
 const formattedPercentage = computed(() => {
-  const val = percentage.value === undefined || isNaN(percentage.value) ? 0 : percentage.value;
+  const val =
+    percentage.value === undefined || isNaN(percentage.value) ? 0 : percentage.value;
   return (val * 100).toFixed(2).replace(".", ",");
 });
-
 </script>
