@@ -54,7 +54,6 @@ export const getSectionDataFromXLSX = async (
       }
     });
 
-  await writeFile("NOVOS_LOCAIS.json", JSON.stringify(data));
   console.info(
     "Novas seções salvas com sucesso: ",
     data.length,

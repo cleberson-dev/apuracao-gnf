@@ -1,58 +1,10 @@
-import {
-  app,
-  protocol,
-  BrowserWindow,
-  ipcMain,
-  Menu,
-  MenuItemConstructorOptions,
-  dialog,
-} from "electron";
+import { app, protocol, BrowserWindow, Menu } from "electron";
 import { fileURLToPath } from "url";
 
-import { autoUpdater as electronUpdaterAutoUpdater } from "electron-updater";
-import logger from "electron-log";
-import { readFile, writeFile } from "fs/promises";
-import { Section } from "../types.js";
-import { checkFileExists, getSectionDataFromXLSX } from "../utils.js";
-
-const IMPORTED_SECTIONS_PATH = "IMPORTED_SECTIONS.json";
-
-export class AutoUpdater {
-  constructor(private _win: BrowserWindow) {
-    electronUpdaterAutoUpdater.logger = logger;
-    electronUpdaterAutoUpdater.on("checking-for-update", () => {
-      this._sendStatusToWindow("Checking for update...");
-    });
-    electronUpdaterAutoUpdater.on("update-available", () => {
-      this._sendStatusToWindow("Update available.");
-      this._win.webContents.send("update-available");
-    });
-    electronUpdaterAutoUpdater.on("update-not-available", () => {
-      this._sendStatusToWindow("Update not available.");
-    });
-    electronUpdaterAutoUpdater.on("error", (err) => {
-      this._sendStatusToWindow("Error in auto-updater. " + err);
-      this._win.webContents.send("update-error");
-    });
-    electronUpdaterAutoUpdater.on("update-downloaded", () => {
-      this._sendStatusToWindow("Update downloaded");
-      this._win.webContents.send("update-downloaded");
-    });
-  }
-
-  private _sendStatusToWindow(text: string) {
-    logger.info(text);
-    this._win.webContents.send("message", text);
-  }
-
-  checkForUpdates() {
-    electronUpdaterAutoUpdater.checkForUpdatesAndNotify();
-  }
-
-  install() {
-    electronUpdaterAutoUpdater.quitAndInstall();
-  }
-}
+import { AutoUpdater } from "./auto-updater.js";
+import { listenToRendererEvents } from "./listeners.js";
+import { getMenu } from "./menu.js";
+import { MAIN_WINDOW_OPTIONS } from "./constants.js";
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -60,72 +12,10 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 function createWindow() {
-  // Create the browser window.
-  const win = new BrowserWindow({
-    width: 1366,
-    height: 768,
-    fullscreen: false,
-    show: true,
-    autoHideMenuBar: false,
-    webPreferences: {
-      contextIsolation: true,
-      nodeIntegration: true,
-      nodeIntegrationInSubFrames: true,
-      preload: fileURLToPath(new URL("../preload/index.cjs", import.meta.url)),
-    },
-  });
-
-  const appMenu = Menu.getApplicationMenu()!;
-  const newMenu = [...appMenu.items];
-  newMenu.splice(1, 0, {
-    label: "Seções",
-    submenu: [
-      {
-        label: "Remover todas",
-        click: () => {
-          win.webContents.send("remove-all-sections");
-        },
-      } as MenuItemConstructorOptions,
-      {
-        label: "Restaurar",
-        click: () => win.webContents.send("restore-sections"),
-      } as MenuItemConstructorOptions,
-      {
-        label: "Importar de XLSX",
-        click: async () => {
-          const { canceled, filePaths } = await dialog.showOpenDialog({
-            filters: [
-              {
-                name: "Arquivos XLSX",
-                extensions: ["xlsx"],
-              },
-            ],
-          });
-          if (!canceled) {
-            win.webContents.send("sectionsUpload:uploading");
-            const sections = await getSectionDataFromXLSX(filePaths[0], 4, 70);
-
-            if (
-              !sections ||
-              sections.some((section) =>
-                Object.values(section).some((val) => !val && val !== 0)
-              )
-            ) {
-              win.webContents.send("sectionsUpload:failed");
-              return;
-            }
-
-            await writeFile(IMPORTED_SECTIONS_PATH, JSON.stringify(sections));
-            win.webContents.send("sectionsUpload:success");
-          }
-        },
-      } as MenuItemConstructorOptions,
-    ],
-  });
-  const menu = Menu.buildFromTemplate(newMenu);
-  Menu.setApplicationMenu(menu);
-
+  const win = new BrowserWindow(MAIN_WINDOW_OPTIONS);
   const autoUpdater = new AutoUpdater(win);
+  const menu = getMenu(win);
+  Menu.setApplicationMenu(menu);
 
   if ((import.meta as any).env.DEV) {
     win.loadURL(process.env["ELECTRON_RENDERER_URL"]!);
@@ -136,33 +26,21 @@ function createWindow() {
   }
 
   return [win, autoUpdater] as const;
-  // return win;
 }
 
-// Quit when all windows are closed.
 app.on("window-all-closed", () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  if (process.platform === "darwin") return;
+  app.quit();
 });
 
 app.on("activate", () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  if (BrowserWindow.getAllWindows().length !== 0) return;
+  createWindow();
 });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on("ready", () => {
+app.whenReady().then(() => {
   const [win, autoUpdater] = createWindow();
-  // const win = createWindow();
-
   autoUpdater.checkForUpdates();
-
   win.webContents.setWindowOpenHandler((details) => {
     return {
       action: "allow",
@@ -182,32 +60,8 @@ app.on("ready", () => {
       },
     };
   });
-  ipcMain.on(
-    "register-votes",
-    (_, sectionId: number, votes: Record<number | "outros", number>) => {
-      win.webContents.send("votes-registered", sectionId, votes);
-      win
-        .getChildWindows()
-        .forEach((win) =>
-          win.webContents.send("votes-registered", sectionId, votes)
-        );
-    }
-  );
 
-  ipcMain.on("update-and-restart", () => {
-    autoUpdater.install();
-  });
-
-  ipcMain.handle(
-    "import-sections",
-    async (): Promise<Section[] | undefined> => {
-      if (!(await checkFileExists(IMPORTED_SECTIONS_PATH))) return undefined;
-      const sections = await JSON.parse(
-        (await readFile(IMPORTED_SECTIONS_PATH)).toString()
-      );
-      return sections;
-    }
-  );
+  listenToRendererEvents(win, autoUpdater);
 });
 
 // Exit cleanly on request from parent process in development mode.
