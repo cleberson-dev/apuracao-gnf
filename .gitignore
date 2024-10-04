@@ -29,3 +29,4 @@ pnpm-debug.log*
 *.csv
 *.xlsx
 IMPORTED_SECTIONS.json
+electron.vite.config.*.mjs
