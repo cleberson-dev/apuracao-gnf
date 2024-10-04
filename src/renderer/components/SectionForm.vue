@@ -154,7 +154,7 @@ const votesWithVoters = (node: any) => {
       <label class="font-semibold text-lg block mb-4">Votos</label>
       <ul :class="classes.messages" v-if="fns.length(messages)">
         <li
-          v-for="message in messages"
+          v-for="message of messages"
           :key="message.key"
           :class="classes.message"
           :id="`${id}-${message.key}`"
@@ -166,7 +166,7 @@ const votesWithVoters = (node: any) => {
       <ul class="flex flex-col gap-2">
         <li
           v-if="ENABLE_VOTES"
-          v-for="candidate in candidates"
+          v-for="candidate of candidates"
           class="grid grid-cols-[auto_1fr_auto] items-center select-none relative"
         >
           <span

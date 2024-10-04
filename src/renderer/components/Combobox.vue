@@ -25,7 +25,7 @@
         Seção não encontrada
       </li>
       <li
-        v-for="item in filteredItems"
+        v-for="item of filteredItems"
         class="p-2 hover:bg-black/10 cursor-pointer focus:bg-black/10"
         :class="{
           'bg-black/10': item.value === hovered?.value,

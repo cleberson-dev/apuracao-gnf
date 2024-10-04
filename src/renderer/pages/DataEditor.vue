@@ -90,11 +90,11 @@ const sectionRowClassName = (item: Item) => {
     <p class="relative bottom-1">
       <small>
         {{ numberOfCandidates }} candidatos,
-        {{ nf.format(sectionStore.votosApurados) }} votos registrados.
+        {{ nf.format(sectionStore.countedVotes) }} votos registrados.
         <br />
-        {{ nf.format(sectionStore.totalElectors) }} eleitores,
-        {{ nf.format(sectionStore.totalElectorsByZone("urbana")) }} na zona urbana e
-        {{ nf.format(sectionStore.totalElectorsByZone("rural")) }} na zona rural
+        {{ nf.format(sectionStore.totalVoters) }} eleitores,
+        {{ nf.format(sectionStore.totalVotersByZone("urbana")) }} na zona urbana e
+        {{ nf.format(sectionStore.totalVotersByZone("rural")) }} na zona rural
         <br />
         {{ sectionStore.sections.length }} seções,
         {{ sectionStore.sectionsByZone("urbana").length }} urbanas e
@@ -102,46 +102,72 @@ const sectionRowClassName = (item: Item) => {
       </small>
     </p>
     <div class="flex self-end gap-4 text-sm">
-      <button @click.prevent="onNewSectionClick"
-        class="bg-green-500 text-white p-2 rounded mb-4 flex items-center gap-1">
+      <button
+        @click.prevent="onNewSectionClick"
+        class="bg-green-500 text-white p-2 rounded mb-4 flex items-center gap-1"
+      >
         <PlusIcon class="size-3" /> Criar
       </button>
-      <button v-if="IS_DEV" :disabled="sectionStore.sections.length === 0"
+      <button
+        v-if="IS_DEV"
+        :disabled="sectionStore.sections.length === 0"
         @click.prevent="openConfirmationDialog(removeAllSections)"
-        class="bg-red-500 text-white p-2 rounded mb-4 flex items-center gap-1 disabled:opacity-50">
+        class="bg-red-500 text-white p-2 rounded mb-4 flex items-center gap-1 disabled:opacity-50"
+      >
         <TrashIcon class="size-3" />
         Remover todas as seções
       </button>
-      <button v-if="IS_DEV" :disabled="sectionStore.sections.length === 0"
+      <button
+        v-if="IS_DEV"
+        :disabled="sectionStore.sections.length === 0"
         @click.prevent="openConfirmationDialog(resetSections)"
-        class="bg-orange-500 text-white p-2 rounded mb-4 flex items-center gap-1 disabled:opacity-50">
+        class="bg-orange-500 text-white p-2 rounded mb-4 flex items-center gap-1 disabled:opacity-50"
+      >
         <TableCellsIcon class="size-3" />
         Restaurar seções
       </button>
     </div>
 
     <label class="text-xs mb-1">Pesquisar</label>
-    <input type="text"
+    <input
+      type="text"
       class="border border-solid border-borderColor rounded mb-2 focus:outline-primary text-sm p-1 px-2 uppercase"
-      v-model="searchText" />
+      v-model="searchText"
+    />
 
-    <EasyDataTable :headers="headers" :items="items" :search-value="searchText" search-field="local"
-      :style="{ width: '100%' }" :body-row-class-name="sectionRowClassName">
+    <EasyDataTable
+      :headers="headers"
+      :items="items"
+      :search-value="searchText"
+      search-field="local"
+      :style="{ width: '100%' }"
+      :body-row-class-name="sectionRowClassName"
+    >
       <template #item-votes="item">
         {{ (Object.values(item.votes) as number[]).reduce((acc, val) => acc + val, 0) }}
       </template>
       <template #item-actions="item">
         <div class="flex gap-1 items-center">
           <button @click="onRowClick(item)" title="Editar">
-            <PencilIcon class="text-blue-500 size-4 hover:text-blue-700 transition-colors" />
+            <PencilIcon
+              class="text-blue-500 size-4 hover:text-blue-700 transition-colors"
+            />
           </button>
-          <button @click="openConfirmationDialog(() => removeSection(item))" title="Remover seção">
+          <button
+            @click="openConfirmationDialog(() => removeSection(item))"
+            title="Remover seção"
+          >
             <TrashIcon class="text-red-500 size-4 hover:text-red-700 transition-colors" />
           </button>
-          <button @click="
-            openConfirmationDialog(() => sectionStore.cleanVotesBySection(item.id))
-            " title="Limpar Votos da Seção">
-            <EraserIcon class="text-green-500 size-4 hover:text-green-700 transition-colors" />
+          <button
+            @click="
+              openConfirmationDialog(() => sectionStore.cleanVotesBySection(item.id))
+            "
+            title="Limpar Votos da Seção"
+          >
+            <EraserIcon
+              class="text-green-500 size-4 hover:text-green-700 transition-colors"
+            />
           </button>
         </div>
       </template>
@@ -156,15 +182,21 @@ const sectionRowClassName = (item: Item) => {
     </EasyDataTable>
   </div>
 
-  <div v-if="isModalOpen"
-    class="backdrop-blur w-screen h-screen fixed top-0 left-0 z-50 flex items-center justify-center">
-    <div class="w-2/5 max-h-[90vh] overflow-auto bg-white rounded flex flex-col p-4 text-sm shadow">
+  <div
+    v-if="isModalOpen"
+    class="backdrop-blur w-screen h-screen fixed top-0 left-0 z-50 flex items-center justify-center"
+  >
+    <div
+      class="w-2/5 max-h-[90vh] overflow-auto bg-white rounded flex flex-col p-4 text-sm shadow"
+    >
       <div class="flex justify-between">
         <h1 class="font-bold text-2xl">
           {{ selectedSection ? "Atualizar seção" : "Criar seção" }}
         </h1>
-        <button class="rounded-full hover:bg-red-500/20 flex items-center justify-center size-8 transition-colors"
-          @click.prevent="isModalOpen = false">
+        <button
+          class="rounded-full hover:bg-red-500/20 flex items-center justify-center size-8 transition-colors"
+          @click.prevent="isModalOpen = false"
+        >
           X
         </button>
       </div>

@@ -19,12 +19,12 @@
         <div>
           <h1 class="text-primary text-[1.6rem]">
             {{
-              formatarPercentual(sectionStore.votosApurados / sectionStore.totalElectors)
+              formatarPercentual(sectionStore.countedVotes / sectionStore.totalVoters)
             }}%
           </h1>
           <h2 class="text-[#909090] text-xs">
-            Votos apurados ({{ formatNumbers(sectionStore.votosApurados) }}/{{
-              formatNumbers(sectionStore.totalElectors)
+            Votos apurados ({{ formatNumbers(sectionStore.countedVotes) }}/{{
+              formatNumbers(sectionStore.totalVoters)
             }})
           </h2>
         </div>
@@ -32,13 +32,13 @@
           <h1 class="text-primary text-[2rem]">
             {{
               formatarPercentual(
-                sectionStore.closedSections.length / sectionStore.allSections.length
+                sectionStore.closedSections.length / sectionStore.sections.length
               )
             }}%
           </h1>
           <h2 class="text-[#909090] text-base">
             Seções totalizadas ({{ sectionStore.closedSections.length }}/{{
-              sectionStore.allSections.length
+              sectionStore.sections.length
             }})
           </h2>
         </div>
@@ -90,7 +90,7 @@
 
     <div class="mt-12 flex justify-between flex-wrap">
       <candidate
-        v-for="candidate in otherCandidates"
+        v-for="candidate of otherCandidates"
         :key="candidate.number"
         :name="candidate.name"
         :profilePicture="candidate.profilePicture"
@@ -103,7 +103,7 @@
         name="Brancos, nulos e abstenções"
         color="red"
         :votes="sectionStore.nullVotes"
-        :totalVotes="sectionStore.votosApurados"
+        :totalVotes="sectionStore.countedVotes"
       />
     </div>
   </section>

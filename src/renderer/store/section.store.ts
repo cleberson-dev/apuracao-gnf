@@ -28,10 +28,8 @@ export const useSectionStore = defineStore("sections", {
     closedSections: (state) => state.sections.filter((s) => !!s.closed),
     closedSectionsByZone: (state) => (zone: string) =>
       state.sections.filter((s) => s.zone === zone && !!s.closed),
-    section: (state) => (num: string) =>
-      state.sections.find((s) => s.number === num),
-    allSections: (state) =>
-      state.sections.sort((a, b) => Number(a.number) - Number(b.number)),
+    sortedSections: (state) =>
+      state.sections.sort((a, b) => a.number.localeCompare(b.local)),
     sectionsByZone: (state) => (zone: string) =>
       state.sections.filter((s) => s.zone === zone),
     validVotes: (state) =>
@@ -44,39 +42,9 @@ export const useSectionStore = defineStore("sections", {
           }
           return prev + votados;
         }, 0),
-    validVotesByZone: (state) => (zone: string) =>
-      state.sections
-        .filter((s) => s.zone === zone && !!s.closed)
-        .reduce((prev, acc) => {
-          let votados = 0;
-          for (let partidoVoto in acc.votes) {
-            votados += acc.votes[partidoVoto];
-          }
-          return prev + votados;
-        }, 0),
-    votesCounted: (state) =>
-      state.sections
-        .filter((s) => !!s.closed)
-        .reduce((prev, acc) => {
-          let votados = 0;
-          for (let partidoVoto in acc.votes) {
-            votados += acc.votes[partidoVoto];
-          }
-          return prev + votados;
-        }, 0),
-    votesCountedByZone: (state) => (zone: string) =>
-      state.sections
-        .filter((s) => !!s.closed && s.zone === zone)
-        .reduce((prev, acc) => {
-          let votados = 0;
-          for (let partidoVoto in acc.votes) {
-            votados += acc.votes[partidoVoto];
-          }
-          return prev + votados;
-        }, 0),
-    totalElectors: (state) =>
+    totalVoters: (state) =>
       state.sections.reduce((prev, acc) => prev + acc.voters, 0),
-    totalElectorsByZone: (state) => (zone: string) =>
+    totalVotersByZone: (state) => (zone: string) =>
       state.sections
         .filter((s) => s.zone === zone)
         .reduce((prev, acc) => prev + acc.voters, 0),
@@ -93,13 +61,15 @@ export const useSectionStore = defineStore("sections", {
     nullVotesByZone: (state) => (zone: string) =>
       state.sections
         .filter((s) => !!s.closed && s.zone === zone)
-        .reduce((prev, acc) => {
-          let votados = 0;
-          for (let partidoVoto in acc.votes) {
-            votados += acc.votes[partidoVoto];
-          }
-          return prev + (acc.voters - votados);
-        }, 0),
+        .reduce(
+          (total, section) =>
+            total +
+            (section.voters -
+              Object.values(section.votes).reduce(
+                (count, votes) => count + votes
+              )),
+          0
+        ),
     votesByCandidate: (state) => (candidate: number | "outros") =>
       state.sections
         .filter((s) => !!s.closed)
@@ -110,11 +80,11 @@ export const useSectionStore = defineStore("sections", {
           .filter((s) => !!s.closed && s.zone === zone)
           .reduce((prev, acc) => prev + acc.votes[candidate], 0),
 
-    votosApurados: (state) =>
+    countedVotes: (state) =>
       state.sections
         .filter((s) => !!s.closed)
         .reduce((prev, acc) => prev + acc.voters, 0),
-    votosApuradosPorZona: (state) => (zone: string) =>
+    countedVotesByZone: (state) => (zone: string) =>
       state.sections
         .filter((s) => !!s.closed && s.zone === zone)
         .reduce((prev, acc) => prev + acc.voters, 0),

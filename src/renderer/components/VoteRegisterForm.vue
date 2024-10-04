@@ -2,7 +2,6 @@
 import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { push } from "notivue";
-import { reset } from "@formkit/core";
 
 import Combobox from "./Combobox.vue";
 import CircularPicture from "../components/CircularPicture.vue";
@@ -63,6 +62,16 @@ const isInvalid = computed(() => {
     formSectionId.value === undefined
   );
 });
+
+const sectionComboboxItems = computed(() =>
+  sectionStore.sections
+    .toSorted((a, b) => a.number.localeCompare(b.number))
+    .map((section) => ({
+      label: `${section.number} - ${section.local}`,
+      value: section.id,
+      marked: section.closed,
+    }))
+);
 
 function onSelectChange(newId: number) {
   formSectionId.value = newId;
@@ -125,13 +134,7 @@ function cleanSection() {
       <h1 class="text-4xl font-black mb-5">Cadastrar votos</h1>
       <label class="block text-base font-bold text-[#909090]">Selecione a seção</label>
       <Combobox
-        :items="
-          sectionStore.allSections.map((s) => ({
-            label: `${s.number} - ${s.local}`,
-            value: s.id,
-            marked: s.closed,
-          }))
-        "
+        :items="sectionComboboxItems"
         :value="formSectionId"
         @change="onSelectChange($event)"
         class="w-[40vw]"
@@ -141,7 +144,7 @@ function cleanSection() {
     <div class="flex justify-between w-full">
       <div
         class="flex flex-col items-center"
-        v-for="candidate in candidates"
+        v-for="candidate of candidates"
         :key="candidate.number"
       >
         <h4 class="mt-0 mb-1 font-extrabold">{{ candidate.name }}</h4>

@@ -71,7 +71,7 @@ function simulate() {
     </div>
     <nav class="text-[0.8rem] decoration-none font-bold">
       <li
-        v-for="item in items"
+        v-for="item of items"
         class="py-4 px-1 hover:bg-[rgba(0,0,0,.2)] list-none transition-colors cursor-pointer"
       >
         <router-link
