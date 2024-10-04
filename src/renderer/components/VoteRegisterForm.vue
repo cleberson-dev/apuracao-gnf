@@ -92,7 +92,7 @@ async function registerVote(e: any) {
     sectionId: formSectionId.value!,
     votes: { ...formVotes },
   });
-  (window as any).electronAPI.registerVotes(formSectionId.value!, { ...formVotes });
+  window.electronAPI.registerVotes(formSectionId.value!, { ...formVotes });
   mainStore.updateTime();
 
   formSectionId.value = undefined;

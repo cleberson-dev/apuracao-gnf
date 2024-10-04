@@ -64,7 +64,7 @@ const themeStore = useThemeStore();
 const isCollapsed = ref(false);
 
 const updateAndRestart = () => {
-  (window as any).electronAPI.updateAndRestartApp();
+  window.electronAPI.updateAndRestartApp();
 };
 
 const addKeyShortcuts = (e: KeyboardEvent) => {
@@ -88,7 +88,7 @@ onMounted(() => {
   mainStore.initializeTime();
   window.addEventListener("keyup", addKeyShortcuts);
   listenToMainEvents(openConfirmationDialog);
-  appVersion.value = (window as any).electronAPI.appVersion;
+  appVersion.value = window.electronAPI.appVersion;
 });
 
 onUnmounted(() => {

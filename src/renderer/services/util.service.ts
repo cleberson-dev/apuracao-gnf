@@ -19,7 +19,7 @@ export class UtilService {
   }
 
   static async importSections(): Promise<Section[] | undefined> {
-    const data = await (window as any).electronAPI.importSections();
+    const data = await window.electronAPI.importSections();
     return data;
   }
 }

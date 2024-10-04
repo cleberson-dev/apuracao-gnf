@@ -11,18 +11,18 @@ export default function listenToMainEvents(
 ) {
   const sectionStore = useSectionStore();
 
-  (window as any).electronAPI.onMessage(logElectronMessage);
+  window.electronAPI.onMessage(logElectronMessage);
 
   // Listening for Auto-Update Events
   let uploadNotification: ReturnType<typeof push.promise>;
-  (window as any).electronAPI.onUpdateAvailable(() => {
+  window.electronAPI.onUpdateAvailable(() => {
     uploadNotification = push.promise({
       title: "Atualização disponível!",
       message: "Realizando o download...",
     });
   });
 
-  (window as any).electronAPI.onUpdateDownloaded(() => {
+  window.electronAPI.onUpdateDownloaded(() => {
     uploadNotification.success<{ isUpdateDownloaded: boolean }>({
       title: "✅ Download de Atualização Completo!",
       duration: 20000,
@@ -34,20 +34,20 @@ export default function listenToMainEvents(
     });
   });
 
-  (window as any).electronAPI.onUpdateError(() => {
+  window.electronAPI.onUpdateError(() => {
     uploadNotification.error({
       title: "Atualização não concluída!",
       message: "Algo aconteceu enquanto atualizava a aplicação.",
     });
   });
 
-  (window as any).electronAPI.onRemoveAllSections(() => {
+  window.electronAPI.onRemoveAllSections(() => {
     openConfirmationDialog(() => {
       sectionStore.removeAllSections();
       push.info("Todas as seções foram removidas");
     });
   });
-  (window as any).electronAPI.onRestoreSections(() => {
+  window.electronAPI.onRestoreSections(() => {
     openConfirmationDialog(async () => {
       const importedSections = await UtilService.importSections();
       sectionStore.reset(importedSections);
@@ -56,14 +56,14 @@ export default function listenToMainEvents(
   });
 
   let sectionsUploadNotification: ReturnType<typeof push.promise>;
-  (window as any).electronAPI.onSectionsUploadUploading(() => {
+  window.electronAPI.onSectionsUploadUploading(() => {
     sectionsUploadNotification = push.promise({
       title: "Importando Seções",
       message: "Aguarde enquanto estamos importando seu arquivo...",
     });
   });
 
-  (window as any).electronAPI.onSectionsUploadSuccess(() => {
+  window.electronAPI.onSectionsUploadSuccess(() => {
     sectionsUploadNotification.success({
       title: "Importação concluída",
       message: "Para usar, basta restaurar as seções",

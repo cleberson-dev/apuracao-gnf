@@ -56,10 +56,10 @@ const cb = (_ev: any, sectionId: number, votes: Record<number | "outros", number
 };
 
 onMounted(() => {
-  (window as any).electronAPI.onVotesRegistered(cb);
+  window.electronAPI.onVotesRegistered(cb);
 });
 
 onUnmounted(() => {
-  (window as any).electronAPI.offVotesRegistered(cb);
+  window.electronAPI.offVotesRegistered(cb);
 });
 </script>
