@@ -5,7 +5,8 @@ import type { Section } from "./types";
 
 export async function checkFileExists(filepath: string): Promise<boolean> {
   try {
-    return !!access(filepath, constants.F_OK);
+    await access(filepath, constants.F_OK);
+    return true;
   } catch {
     return false;
   }
@@ -45,10 +46,12 @@ export const getSectionDataFromXLSX = async (
         case "B":
           data[normalIndex].local = val;
         case "E":
-          data[normalIndex].zone = {
-            "ZONA URBANA": "urbana",
-            "ZONA RURAL": "rural",
-          }[val as "ZONA URBANA" | "ZONA RURAL"];
+          data[normalIndex].zone = (
+            {
+              "ZONA URBANA": "urbana",
+              "ZONA RURAL": "rural",
+            } as const
+          )[val as "ZONA URBANA" | "ZONA RURAL"];
         case "G":
           data[normalIndex].voters = val;
       }
@@ -66,9 +69,9 @@ export const getSectionDataFromXLSX = async (
 export const getSectionDataFromCSV = (
   path: string,
   saveAsJSON?: boolean
-): Promise<Section[]> => {
+): Promise<Omit<Section, "id" | "closed" | "votes">[]> => {
   const headers: Record<string, number> = {};
-  const sections: Section[] = [];
+  const sections: Omit<Section, "id" | "closed" | "votes">[] = [];
 
   return new Promise((resolve) => {
     readFile(path).then((file) => {
@@ -100,12 +103,13 @@ export const getSectionDataFromCSV = (
         }
 
         if (section[headers["CD_MUNICIPIO"]] === CD_MUNICIPIO) {
-          const newSection: typeof sections[number] = {
+          const newSection: Omit<Section, "id" | "closed" | "votes"> = {
             voters:
               +section[headers["QT_ELEITOR_ELEICAO_MUNICIPAL"]] ||
               +section[headers["QT_ELEITOR_SECAO"]],
-            number: +section[headers["NR_SECAO"]],
+            number: section[headers["NR_SECAO"]],
             local: section[headers["NM_LOCAL_VOTACAO"]],
+            zone: "urbana",
           };
 
           const NM_BAIRRO = section[headers["NM_BAIRRO"]];
