@@ -18,3 +18,5 @@ export const MAIN_WINDOW_OPTIONS: BrowserWindowConstructorOptions = {
     preload: fileURLToPath(new URL("../preload/index.cjs", import.meta.url)),
   },
 };
+
+export const ENABLE_IMPORT_SECTIONS = false;

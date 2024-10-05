@@ -17,45 +17,46 @@ const CD_MUNICIPIO = "07668"; // GOVERNADOR NUNES FREIRE => 07668
 // path: Relative to Project Dir
 export const getSectionDataFromXLSX = async (
   path: string,
-  startRow: number,
-  endRow: number
+  startRow: number
 ): Promise<Section[] | undefined> => {
   if (!(await checkFileExists(path))) return undefined;
 
   const fileData = xlsx.readFile(path);
   const data: Section[] = [];
 
-  Object.entries(fileData.Sheets[fileData.SheetNames[0]])
+  const entries = Object.entries(fileData.Sheets[fileData.SheetNames[0]])
     .filter(([key]) => !["!margins", "!ref"].includes(key))
-    .slice(0, -1)
-    .forEach(async ([key, value]) => {
-      const [index] = key.match(/\d+/) as [string];
-      const [letter] = key.match(/[A-Z]+/) as [string];
+    .slice(0, -1);
 
-      if (+index < startRow || +index > endRow) return;
+  for (const [key, value] of entries) {
+    const [index] = key.match(/\d+/) as [string];
+    const [letter] = key.match(/[A-Z]+/) as [string];
+    const val = value.v;
 
-      // It's 1-index and the first row is the header
-      const normalIndex = +index - 4;
-      data[normalIndex] = data[normalIndex] ?? {};
+    if (+index < startRow) continue;
+    console.log({ letter, index, val });
+    if (val === undefined || val === "") break;
 
-      const val = value.v;
+    // It's 1-index and the first row is the header
+    const normalIndex = +index - 4;
+    data[normalIndex] = data[normalIndex] ?? {};
 
-      switch (letter.toUpperCase()) {
-        case "A":
-          data[normalIndex].number = `${val}`;
-        case "B":
-          data[normalIndex].local = val;
-        case "E":
-          data[normalIndex].zone = (
-            {
-              "ZONA URBANA": "urbana",
-              "ZONA RURAL": "rural",
-            } as const
-          )[val as "ZONA URBANA" | "ZONA RURAL"];
-        case "G":
-          data[normalIndex].voters = val;
-      }
-    });
+    switch (letter.toUpperCase()) {
+      case "A":
+        data[normalIndex].number = `${val}`;
+      case "B":
+        data[normalIndex].local = val;
+      case "E":
+        data[normalIndex].zone = (
+          {
+            "ZONA URBANA": "urbana",
+            "ZONA RURAL": "rural",
+          } as const
+        )[val as "ZONA URBANA" | "ZONA RURAL"];
+      case "G":
+        data[normalIndex].voters = val;
+    }
+  }
   return data;
 };
 

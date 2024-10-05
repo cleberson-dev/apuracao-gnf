@@ -63,10 +63,10 @@ export default function listenToMainEvents(
     });
   });
 
-  window.electronAPI.onSectionsUploadSuccess(() => {
+  window.electronAPI.onSectionsUploadSuccess((_, payload) => {
     sectionsUploadNotification.success({
       title: "Importação concluída",
-      message: "Para usar, basta restaurar as seções",
+      message: `${payload.sectionsLength} novas seções adicionadas. Para usar as seções importadas, restaure-as.`,
     });
   });
 
