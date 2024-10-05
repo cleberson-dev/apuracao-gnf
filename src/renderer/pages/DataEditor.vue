@@ -108,24 +108,6 @@ const sectionRowClassName = (item: Item) => {
       >
         <PlusIcon class="size-3" /> Criar
       </button>
-      <button
-        v-if="IS_DEV"
-        :disabled="sectionStore.sections.length === 0"
-        @click.prevent="openConfirmationDialog(removeAllSections)"
-        class="bg-red-500 text-white p-2 rounded mb-4 flex items-center gap-1 disabled:opacity-50"
-      >
-        <TrashIcon class="size-3" />
-        Remover todas as seções
-      </button>
-      <button
-        v-if="IS_DEV"
-        :disabled="sectionStore.sections.length === 0"
-        @click.prevent="openConfirmationDialog(resetSections)"
-        class="bg-orange-500 text-white p-2 rounded mb-4 flex items-center gap-1 disabled:opacity-50"
-      >
-        <TableCellsIcon class="size-3" />
-        Restaurar seções
-      </button>
     </div>
 
     <label class="text-xs mb-1">Pesquisar</label>
