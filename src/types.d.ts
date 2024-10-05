@@ -38,6 +38,7 @@ declare global {
       onRemoveAllSections: (cb: () => void) => void;
       onSectionsUploadUploading: (cb: () => void) => void;
       onSectionsUploadSuccess: (cb: () => void) => void;
+      onSectionsUploadFail: (cb: () => void) => void;
       importSections: () => Promise<Section[] | undefined>;
     };
   }

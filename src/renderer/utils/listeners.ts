@@ -69,4 +69,11 @@ export default function listenToMainEvents(
       message: "Para usar, basta restaurar as seções",
     });
   });
+
+  window.electronAPI.onSectionsUploadFail(() => {
+    sectionsUploadNotification.error({
+      title: "Importação falhou",
+      message: "Alguma coisa com seu arquivo XLSX, por favor cheque-o.",
+    });
+  });
 }

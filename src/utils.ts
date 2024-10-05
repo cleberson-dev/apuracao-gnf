@@ -56,13 +56,6 @@ export const getSectionDataFromXLSX = async (
           data[normalIndex].voters = val;
       }
     });
-
-  console.info(
-    "Novas seções salvas com sucesso: ",
-    data.length,
-    " novas seções"
-  );
-
   return data;
 };
 

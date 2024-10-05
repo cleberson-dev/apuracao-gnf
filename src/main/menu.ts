@@ -49,7 +49,7 @@ export function getMenu(win: BrowserWindow) {
                 Object.values(section).some((val) => !val && val !== 0)
               )
             ) {
-              win.webContents.send("sectionsUpload:failed");
+              win.webContents.send("sectionsUpload:fail");
               return;
             }
 

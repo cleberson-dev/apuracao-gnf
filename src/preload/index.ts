@@ -37,6 +37,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.on("sectionsUpload:uploading", cb),
   onSectionsUploadSuccess: (cb: () => void) =>
     ipcRenderer.on("sectionsUpload:success", cb),
+  onSectionsUploadFail: (cb: () => void) =>
+    ipcRenderer.on("sectionsUpload:fail", cb),
   importSections: (): Promise<Section[] | undefined> =>
     ipcRenderer.invoke("import-sections"),
 });
