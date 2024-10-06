@@ -2,7 +2,7 @@
   <section
     class="flex-grow-[3] h-[100svh] shadow-lg px-3 md:px-10 py-4 dark:text-white/80 flex flex-col justify-center"
     v-if="candidates.length > 0"
-    :class="{ 'pl-36': themeStore.spacing === 'center' }"
+    :class="{ 'md:pl-36': themeStore.spacing === 'center' }"
   >
     <div class="flex flex-col md:flex-row items-start md:mb-2">
       <div class="flex-grow text-[#2E3790]">
