@@ -137,12 +137,16 @@ const votesWithVoters = (node: any) => {
       name="closed"
       :value="!!section.closed"
     />
-    <hr class="my-2" />
+    <hr v-if="ENABLE_VOTES" class="my-2" />
     <FormKit
       type="group"
       id="votes"
       name="votes"
-      v-if="!!section && Object.values(section.votes).some((vote) => vote !== 0)"
+      v-if="
+        ENABLE_VOTES &&
+        !!section &&
+        Object.values(section.votes).some((vote) => vote !== 0)
+      "
       validation-visibility="live"
       :validation-rules="{ votesWithVoters }"
       validation="votesWithVoters"
@@ -165,7 +169,6 @@ const votesWithVoters = (node: any) => {
       </ul>
       <ul class="flex flex-col gap-2">
         <li
-          v-if="ENABLE_VOTES"
           v-for="candidate of candidates"
           class="grid grid-cols-[auto_1fr_auto] items-center select-none relative"
         >
