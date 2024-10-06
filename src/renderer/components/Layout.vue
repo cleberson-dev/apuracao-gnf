@@ -2,10 +2,10 @@
 import { onMounted, onUnmounted, ref } from "vue";
 import { useThemeStore } from "../store/theme.store";
 import Menu from "./Menu.vue";
+import AppVersion from "./AppVersion.vue";
 
 const themeStore = useThemeStore();
 const isCollapsed = ref(false);
-const appVersion = ref<string | undefined>();
 
 const addKeyShortcuts = (e: KeyboardEvent) => {
   if (!e.ctrlKey) return;
@@ -20,7 +20,6 @@ const addKeyShortcuts = (e: KeyboardEvent) => {
 
 onMounted(() => {
   window.addEventListener("keyup", addKeyShortcuts);
-  appVersion.value = window.electronAPI.appVersion;
 });
 
 onUnmounted(() => {
@@ -39,6 +38,6 @@ onUnmounted(() => {
       <slot></slot>
     </main>
 
-    <div class="absolute bottom-1 right-1 font-mono">{{ appVersion }}</div>
+    <AppVersion />
   </div>
 </template>
