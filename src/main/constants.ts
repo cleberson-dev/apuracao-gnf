@@ -10,7 +10,7 @@ export const MAIN_WINDOW_OPTIONS: BrowserWindowConstructorOptions = {
   height: 768,
   fullscreen: false,
   show: true,
-  autoHideMenuBar: false,
+  autoHideMenuBar: true,
   webPreferences: {
     contextIsolation: true,
     nodeIntegration: true,
