@@ -58,6 +58,7 @@
         :votes="sectionStore.votesByCandidate(challengers[0].number)"
         :totalVotes="sectionStore.validVotes"
         size="large"
+        :hasWon="config.ENABLE_PREDICT_WINNER && hasPrincipalWon"
       />
 
       <votes-diff
@@ -73,6 +74,7 @@
         :color="challengers[1].color"
         :votes="sectionStore.votesByCandidate(challengers[1].number)"
         :totalVotes="sectionStore.validVotes"
+        :hasLost="config.ENABLE_PREDICT_WINNER && hasPrincipalWon"
       />
 
       <votes-diff
@@ -88,6 +90,7 @@
         :color="challengers[2].color"
         :votes="sectionStore.votesByCandidate(challengers[2].number)"
         :totalVotes="sectionStore.validVotes"
+        :hasLost="config.ENABLE_PREDICT_WINNER && hasPrincipalWon"
       />
     </div>
     <div
@@ -116,13 +119,15 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import Candidate from "./Candidate.vue";
-import SectionHeader from "./SectionHeader.vue";
 import VotesDiff from "./VotesDiff.vue";
 import { sortCandidates, formatNumbers } from "../utils";
 import CandidateService from "../services/candidate.service";
 import { useSectionStore } from "../store/section.store";
 import { useMainStore } from "../store/main.store";
 import { useThemeStore } from "../store/theme.store";
+import { UtilService } from "../services/util.service";
+
+const config = UtilService.getConfig();
 
 const mainStore = useMainStore();
 const sectionStore = useSectionStore();
@@ -150,6 +155,24 @@ const formattedLatestUpdate = computed(() =>
       }).format(mainStore.latestUpdate)
     : undefined
 );
+
+const hasPrincipalWon = computed(() => {
+  if (!config.ENABLE_PREDICT_WINNER) return false;
+
+  const sortedCandidatesByVote = candidates
+    .map((c) => ({ ...c, totalVotes: sectionStore.votesByCandidate(c.number) }))
+    .sort((a, b) => b.totalVotes - a.totalVotes);
+
+  const principalIdx = sortedCandidatesByVote.findIndex((c) => c.number === 22)!;
+  if (principalIdx !== 0) return false;
+
+  const [principal, secondPlace] = sortedCandidatesByVote;
+  const difference = principal.totalVotes - secondPlace.totalVotes;
+
+  return (
+    difference > 0 && difference > sectionStore.totalVoters - sectionStore.countedVotes
+  );
+});
 
 const formatarPercentual = (decimal: number) => {
   const val = isNaN(decimal) ? 0 : decimal;

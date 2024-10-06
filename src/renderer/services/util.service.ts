@@ -1,4 +1,5 @@
 import html2canvas from "html2canvas";
+import config from "../../../config.json";
 import type { Section } from "../../types";
 
 export class UtilService {
@@ -21,5 +22,9 @@ export class UtilService {
   static async importSections(): Promise<Section[] | undefined> {
     const data = await window.electronAPI.importSections();
     return data;
+  }
+
+  static getConfig() {
+    return config;
   }
 }

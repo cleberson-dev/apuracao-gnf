@@ -1,7 +1,12 @@
 <template>
   <div
     v-if="featured"
-    :class="['flex items-center relative gap-1', gray ? 'gray' : '']"
+    :class="[
+      'flex items-center relative gap-1',
+      gray ? 'gray' : '',
+      hasWon ? 'animate-pulse' : '',
+      hasLost ? 'grayscale' : '',
+    ]"
     :title="name"
   >
     <div class="relative flex flex-col">
@@ -9,17 +14,18 @@
         :src="profilePicture ?? '/empty-profile-picture.png'"
         :size="size"
         :color="color"
+        :borderWidth="hasWon ? 8 : 1"
       />
     </div>
     <div class="flex flex-grow z-10">
       <div class="relative flex-grow flex">
         <p
           class="text-nowrap absolute font-bold"
-          :class="principal ? 'text-2xl -top-8' : 'text-sm -top-5'"
+          :class="[principal ? 'text-2xl -top-8' : 'text-sm -top-5']"
         >
           {{ name }}
         </p>
-        <Bar :color="color" :percentage="percentage" />
+        <Bar :color="color" :percentage="percentage" :highlighted="hasWon" />
         <div class="flex flex-col items-end relative">
           <p
             :style="{ color }"
@@ -96,6 +102,14 @@ const props = defineProps({
     default: "normal",
   },
   principal: {
+    type: Boolean,
+    default: false,
+  },
+  hasWon: {
+    type: Boolean,
+    default: false,
+  },
+  hasLost: {
     type: Boolean,
     default: false,
   },
