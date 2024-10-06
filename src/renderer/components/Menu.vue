@@ -14,6 +14,8 @@ import ConfirmationDialog from "./ConfirmationDialog.vue";
 import { useSectionStore } from "../store/section.store";
 import { IS_DEV } from "../utils";
 import type { FunctionalComponent } from "vue";
+import { useMainStore } from "../store/main.store";
+import { push } from "notivue";
 
 type Item = {
   label: string;
@@ -25,6 +27,7 @@ type Item = {
 const router = useRouter();
 const modal = useModal();
 const sectionStore = useSectionStore();
+const mainStore = useMainStore();
 
 const items: Item[] = [
   { href: "/", label: "Início", icon: HomeIcon },
@@ -53,7 +56,9 @@ function cleanVotes() {
   modal.addModal(
     <ConfirmationDialog
       onConfirm={() => {
-        router.push("/limpar");
+        sectionStore.cleanVotes();
+        mainStore.clearTime();
+        push.success("Votos limpos com sucesso!");
       }}
     />
   );
@@ -65,7 +70,7 @@ function simulate() {
 </script>
 
 <template>
-  <header class="bg-primary h-full text-white max-w-[6rem]">
+  <header class="bg-primary h-full text-white max-w-[6rem] hidden md:block">
     <div class="w-full flex justify-center items-center py-5">
       <img alt="Logo" src="../assets/img/logo.png" class="w-9" />
     </div>

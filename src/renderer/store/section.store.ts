@@ -101,7 +101,7 @@ export const useSectionStore = defineStore("sections", {
       section.votes = votes;
       section.closed = true;
     },
-    async cleanVotes() {
+    cleanVotes() {
       try {
         this.sections = this.sections.map((s) => ({
           ...s,

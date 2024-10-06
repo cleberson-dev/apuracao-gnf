@@ -21,13 +21,16 @@
         </p>
         <Bar :color="color" :percentage="percentage" />
         <div class="flex flex-col items-end relative">
-          <p :style="{ color }" class="text-4xl font-bold ml-2 translate-y-2">
+          <p
+            :style="{ color }"
+            class="text-2xl md:text-4xl font-bold ml-1 md:ml-2 md:translate-y-2"
+          >
             {{ formatNumbers(votes) }}
           </p>
           <p
             v-if="votes > 0"
             :style="{ color }"
-            class="text-2xl font-bold absolute -bottom-8"
+            class="text-lg md:text-2xl font-bold absolute -bottom-6 md:-bottom-8"
           >
             {{ formattedPercentage }}%
           </p>
@@ -36,9 +39,9 @@
     </div>
   </div>
 
-  <div v-else class="flex gap-3" :title="name">
+  <div v-else class="flex gap-2 md:gap-3 items-center md:items-start" :title="name">
     <figure
-      class="size-11 bg-cover bg-center rounded-full border-4 border-solid m-0 bg-[#c4c4c4]"
+      class="size-10 md:size-11 bg-cover bg-center rounded-full border-4 border-solid m-0 bg-[#c4c4c4]"
       alt="Foto do candidato"
       :style="{
         borderColor: color,

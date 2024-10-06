@@ -9,7 +9,7 @@
     {{ difference >= 0 ? "+" : "-" }}
     {{ formatNumbers(Math.abs(difference)) }}
     <span
-      class="uppercase font-medium text-black dark:text-white"
+      class="uppercase font-medium text-black dark:text-white hidden md:block"
       :style="{ fontSize: `calc(0.75rem * ${size})` }"
       >Diferença de votos</span
     >

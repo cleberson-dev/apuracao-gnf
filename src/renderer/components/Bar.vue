@@ -8,7 +8,7 @@ defineProps<{
 <template>
   <div
     class="max-w-full rounded-md"
-    :class="[compact ? 'h-5' : 'h-16']"
+    :class="[compact ? 'h-5' : 'h-8 md:h-16']"
     :style="{
       backgroundColor: color,
       width: `calc(100% * ${percentage ?? 0})`,
