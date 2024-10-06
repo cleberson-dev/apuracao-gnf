@@ -19,14 +19,7 @@
         >
           {{ name }}
         </p>
-        <div
-          class="h-16 max-w-full rounded-md"
-          :style="{
-            backgroundColor: color,
-            width: `calc(100% * ${percentage})`,
-            content: '',
-          }"
-        ></div>
+        <Bar :color="color" :percentage="percentage" />
         <div class="flex flex-col items-end relative">
           <p :style="{ color }" class="text-4xl font-bold ml-2 translate-y-2">
             {{ formatNumbers(votes) }}
@@ -66,6 +59,7 @@
 import { computed, defineProps } from "vue";
 import CircularPicture from "./CircularPicture.vue";
 import { formatNumbers } from "../utils";
+import Bar from "./Bar.vue";
 
 const props = defineProps({
   name: {

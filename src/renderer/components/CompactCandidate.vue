@@ -2,13 +2,7 @@
   <div v-if="featured">
     <div class="flex items-center justify-start">
       <div class="flex-grow">
-        <div
-          class="h-5 rounded-md"
-          :style="{
-            backgroundColor: color,
-            width: `calc(100% * ${percentage})`,
-          }"
-        />
+        <Bar compact :color="color" :percentage="percentage" />
       </div>
       <circular-picture :src="profilePicture" :color="color" size="smaller" />
       <p class="font-bold m-0 ml-1 text-lg" :style="{ color: color }">
@@ -34,6 +28,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import CircularPicture from "./CircularPicture.vue";
+import Bar from "./Bar.vue";
 import { formatNumbers } from "../utils";
 
 const props = defineProps({
