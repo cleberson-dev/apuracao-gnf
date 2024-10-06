@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import type { Section, Zone } from "../../types";
 import CandidateService from "../services/candidate.service";
 import initialSections from "../data/secoes.json";
+import { shuffleArray } from "../utils";
 
 const candidates = CandidateService.getAll();
 
@@ -157,14 +158,17 @@ export const useSectionStore = defineStore("sections", {
       this.sections = initSections(newSections);
     },
     simulate() {
+      const shuffledCandidates = shuffleArray(
+        candidates.map((candidate) => candidate.number)
+      );
       const newSections = initSections().map((stateSection) => {
         const section = { ...stateSection, closed: true };
         let left = section.voters;
-        for (const candidateNumber in section.votes) {
+        shuffledCandidates.forEach((candidateNumber) => {
           const newVotes = Math.floor(Math.random() * left);
           left -= newVotes;
-          section.votes[candidateNumber] = newVotes;
-        }
+          section.votes[candidateNumber as number | "outros"] = newVotes;
+        });
         return section;
       });
       this.sections = newSections;

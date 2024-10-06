@@ -17,3 +17,14 @@ export const formatNumbers = (num: number) =>
   Intl.NumberFormat("pt-BR").format(num);
 
 export const IS_DEV = !!(import.meta as any).env.DEV;
+
+export const shuffleArray = <T>(arr: T[]) => {
+  const copyArr = [...arr];
+  const shuffledArray: T[] = [];
+  while (copyArr.length) {
+    const randomIdx = Math.floor(Math.random() * copyArr.length);
+    const [randomItem] = copyArr.splice(randomIdx, 1);
+    shuffledArray.push(randomItem);
+  }
+  return shuffledArray;
+};
