@@ -150,7 +150,7 @@ function cleanSection() {
         <h4 class="mt-0 mb-1 font-extrabold">{{ candidate.name }}</h4>
         <circular-picture
           :src="candidate.profilePicture"
-          :size="4"
+          size="extranormal"
           :color="candidate.color"
         />
         <input

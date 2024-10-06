@@ -10,7 +10,7 @@
           }"
         />
       </div>
-      <circular-picture :src="profilePicture" :color="color" :size="1" />
+      <circular-picture :src="profilePicture" :color="color" size="smaller" />
       <p class="font-bold m-0 ml-1 text-lg" :style="{ color: color }">
         {{ formattedPercentage }}%
       </p>
@@ -21,7 +21,7 @@
   </div>
 
   <div v-else class="compact-candidate_mini flex">
-    <circular-picture :src="profilePicture" :color="color" :size="1.2" />
+    <circular-picture :src="profilePicture" :color="color" size="small" />
     <div class="flex flex-col justify-between ml-2">
       <p class="text-base font-bold m-0" :style="{ color: color }">
         {{ formattedPercentage }}%

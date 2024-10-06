@@ -95,8 +95,8 @@ const props = defineProps({
     default: false,
   },
   size: {
-    type: Number,
-    default: 4,
+    type: String,
+    default: "normal",
   },
   principal: {
     type: Boolean,

@@ -53,7 +53,7 @@
       :color="challengers[0].color"
       :votes="sectionStore.votesByCandidate(challengers[0].number)"
       :totalVotes="sectionStore.validVotes"
-      :size="5"
+      size="large"
     />
 
     <votes-diff
@@ -69,7 +69,6 @@
       :color="challengers[1].color"
       :votes="sectionStore.votesByCandidate(challengers[1].number)"
       :totalVotes="sectionStore.validVotes"
-      :size="3.5"
     />
 
     <votes-diff
@@ -85,7 +84,6 @@
       :color="challengers[2].color"
       :votes="sectionStore.votesByCandidate(challengers[2].number)"
       :totalVotes="sectionStore.validVotes"
-      :size="3.5"
     />
 
     <div class="mt-12 flex justify-between flex-wrap">
