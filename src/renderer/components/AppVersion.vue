@@ -4,7 +4,7 @@ import { onMounted, ref } from "vue";
 const appVersion = ref("");
 
 onMounted(() => {
-  appVersion.value = "v1.8.1";
+  appVersion.value = "v1.8.2";
 });
 </script>
 
